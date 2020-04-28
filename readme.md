@@ -1,7 +1,4 @@
 # Machine learning tools for mycoviral data
-People
-- Chunrong Huang
-- Liule Yang
 
 # Steps to clone the repo locally
 
