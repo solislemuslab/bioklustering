@@ -13,3 +13,10 @@ git clone https://github.com/solislemuslab/mycorivus-website.git
 # Resources
 
 [Mycovirus paper](https://apsjournals.apsnet.org/doi/10.1094/PHYTO-05-19-0166-RVW)
+
+# Steps to render the website
+General Idea:
+1. cd myweb2
+2. install required packages
+    (will provide more details)
+3. python3 manage.py runserver
