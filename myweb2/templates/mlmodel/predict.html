@@ -1,0 +1,83 @@
+{% extends "./index.html" %}
+{% block upload %}
+{% load crispy_forms_tags %}
+<div class="row">
+    <div class="col-md-2">
+        <h4>Upload File</h4>
+    </div>
+    <div class="col-md-10">    
+        <p>Please upload file(s) containing sequence(s) of virus genome.<br/><small style="color:#6c757d"></small></p>
+        <form id="fileinfoform" method="POST" enctype="multipart/form-data" id="uploadform">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4">
+                    {{ upload_form.filepath|as_crispy_field  }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2 mt-2">
+                    <button type="submit" value="upload_form" name="action" class="btn btn-secondary" style="width: 100%">Upload</button>		
+                </div>
+            </div>
+        </form>
+    </div>  
+</div>
+<br><br><br>
+
+<div class="row">
+    <div class="col-md-2">
+        <h4>Predict</h4>
+    </div>
+    <div class="col-md-10">    
+        <p>Please fill in the form below before making a prediction.<br/><small style="color:#6c757d"></small></p>
+        <form id="predictinfoform" method="POST" enctype="multipart/form-data" id="uploadform" target="_blank">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4">
+                    {{ predict_form.mlmodels|as_crispy_field }}
+                </div>
+                <div class="col-md-4">
+                    {{ predict_form.kmer|as_crispy_field }}
+                </div>
+                <div class="col-md-4">
+                    {{ predict_form.email|as_crispy_field }}
+                    {{ predict_form.sendbyemail|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <button type="submit" id="predictbtn" value="predict_form" name="action" class="btn btn-secondary" style="width: 100%">Predict</button>
+                </div>
+            </div>
+        </form>
+    </div>  
+</div>
+
+<br><br><br>
+<div class="row">
+    <div class="col-md-2">
+        <h4>File List</h4>
+    </div>
+    <div class="col-md-8">
+        <small>If you see some random strings appended after your files below, don't worry! They are just for avoiding duplicants.</small>
+        {% for f in files %}
+            <form method="post" action="{% url 'delete' f.pk %}">
+                {% csrf_token %}
+                {{ f.filepath.name|slice:"10:"|truncatechars:80 }}
+                <button type="submit" class="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </form>
+        {% endfor %}
+    </div>
+</div>
+<br><br><br>
+
+{% if files.count == 0 %}
+<script>
+    $("#predictbtn").on("click", function() {
+        alert("Please upload at least one file before making a prediction.");
+    })
+</script>
+{% endif %}
+{% endblock %}

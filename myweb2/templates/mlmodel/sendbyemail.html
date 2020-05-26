@@ -1,0 +1,12 @@
+{% extends "./base.html" %}
+{% block loading %}
+<div id="result">
+    <div class="jumbotron text-center">
+        <h1 class="display-4 ">Thank you!</h1>
+        <p class="lead">The result will be sent to you via email.</p>
+        <hr class="my-4">
+        <p>Having trouble? <a href="mailto:chuang278@wisc.edu">Contact us</a>.</p>
+        <input type="button" class="btn btn-primary btn-lg" role="button" value="Download" onclick="window.open('../download_pdf')"/>
+    </div>
+</div>
+{% endblock %}

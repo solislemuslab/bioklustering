@@ -1,0 +1,50 @@
+{% extends "./base.html" %}
+{% block loading %}
+<div id="loading" class="d-flex justify-content-center align-items-center">
+    <div class="spinner-border text-secondary" role="status" style="width: 5rem; height: 5rem;">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+{% autoescape off %}
+<div id="result">
+    <div class="jumbotron text-center">
+        <h1 class="display-4 ">Thank you!</h1>
+        <p class="lead">Please check the bottom below if you want a copy of prediction result.</p>
+        <hr class="my-4">
+        <p>Having trouble? <a href="mailto:chuang278@wisc.edu">Contact us</a>.</p>
+        <input type="button" class="btn btn-primary btn-lg" role="button" value="Download" onclick="window.open('../download_csv')"/>
+    </div>
+    <h2>Result</h2>
+    <div id="result_img" style="width: 40%">
+    </div>
+    <div id="result1" style="width: 40%">
+    </div>
+</div>
+{% endautoescape %} 
+
+<script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+<script>
+    $("#loading").height(screen.height/2);
+    $("#loading").show();
+    $("#result").hide();
+    $.ajax({
+        url: '../process/',
+        type: 'POST',
+        dataType: 'json',
+        data: {csrfmiddlewaretoken: window.CSRF_TOKEN},
+        success: function(result){
+            $("#loading").remove();
+            $('#result1').append(result.label);
+            $("#result").show();
+            result.image.forEach(i => {
+                $('#result_img').append('<img src="' + "../" + i + '" />');
+            });
+            
+        },
+        error: function(xhr){
+            alert(xhr.responseText); //Remove this when all is fine.
+        },
+    });
+</script>
+{% endblock %}
