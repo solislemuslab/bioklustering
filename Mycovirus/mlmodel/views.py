@@ -1,18 +1,21 @@
-from django.shortcuts import redirect, render
+import os 
+import pandas as pd
 from .models import FileInfo
-from django.http import FileResponse, HttpResponse, HttpResponseRedirect, JsonResponse
 from .parser.parseFasta import *
+from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as ug
 from django.core.exceptions import ValidationError
-from django import forms
-import os 
+from django.core.mail import send_mail, EmailMessage
 from django.core.files.storage import FileSystemStorage
-import pandas as pd
-from mlmodel.forms import FileInfoForm, PredictInfoForm
+from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.views.generic.edit import FormView
+from django.http import FileResponse, HttpResponse, HttpResponseRedirect, JsonResponse
+from mlmodel.forms import FileInfoForm, PredictInfoForm
 from mlmodel.parser import kmeans
 from mlmodel.models import PredictInfo
+
 
 class PredictionView(FormView):
     template = 'predict.html'
@@ -33,18 +36,33 @@ class PredictionView(FormView):
         if self.request.method=='POST':
             upload_form = FileInfoForm(self.request.POST, files=self.request.FILES, prefix="upload_form")
             predict_form = PredictInfoForm(self.request.POST, prefix="predict_form")
-            if upload_form.is_valid() and not predict_form.is_valid():
+            upload_form_isalid = upload_form.is_valid()
+            predict_form_isvalid = predict_form.is_valid()
+
+            if upload_form_isalid and not predict_form_isvalid:
                 upload_form.save()
                 #  process the uploaded file before writing it to database
                 f = upload_form['filepath'].value()
                 filepath = f.name
                 handle_uploaded_file(f, filepath)
                 return redirect('index') #TODO
-            elif predict_form.is_valid() and not upload_form.is_valid():
+            elif predict_form_isvalid and not upload_form_isalid:
                 files = FileInfo.objects.all()
                 path = os.path.join('mlmodel', 'result.html')
                 if len(files) != 0:
                     predict_form.save()
+                    # if predict_form['sendbyemail'].value():
+                    #     from_email = "mycovirus.website@mail.com"
+                    #     to_email = predict_form['email'].value()
+                    #     send_mail(
+                    #         '[Mycovirus Website]Here is your prediction result.',
+                    #         'Here is the message. Test.',
+                    #         from_email,
+                    #         [to_email],
+                    #         fail_silently=False,
+                    #     )
+                    #     predict_form['email'].value()
+
                     return redirect('result')
         
         upload_form = FileInfoForm(prefix = "upload_form")
@@ -91,6 +109,8 @@ def process(request):
     if request.method == 'POST':
         filenames = FileInfo.objects.values_list('filepath', flat=True)
         mlmethod = getattr(PredictInfo.objects.last(), "mlmodels")
+        senbyemail = getattr(PredictInfo.objects.last(), "sendbyemail")
+        email = getattr(PredictInfo.objects.last(), "email")
         result = []
         if(mlmethod == "kmeans"):
             result = kmeans.websiteScriptKmeans(filenames)
@@ -111,6 +131,22 @@ def process(request):
         # write to csv
         path = os.path.join("media", "resultfiles", "result.csv")
         all_df.to_csv(path, index_label='ID')
+        if len(email) > 0 : # send the result as long as email addr is entered
+            from_email = os.environ.get('MYCOVIRUS_EMAIL_USER')
+            to_email = email
+            template_path = os.path.join("email", "email_template.txt")
+            email_msg = EmailMessage(
+                '[Mycovirus Website] Here is your prediction result.',
+                render_to_string(template_path, {}),
+                from_email,
+                [to_email],
+                reply_to=[from_email],
+            )
+            email_msg.attach_file(path)
+            email_msg.send()
+        elif senbyemail == False: # if select sendbyemail but not enter email addr
+            # TODO:
+            email = 1
     # return JsonResponse({'label': lable})    
     return JsonResponse({'label': label, 'image': result[1]})
 

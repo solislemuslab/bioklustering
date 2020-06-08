@@ -1,6 +1,6 @@
 from django.db import models
 from django import forms
-from django.core.validators import EmailValidator, MaxValueValidator, MinValueValidator
+from django.core.validators import EmailValidator
 
 # Create your models here.
 
@@ -30,7 +30,7 @@ class PredictInfo(models.Model):
     mlmodels = models.CharField(max_length=30, choices=mlmodels_choices, default=A)
     kmer = models.CharField('Kmer size', max_length=200, blank=True, null=True, help_text = "Enter one or more kmer sizes here if you want to train the model with specific kmer size. Please separate each kmer size by a comma.")    
     sendbyemail = models.BooleanField('Send prediction to email?', default=False)
-    email = models.EmailField('Email', max_length = 254, blank=True, null=True, help_text="If you want to send the result via email, please enter an email address here.")
+    email = models.EmailField('Email', max_length = 254, blank=True, null=True, help_text="If you want to send the result via email, please enter a valid email address here. E.g. xxxxx@gmail.com")
     
     def __str__(self):
         return self.mlmodels
