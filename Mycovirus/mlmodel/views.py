@@ -16,7 +16,6 @@ from mlmodel.forms import FileInfoForm, PredictInfoForm
 from mlmodel.parser import kmeans
 from mlmodel.models import PredictInfo
 
-
 class PredictionView(FormView):
     template = 'predict.html'
         
@@ -42,8 +41,8 @@ class PredictionView(FormView):
             if upload_form_isalid and not predict_form_isvalid:
                 upload_form.save()
                 #  process the uploaded file before writing it to database
-                f = upload_form['filepath'].value()
-                filepath = f.name
+                f = upload_form['filepath'].value() # actual file
+                filepath = os.path.join("media", "resultfiles", f.name)
                 handle_uploaded_file(f, filepath)
                 return redirect('index') #TODO
             elif predict_form_isvalid and not upload_form_isalid:
@@ -131,7 +130,7 @@ def process(request):
         # write to csv
         path = os.path.join("media", "resultfiles", "result.csv")
         all_df.to_csv(path, index_label='ID')
-        if len(email) > 0 : # send the result as long as email addr is entered
+        if email and len(email) > 0 : # send the result as long as email addr is entered
             from_email = os.environ.get('MYCOVIRUS_EMAIL_USER')
             to_email = email
             template_path = os.path.join("email", "email_template.txt")
