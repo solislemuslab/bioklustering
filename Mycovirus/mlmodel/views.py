@@ -1,6 +1,6 @@
 import os 
 import pandas as pd
-from .models import FileInfo
+from .models import FileInfo, FileListInfo
 from .parser.parseFasta import *
 from django import forms
 from django.utils.safestring import mark_safe
@@ -12,7 +12,7 @@ from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.views.generic.edit import FormView
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect, JsonResponse
-from mlmodel.forms import FileInfoForm, PredictInfoForm
+from mlmodel.forms import FileInfoForm, FileListInfoForm, PredictInfoForm
 from mlmodel.parser import kmeans
 from mlmodel.models import PredictInfo
 
@@ -22,11 +22,15 @@ class PredictionView(FormView):
     def get(self, request, *args, **kwargs):
         upload_form = FileInfoForm(prefix = "upload_form")
         predict_form = PredictInfoForm(prefix = "predict_form")
+        filelist_form = FileListInfoForm(prefix="filelist_form")
         files = FileInfo.objects.all()
+        filelists = FileListInfo.objects.all()
         context = {
             'upload_form': upload_form,
             'predict_form': predict_form,
-            'files': files
+            'filelist_form': filelist_form,
+            'files': files,
+            'filelists': filelists
         }
         path = os.path.join('mlmodel', self.template)
         return render(self.request, path, context)
@@ -35,17 +39,20 @@ class PredictionView(FormView):
         if self.request.method=='POST':
             upload_form = FileInfoForm(self.request.POST, files=self.request.FILES, prefix="upload_form")
             predict_form = PredictInfoForm(self.request.POST, prefix="predict_form")
+            filelist_form = FileListInfoForm(self.request.POST, prefix="filelist_form")
+            
             upload_form_isalid = upload_form.is_valid()
             predict_form_isvalid = predict_form.is_valid()
+            filelist_form_isvalid = filelist_form.is_valid()
 
-            if upload_form_isalid and not predict_form_isvalid:
+            if upload_form_isalid and not predict_form_isvalid and not filelist_form_isvalid:
                 upload_form.save()
                 #  process the uploaded file before writing it to database
                 f = upload_form['filepath'].value() # actual file
                 filepath = os.path.join("media", "resultfiles", f.name)
                 handle_uploaded_file(f, filepath)
                 return redirect('index') #TODO
-            elif predict_form_isvalid and not upload_form_isalid:
+            elif predict_form_isvalid and not upload_form_isalid and not filelist_form_isvalid:
                 files = FileInfo.objects.all()
                 path = os.path.join('mlmodel', 'result.html')
                 if len(files) != 0:
@@ -61,17 +68,26 @@ class PredictionView(FormView):
                     #         fail_silently=False,
                     #     )
                     #     predict_form['email'].value()
+                if len(str(FileListInfo.objects.last()).split(", ")) == 0:
+                    predict_form.save()
+                return redirect('result')
+            elif filelist_form_isvalid and not upload_form_isalid and not predict_form_isvalid:
+                filelist_form.save()
+                return redirect('index') #TODO
 
-                    return redirect('result')
         
         upload_form = FileInfoForm(prefix = "upload_form")
         predict_form = PredictInfoForm(prefix = "predict_form")
+        filelist_form = FileListInfoForm(prefix="filelist_form")
         files = FileInfo.objects.all()
+        filelists = FileListInfo.objects.all()
         path = os.path.join('mlmodel', self.template)
         return render(self.request, path, {
             'upload_form': upload_form,
             'predict_form': predict_form,
+            'filelist_form': filelist_form,
             'files': files,
+            'filelists': filelists
         })
 
         #     else:
@@ -106,7 +122,8 @@ def process(request):
     form = FileInfoForm(prefix='upload_form')
     label = "<div>Fail to predict labels.</div>"
     if request.method == 'POST':
-        filenames = FileInfo.objects.values_list('filepath', flat=True)
+        # filenames = FileInfo.objects.values_list('filepath', flat=True)
+        filenames = str(FileListInfo.objects.last()).split(sep=", ")
         mlmethod = getattr(PredictInfo.objects.last(), "mlmodels")
         senbyemail = getattr(PredictInfo.objects.last(), "sendbyemail")
         email = getattr(PredictInfo.objects.last(), "email")

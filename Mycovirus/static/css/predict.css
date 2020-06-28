@@ -1,14 +1,37 @@
-.upload {
-    content:'Drag and drop here or Browse files';
-    width: 100%;
+html, body { 
+    width: 100%; 
     height: 100%;
-    border: 2px dashed #ced4da;
+}
+
+h4 {
+    font-size: 32px;
+}
+
+.alignment_box select{
+    width: 105%;
+}
+
+.upload_container {
+    position: relative;
+    border: 5px dashed #E9ECEF;
     border-radius: .5rem;
-    padding: 80% 1% 1% 1%;
     color: #495057;
     background-color: #fff;
     background-clip: padding-box;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.upload {
+    width: 100%;
+    height: 100%;
+    padding: 80% 1% 1% 1%;
+    opacity: 0%;
+    /* border: 5px dashed #E9ECEF;
+    border-radius: .5rem;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; */
     /* text-indent: 999em; */
     /* text-align: center; */
 }
@@ -24,4 +47,40 @@
     border: transparent;
     color: #6d7378;
 }
+
+#inputfile_name {
+    color: #6d7378;
+    padding: 0% 3%;
+    overflow: auto;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.fileupload_container {
+    height: 100%;
+}
+
+.table_header {
+    background-color: #6d7378;
+    color: white;
+}
+
+.filelist_container {
+    height: 200%;
+    overflow: auto;
+    display: inline-block;
+    white-space: nowrap;
+    border: 2px solid #E9ECEF;
+    border-radius: .25rem;
+}
+
+.filelist_container tbody tr td {
+    font-size: 14px;
+    color: #4c4f52;
+}
+
+
+
+
+
 

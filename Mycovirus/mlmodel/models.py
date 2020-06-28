@@ -20,6 +20,18 @@ class FileInfo(models.Model):
         self.filepath.delete()
         super().delete(*args, **kwargs)
 
+class FileListInfo(models.Model):
+    A = "aligned"
+    B = "unaligned"
+    alignment_choices = [(A, "aligned"), (B, "unaligned")]
+    alignment = models.CharField(max_length=30, choices=alignment_choices, default=B)
+    filelist = models.ManyToManyField(FileInfo, blank=True)
+
+    def __str__(self):
+        filelist_str = ", ".join(str(f.filepath.name) for f in self.filelist.all())
+        return filelist_str
+        # return self.alignment
+
 class PredictInfo(models.Model):
     A = "kmeans"
     B = "kmeansPCA"

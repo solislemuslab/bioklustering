@@ -3,59 +3,72 @@
 {% load crispy_forms_tags %}
 {% load static %}
 <link rel='stylesheet' href="{% static 'css/predict.css' %}">
-<div class="row">
-    <div class="col-md-2">
-        <h4>Upload File</h4>
-    </div>
-    <div class="col-md-10">    
-        <p>Please upload file(s) containing sequence(s) of virus genome.<br/><small style="color:#6c757d"></small></p>
-        <form id="fileinfoform" method="POST" enctype="multipart/form-data" id="uploadform">
+
+<br><br>
+<h4>Upload File</h4>
+<p>Please upload file(s) containing sequence(s) of virus genome.</p>
+<div class="row fileupload_container mb-5 mt-4">
+    <div class="col-md-5 mb-5">    
+        <form id="fileinfoform" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ upload_form.filepath}}
+            <button type="submit" value="upload_form" name="action" class="btn btn-secondary mt-3" style="width: 100%; height: 13%;">Upload</button>		
+        </form>
+    </div>  
+    <div class="col-md-7">
+        <form id="filelistform" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row">
+                {{ filelist_form.filelist }}
+            </div>
+            <div class="row float-right mt-3">
+                <div class="col-md-6 alignment_box">
+                    {{ filelist_form.alignment | as_crispy_field }}
+                </div>
                 <div class="col-md-6">
-                    {{ upload_form.filepath}}
-                    <button type="submit" value="upload_form" name="action" class="btn btn-secondary mt-3" style="width: 100%; height: 13%;">Upload</button>		
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2 mt-2">
+                    <div class="btn-group" style="width: 105%;">
+                            <button type="button" class="btn btn-secondary" style="width: 105%;">Actions</button>
+                            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu">
+                            <button type="submit" value="filelist_form" name="action" class="dropdown-item">Add to prediction</button>		
+                            <button value="filelist_form" name="action" class="dropdown-item">Delete files</button>		
+                        <div class="dropdown-divider"></div>
+                            <button button value="filelist_form" name="action" class="dropdown-item">Save to database</button>		
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
-    </div>  
-</div>
-<br><br><br>
-
-<div class="row">
-    <div class="col-md-2">
-        <h4>Predict</h4>
     </div>
-    <div class="col-md-10">    
-        <p>Please fill in the form below before making a prediction.<br/><small style="color:#6c757d"></small></p>
-        <form id="predictinfoform" method="POST" enctype="multipart/form-data" id="uploadform" target="_blank">
-            {% csrf_token %}
-            <div class="row">
-                <div class="col-md-4">
-                    {{ predict_form.mlmodels|as_crispy_field }}
-                </div>
-                <div class="col-md-4">
-                    {{ predict_form.kmer|as_crispy_field }}
-                </div>
-                <div class="col-md-4">
-                    {{ predict_form.email|as_crispy_field }}
-                    {{ predict_form.sendbyemail|as_crispy_field }}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
-                    <button type="submit" id="predictbtn" value="predict_form" name="action" class="btn btn-secondary" style="width: 100%">Predict</button>
-                </div>
-            </div>
-        </form>
-    </div>  
 </div>
 
+
+<div class="dropdown-divider mb-5"></div>
+<h4>Predict</h4>
+<p>Please fill in the form below before making a prediction.<br/><small style="color:#6c757d"></small></p>
+    <form id="predictinfoform" method="POST" enctype="multipart/form-data" target="_blank">
+        {% csrf_token %}
+        <div class="row ">
+            <div class="col-md-4">
+                {{ predict_form.mlmodels|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ predict_form.kmer|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ predict_form.email|as_crispy_field }}
+                {{ predict_form.sendbyemail|as_crispy_field }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <button type="submit" id="predictbtn" value="predict_form" name="action" class="btn btn-secondary" style="width: 100%">Predict</button>
+            </div>
+        </div>
+    </form>
 <br><br><br>
+
+<!-- <br><br><br>
 <div class="row">
     <div class="col-md-2">
         <h4>File List</h4>
@@ -73,7 +86,7 @@
         {% endfor %}
     </div>
 </div>
-<br><br><br>
+<br><br><br> -->
 
 {% if files.count == 0 %}
 <script>
@@ -83,4 +96,37 @@
     })
 </script>
 {% endif %}
+
+<!-- {% with last=filelists.last %}
+{{last}}
+{% ifequal last|length 0 %}
+hihihi
+<script>
+    if(len(last)==0) {
+        $("#predictbtn").on("click", function() {
+            alert("Please select files you want to predict and add to prediction.");
+            return false;
+        })
+    }
+</script>
+{% endifequal %}
+{% endwith %} -->
+
+<script>
+    function resize() {
+        let height = $('.upload_container').height();
+        let width = $('.upload_container').width();
+        $('.filelist_container').height(height);
+        $('.filelist_container').width(1.5*width);
+    }
+    $(window).load(function() {
+        resize();
+    })
+    $(window).resize(function() {
+        resize();
+    })
+    $("#select_all").click(function() {
+        $(".filelist_container input:checkbox").prop("checked", this.checked);
+    })
+</script>
 {% endblock %}

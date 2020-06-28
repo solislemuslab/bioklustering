@@ -337,6 +337,7 @@ def websiteScriptKmeans(fastaList):
     output = []
     images = []
     for i in range(0, len(fastaList)):
+        print(fastaList[i]+ "myfile")
         inputData = parseFasta(fastaList[i])
         inputData["Sequence"] = inputData["Sequence"].apply(lambda x: x.replace("-", ""))
         kmer7TableInput = kmerXTable(inputData, 7,7)
