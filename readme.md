@@ -16,7 +16,10 @@ git clone https://github.com/solislemuslab/mycorivus-website.git
 
 # Steps to render the website
 General Idea:
-1. cd myweb2
+1. cd Mycovirus
 2. install required packages
     (will provide more details)
 3. python3 manage.py runserver
+
+# Notes to render the website
+Different browsers might result in different interface (Recommended: Chrome)
