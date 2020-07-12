@@ -12,28 +12,27 @@
         <form id="fileinfoform" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ upload_form.filepath}}
-            <button type="submit" value="upload_form" name="action" class="btn btn-secondary mt-3" style="width: 100%; height: 13%;">Upload</button>		
+            <button type="submit" value="upload_form" class="btn btn-secondary mt-3" style="width: 100%; height: 13%;">Upload</button>		
         </form>
     </div>  
-    <div class="col-md-7">
+    <div class="col-md-6 ml-md-5">
         <form id="filelistform" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row">
                 {{ filelist_form.filelist }}
             </div>
-            <div class="row float-right mt-3">
+            <div class="row float-right mt-2">
                 <div class="col-md-6 alignment_box">
                     {{ filelist_form.alignment | as_crispy_field }}
                 </div>
                 <div class="col-md-6">
                     <div class="btn-group" style="width: 105%;">
-                            <button type="button" class="btn btn-secondary" style="width: 105%;">Actions</button>
-                            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 105%;">Actions </button>
                         <div class="dropdown-menu">
-                            <button type="submit" value="filelist_form" name="action" class="dropdown-item">Add to prediction</button>		
-                            <button value="filelist_form" name="action" class="dropdown-item">Delete files</button>		
-                        <div class="dropdown-divider"></div>
-                            <button button value="filelist_form" name="action" class="dropdown-item">Save to database</button>		
+                            <button type="submit" value="filelist_form" name="add_filelist" class="dropdown-item">Add to prediction</button>		
+                            <button value="filelist_form" name="delete_filelist" class="dropdown-item">Delete files</button>		
+                            <div class="dropdown-divider"></div>
+                            <button button value="filelist_form" name="action" class="dropdown-item disabled">Save to database</button>		
                         </div>
                     </div>
                 </div>
@@ -68,7 +67,7 @@
     </form>
 <br><br><br>
 
-<!-- <br><br><br>
+<br><br><br>
 <div class="row">
     <div class="col-md-2">
         <h4>File List</h4>
@@ -78,7 +77,7 @@
         {% for f in files %}
             <form method="post" action="{% url 'delete' f.pk %}">
                 {% csrf_token %}
-                {{ f.filepath.name|slice:"10:"|truncatechars:80 }}
+                {{f.pk}} {{ f.filepath.name|slice:"10:"|truncatechars:80 }}
                 <button type="submit" class="close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -86,7 +85,25 @@
         {% endfor %}
     </div>
 </div>
-<br><br><br> -->
+<br><br><br>
+
+<br><br><br>
+<h4>File List</h4>
+<div class="row">
+    {% for fl in filelists %}
+    <div class="col-md-8">
+        <form method="post" action="{% url 'delete_filelists' fl.pk %}">
+            {% csrf_token %}
+            {{ fl.pk }}{{ fl }}
+            <button type="submit" class="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </form>
+    </div>
+    {% endfor %}
+
+</div>
+<br><br><br>
 
 {% if files.count == 0 %}
 <script>

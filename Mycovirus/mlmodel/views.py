@@ -57,25 +57,19 @@ class PredictionView(FormView):
                 path = os.path.join('mlmodel', 'result.html')
                 if len(files) != 0:
                     predict_form.save()
-                    # if predict_form['sendbyemail'].value():
-                    #     from_email = "mycovirus.website@mail.com"
-                    #     to_email = predict_form['email'].value()
-                    #     send_mail(
-                    #         '[Mycovirus Website]Here is your prediction result.',
-                    #         'Here is the message. Test.',
-                    #         from_email,
-                    #         [to_email],
-                    #         fail_silently=False,
-                    #     )
-                    #     predict_form['email'].value()
                 if len(str(FileListInfo.objects.last()).split(", ")) == 0:
                     predict_form.save()
                 return redirect('result')
             elif filelist_form_isvalid and not upload_form_isalid and not predict_form_isvalid:
                 filelist_form.save()
-                return redirect('index') #TODO
+                if 'add_filelist' in self.request.POST:
+                    return redirect('index') #TODO
+                if 'delete_filelist' in self.request.POST:
+                    filelist = FileListInfo.objects.last()
+                    filelist.delete_files()
+                    # filelist.delete()
+                    return redirect('index')
 
-        
         upload_form = FileInfoForm(prefix = "upload_form")
         predict_form = PredictInfoForm(prefix = "predict_form")
         filelist_form = FileListInfoForm(prefix="filelist_form")
@@ -90,26 +84,6 @@ class PredictionView(FormView):
             'filelists': filelists
         })
 
-        #     else:
-        #         upload_form = FileInfoForm(prefix = "upload_form")
-        #         predict_form = PredictInfoForm(prefix = "predict_form")
-        #         files = FileInfo.objects.all()
-        #         path = os.path.join('mlmodel', self.template)
-        #         return render(self.request, path, {
-        #             'upload_form': upload_form,
-        #             'predict_form': predict_form,
-        #             'files': files,
-        #         })
-        # else:
-        #     upload_form = FileInfoForm(prefix = "upload_form")
-        #     predict_form = PredictInfoForm(prefix = "predict_form")
-        #     files = FileInfo.objects.all()
-        #     path = os.path.join('mlmodel', self.template)
-        #     return render(self.request, path, {
-        #         'upload_form': upload_form,
-        #         'predict_form': predict_form,
-        #         'files': files,
-        #     })
 def result(request):
     path = os.path.join('mlmodel', 'result.html')
     return render(request, path)
@@ -128,9 +102,9 @@ def process(request):
         senbyemail = getattr(PredictInfo.objects.last(), "sendbyemail")
         email = getattr(PredictInfo.objects.last(), "email")
         result = []
-        if(mlmethod == "kmeans"):
-            result = kmeans.websiteScriptKmeans(filenames)
-        elif(mlmethod == "kmeansPCA"):
+        # if(mlmethod == "kmeans"):
+        #     result = kmeans.websiteScriptKmeans(filenames)
+        if(mlmethod == "kmeansPCA"):
             result = kmeans.kmeansPCA(filenames)
         elif(mlmethod == "kmeansTSNE"):
             result = kmeans.kmeansTSNE(filenames)
@@ -170,6 +144,12 @@ def delete(request, pk):
     if request.method == 'POST':
         delete_file = FileInfo.objects.get(pk=pk)
         delete_file.delete()
+    return redirect('index')
+
+def delete_filelists(request, pk):
+    if request.method == 'POST':
+        delete_filelist = FileListInfo.objects.get(pk=pk)
+        delete_filelist.delete()
     return redirect('index')
 
 def download_pdf(request):
