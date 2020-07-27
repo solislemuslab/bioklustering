@@ -28,6 +28,8 @@ urlpatterns = [
     path('process/', views.process, name='process'),
     path('download_pdf/', views.download_pdf, name='download_pdf'),
     path('download_csv/', views.download_csv, name='download_csv'),
+    # path('parameters/', views.updateParams, name='updateParams'),
+    path('resetData/', views.resetData, name='resetData')
 ]
 
 # for development purpose
