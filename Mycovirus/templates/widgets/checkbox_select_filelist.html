@@ -1,0 +1,27 @@
+<div class="filelist_container">
+  {% with id=widget.attrs.id %}
+  <table{% if id %} id="{{ id }}"{% endif %} {% if widget.attrs.class %} class="{{ widget.attrs.class }}"{% endif %}>
+    <thead class="thead-light">
+      <tr class="table_row">
+        <th scope="col"><input type="checkbox" id="select_all" style="margin-bottom: 0px;"></th>
+        <th scope="col"><label for="select_all" style="margin-bottom: 0px;">File Name</label></th>
+      </tr>
+    </thead>
+    <tbody> 
+    {% for group, options, index in widget.optgroups %}
+      {% for option in options %}
+      <tr class="table_row">
+        <th scope="row"><input type="checkbox" name="{{option.name}}" value="{{option.value}}" 
+                  class="{{option.attrs.class}}" style="margin-bottom: 0px;" id="{{option.attrs.id}}" {% if option.attrs.checked %}checked{% endif %}></th>
+        <td><label for="{{option.attrs.id}}" style="margin-bottom: 0px;">{{option.label}}</label></td>
+      </tr>
+      {% endfor %}
+    {% endfor %}
+    <tr>
+      <th></th>
+      <td></td>
+    </tr>
+    </tbody>
+  </table>
+  {% endwith %}
+  </div>

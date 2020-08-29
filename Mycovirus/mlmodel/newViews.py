@@ -13,7 +13,7 @@ from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.views.generic.edit import FormView
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect, JsonResponse
-from mlmodel.forms import MyNumberInput, MySelect, FileInfoForm, FileListInfoForm, PredictInfoForm, ParametersInfoForm
+from mlmodel.forms import FileInfoForm, FileListInfoForm, PredictInfoForm, ParametersInfoForm
 from mlmodel.parser import kmeans, GMM
 from mlmodel.models import PredictInfo
 from django.core.validators import MinValueValidator
@@ -44,15 +44,23 @@ class PredictionView(FormView):
         # path = os.path.join('mlmodel', self.template)
         # return render(self.request, path, context)
 
-        predict_info = PredictInfo.objects.last()
-        if predict_info == None:
-            predict_info = PredictInfo.objects.create()
-            predict_info.mlmodels = "kmeansPCA"
-        parameters_form = get_parameters_form(predict_info.mlmodels, getattr(predict_info, "content", {}))
         upload_form = FileInfoForm(prefix = "upload_form")
+
+        filelist_info = request.session.get('filelist_info')
+        if not filelist_info:
+            request.session['filelist_info'] = FileListInfo.objects.create()
+            filelist_info = request.session.get('filelist_info')
+        filelist_form = FileListInfoForm(prefix="filelist_form", initial={'filelist': filelist_info.all()})
+        
+        predict_info = request.session.get('predict_info')
+        if not predict_info:
+            request.session['predict_info'] = PredictInfo.objects.create()
+            predict_info = request.session.get('predict_info')
+            predict_info.mlmodels = "kmeansPCA"
         predict_form = PredictInfoForm(prefix = "predict_form", instance=predict_info)
-        last_filelist = getattr(FileListInfo.objects.last(), 'filelist')
-        filelist_form = FileListInfoForm(prefix="filelist_form", initial={'filelist': last_filelist.all()})
+        parameters_form = get_parameters_form(predict_info.mlmodels, getattr(predict_info, "content", {}))
+
+        
         files = FileInfo.objects.all()
         filelists = FileListInfo.objects.all()
         path = os.path.join('mlmodel', self.template)
@@ -323,12 +331,11 @@ def get_parameters_form(mlmodels, content):
             ('tied', 'Tied'),
             ('full', 'Full'),
         ]
-        kmer_choices = [(i,i) for i in range(1, 10)]
         new_fields = {
-            'k_min': forms.IntegerField(validators=[MinValueValidator(1)], widget=MyNumberInput(attrs={"class":"form-control", "label":"K Min", "help_text":"The minimum length of kmer"})),
-            'k_max': forms.IntegerField(validators=[MinValueValidator(1)], widget=MyNumberInput(attrs={"class":"form-control", "label":"K Max", "help_text":"The maximum length of kmer"})),
-            'num_class': forms.IntegerField(validators=[MinValueValidator(2)], widget=MyNumberInput(attrs={"class":"form-control", "label":"Number of Class", "help_text":"The number of classification labels"})),
-            'cov_type': forms.ChoiceField(choices=cov_types, widget=MySelect(attrs={"class": "custom-select", "label":"Covariance type", "help_text":"The shape you would expect for clusters"}))
+            'k_min': forms.IntegerField(validators=[MinValueValidator(1)]),
+            'k_max': forms.IntegerField(validators=[MinValueValidator(1)]),
+            'num_class': forms.IntegerField(validators=[MinValueValidator(2)]),
+            'cov_type': forms.ChoiceField(choices=cov_types)
         }
         if not bool(content) or 'k_min' not in content:
             content = {

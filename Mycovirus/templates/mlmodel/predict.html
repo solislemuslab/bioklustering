@@ -12,30 +12,28 @@
         <form id="fileinfoform" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ upload_form.filepath}}
-            <button id="file_upload_btn" type="submit" value="upload_form" class="btn btn-secondary mt-3" style="width: 100%; ">Upload</button>		
+            <button id="file_upload_btn" type="submit" value="upload_form" name="upload_file" class="btn btn-secondary mt-3" style="width: 100%; ">Upload</button>		
         </form>
     </div>  
     <div class="col-md-6 ml-3 ml-md-5">
         <form id="filelistform" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="row">
+            <div class="row {% if filelist_form.errors.filelist.0 %} invalid {% endif %}">
                 {{ filelist_form.filelist }}
             </div>
+            <div class="row invalid_msg">
+                <strong>{{ filelist_form.errors.filelist.0 }}</strong>
+            </div>
             <div class="row float-right mt-3">
-                <div class="col-md-7">
-                    {{ filelist_form.alignment | as_crispy_field }}
-                </div>
-                <div class="col-md-5">
-                    <div class="btn-group" style="width: 100%;">
-                        <button id="action_btn" type="button" class="btn btn-secondary" style="width: 100%;">Action</button>
-                        <button id="action_icon_btn" type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        </button>
-                        <div class="dropdown-menu">
-                            <button id="add_to_pred_btn" type="submit" value="filelist_form" name="add_filelist" class="dropdown-item">Add to prediction</button>		
-                            <button id="del_files_btn"value="filelist_form" name="delete_filelist" class="dropdown-item">Delete files</button>		
-                            <div class="dropdown-divider"></div>
-                            <button button value="filelist_form" name="action" class="dropdown-item disabled">Save to database</button>		
-                        </div>
+                <div class="btn-group" style="width: 100%;">
+                    <button id="action_btn" type="button" class="btn btn-secondary" style="width: 100%;">Action</button>
+                    <button id="action_icon_btn" type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    </button>
+                    <div class="dropdown-menu">
+                        <button id="add_to_pred_btn" type="submit" value="filelist_form" name="add_filelist" class="dropdown-item">Add to prediction</button>		
+                        <button id="del_files_btn" value="filelist_form" name="delete_filelist" class="dropdown-item">Delete files</button>		
+                        <div class="dropdown-divider"></div>
+                        <button button value="filelist_form" name="action" class="dropdown-item disabled">Save to database</button>		
                     </div>
                 </div>
             </div>
@@ -48,7 +46,7 @@
 <br><br>
 
 <h4>Predict</h4>
-<span>Please fill in the forms below before making a prediction.</span><br><br><br>
+<span>Please fill in the forms below before making a prediction.</span><br><br>
 <div class="row">
     <div class="col-md-6">
         <h5>Choose a model</h5>
@@ -86,7 +84,10 @@
             {% else %}
                 <div class="d-inline-flex flex-wrap">
                 {% for field in parameters_form%}
-                    <div class="mr-3 flex-fill">{{ field|as_crispy_field }}</div>
+                    <div class="form-group mr-3 flex-fill {% if field.errors.0 %} invalid {% endif %}">
+                        {{ field }} 
+                        <strong class="invalid_msg">{{ field.errors.0 }}</strong>
+                    </div>
                 {% endfor %}
                 </div>
             {% endif %}
@@ -94,6 +95,7 @@
             <div class="row mt-5">
                 <div class="col-md-12">
                     <button type="submit" id="submit_params_btn" value="submit_params" name="submit_params" class="btn btn-secondary float-right mr-3">Predict</button>
+                    <button type="button" id="submit_params_alert" class="btn btn-primary" data-toggle="modal" data-target="#alertModal" style="display:none;"></button>
                 </div>
             </div>
         </form>
@@ -117,14 +119,17 @@ all_filelist:
 all_predictinfo:
 {{all_predictinfo}}
 <br><br><br> -->
+<!-- 
+{% for name, value in content %}
+  {% if value %}
+    {{ name }} => {{ value }}
+  {% endif %}
+{% endfor %} -->
 <!-- <form id="predictinfoform" method="POST" enctype="multipart/form-data" target="_blank">
     {% csrf_token %}
     <div class="row ">
         <div class="col-md-4">
             {{ predict_form.mlmodels|as_crispy_field }}
-        </div>
-        <div class="col-md-4">
-            {{ predict_form.kmer|as_crispy_field }}
         </div>
         <div class="col-md-4">
             {{ predict_form.email|as_crispy_field }}
@@ -177,29 +182,22 @@ all_predictinfo:
 </div>
 <br><br><br>
 
-{% if files.count == 0 %}
-<script>
-    $("#predictbtn").on("click", function() {
-        alert("Please upload at least one file before making a prediction.");
-        return false;
-    })
-</script>
-{% endif %}
+<!-- Button trigger modal -->
 
-<!-- {% with last=filelists.last %}
-{{last}}
-{% ifequal last|length 0 %}
-hihihi
-<script>
-    if(len(last)==0) {
-        $("#predictbtn").on("click", function() {
-            alert("Please select files you want to predict and add to prediction.");
-            return false;
-        })
-    }
-</script>
-{% endifequal %}
-{% endwith %} -->
+  
+<!-- Modal -->
+<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>The filelist is empty!</strong> Please select at least one file before making prediction.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+</div>
+
+
 
 <script>
     function resize() {
@@ -219,7 +217,12 @@ hihihi
     })
     $("#select_all").click(function() {
         $(".filelist_container input:checkbox").prop("checked", this.checked);
+        sessionStorage.setItem('selectAll', this.checked);
+        $("#add_to_pred_btn").click();
     })
+    $('tbody input:checkbox').on('change', function() { // click add to prediction when any checkbox is checked
+        setTimeout($("#add_to_pred_btn").click(), 5000);
+    });
     // $("#action_btn").click(function(){
     //     $(".btn-group, .dropdown-menu").toggleClass("show");
     // })
@@ -239,29 +242,29 @@ hihihi
     $("#file_upload_btn").click(function() {
         sessionStorage.setItem('scrollpos', window.scrollY);
     })
-    // $("#submit_params_btn").click(function() {
-    //     sessionStorage.setItem('scrollpos', window.scrollY);
-    // })
+    $("#submit_params_btn").click(function() {
+        let filelist = "{{filelists.last}}"
+        if(filelist.length === 0) {
+            // alert("Please select files you want to predict and add to prediction.");
+            $("#submit_params_alert").click();
+            return false;
+        }
+    })
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
     document.addEventListener("DOMContentLoaded", function (event) {
-        var scrollpos = sessionStorage.getItem('scrollpos');
+        let scrollpos = sessionStorage.getItem('scrollpos');
         if (scrollpos) {
             window.scrollTo(0, scrollpos);
             sessionStorage.removeItem('scrollpos');
         }
+        let selectAll = sessionStorage.getItem('selectAll');
+        if (selectAll) {
+            $("#select_all").prop('checked', selectAll);
+            sessionStorage.removeItem('selectAll');
+        }
     });
 </script>
 <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
-<script>
-    function resetData() {
-        $.ajax({
-            url: '../resetData/',
-            type: 'POST',
-            dataType: 'json',
-            data: {csrfmiddlewaretoken: window.CSRF_TOKEN},
-        }); 
-    }
-    window.addEventListener("unload", function(event) { 
-        resetData();
-    });
-</script>
 {% endblock %}

@@ -12,9 +12,6 @@ h4 {
     font-size: 16px;
 }
 
-.alignment_box select{
-    width: 105%;
-}
 
 .upload_container {
     position: relative;
@@ -61,31 +58,71 @@ h4 {
     white-space: nowrap;
 }
 
-.fileupload_container {
-    height: 100%;
-}
+
 
 .table_header {
     background-color: #6d7378;
     color: white;
 }
 
+.table_row {
+    height: 5px;
+}
+
 .filelist_container {
-    height: 200%;
     overflow: auto;
     display: inline-block;
     white-space: nowrap;
-    border: 2px solid #E9ECEF;
+    border: 2px solid #dee2e6;
     border-radius: .25rem;
+}
+
+.filelist_container table {
+    border-collapse: collapse;
+    height: 100%;
+    margin: 0;
+}
+
+.filelist_container thead tr th {
+    position: sticky;
+    top: 0px;
+    box-shadow: 0 1px 0 1px #dee2e6;
+}
+
+.filelist_container thead tr th:first-child {
+    text-align: center;
 }
 
 .filelist_container tbody tr td {
     font-size: 14px;
-    color: #4c4f52;
+    color: #4c4f52; 
 }
 
+.filelist_container tbody tr:last-child:hover {
+    background-color: white !important;
+}
 
+.invalid_msg {
+    width: 100%;
+    margin-top: .25rem;
+    font-size: 80%;
+    color: #dc3545;
+}
 
+.invalid .filelist_container {
+    border-color: #dc3545;
+}
 
+.invalid input {
+    border-color: #dc3545;
+}
 
+.asteriskField {
+    color: #dc3545!important;
+    vertical-align: super;
+}
+
+span svg {
+    vertical-align: text-top;
+}
 

@@ -29,7 +29,13 @@ urlpatterns = [
     path('download_pdf/', views.download_pdf, name='download_pdf'),
     path('download_csv/', views.download_csv, name='download_csv'),
     # path('parameters/', views.updateParams, name='updateParams'),
-    path('resetData/', views.resetData, name='resetData')
+    path('resetData/', views.resetData, name='resetData'),
+   
+    path('testcookie/', views.cookie_session, name="cookie_session"),
+    path('deletecookie/', views.cookie_delete, name="cookie_delete"),
+    path('create/', views.create_session, name="create_session"),
+    path('access/', views.access_session, name="access_session"),
+    path('delete/', views.delete_session, name="delete_session")
 ]
 
 # for development purpose

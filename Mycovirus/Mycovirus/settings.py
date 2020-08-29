@@ -147,3 +147,7 @@ EMAIL_USE_SSL = False
 # default uses locally shipped version at 'fontawesome/css/font-awesome.min.css'
 FONTAWESOME_CSS_URL = '//cdn.example.com/fontawesome-min.css'  # absolute url
 FONTAWESOME_CSS_URL = 'myapp/css/fontawesome.min.css'  # relative url
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 10 # set just 10 seconds to test
+SESSION_SAVE_EVERY_REQUEST = True
