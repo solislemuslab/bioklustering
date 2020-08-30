@@ -18,7 +18,7 @@
     <h2>Result</h2>
     <div id="result_img" style="width: 40%">
     </div>
-    <div id="result1" style="width: 40%">
+    <div id="result_label" style="width: 40%">
     </div>
 </div>
 {% endautoescape %} 
@@ -35,12 +35,11 @@
         data: {csrfmiddlewaretoken: window.CSRF_TOKEN},
         success: function(result){
             $("#loading").remove();
-            $('#result1').append(result.label);
+            $('#result_label').append(result.label);
             $("#result").show();
             result.image.forEach(i => {
                 $('#result_img').append('<img src="' + "../" + i + '" />');
             });
-            
         },
         error: function(xhr){
             alert(xhr.responseText); //Remove this when all is fine.

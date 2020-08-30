@@ -11,6 +11,7 @@ from django.core.mail import send_mail, EmailMessage
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
+from django.template.defaulttags import register
 from django.views.generic.edit import FormView
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect, JsonResponse
 from mlmodel.forms import MyNumberInput, MySelect, FileInfoForm, FileListInfoForm, PredictInfoForm, ParametersInfoForm
@@ -323,12 +324,42 @@ def get_parameters_form(mlmodels, content):
             ('tied', 'Tied'),
             ('full', 'Full'),
         ]
-        kmer_choices = [(i,i) for i in range(1, 10)]
+        cov_type_img = os.path.join("media", "models", "images", "gmm_cov_type.png")
+        cov_type_help_text = "Type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. More details see <u>Learn More about GMM</u> above."
         new_fields = {
-            'k_min': forms.IntegerField(validators=[MinValueValidator(1)], widget=MyNumberInput(attrs={"class":"form-control", "label":"K Min", "help_text":"The minimum length of kmer"})),
-            'k_max': forms.IntegerField(validators=[MinValueValidator(1)], widget=MyNumberInput(attrs={"class":"form-control", "label":"K Max", "help_text":"The maximum length of kmer"})),
-            'num_class': forms.IntegerField(validators=[MinValueValidator(2)], widget=MyNumberInput(attrs={"class":"form-control", "label":"Number of Class", "help_text":"The number of classification labels"})),
-            'cov_type': forms.ChoiceField(choices=cov_types, widget=MySelect(attrs={"class": "custom-select", "label":"Covariance type", "help_text":"The shape you would expect for clusters"}))
+            'k_min': forms.IntegerField(validators=[MinValueValidator(1)], 
+                widget=MyNumberInput(attrs={
+                    "class":"form-control", 
+                    "label":"K-min", 
+                    "help_text":"The minimum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 2."
+            })),
+            'k_max': forms.IntegerField(validators=[MinValueValidator(1)], 
+                widget=MyNumberInput(attrs={
+                    "class":"form-control", 
+                    "label":"K-max", 
+                    "help_text":"The maximum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 3."
+            })),
+            'num_class': forms.IntegerField(validators=[MinValueValidator(2)], 
+                widget=MyNumberInput(attrs={
+                    "class":"form-control", 
+                    "label":"Number of classes", 
+                    "help_text":"The number of predicted labels. Default is set to be 2."
+            })),
+            'cov_type': forms.ChoiceField(choices=cov_types, 
+                widget=MySelect(attrs={
+                    "class": "custom-select", 
+                    "label":"Covariance type",
+                    "help_text": cov_type_help_text,
+                    "isHtml": True
+            })),
+            'description': {
+                'Gaussian Mixture Model (GMM)': 'GMM is a probabilistic model that estimates the underlying multiple Gaussian distributions behind the seemingly chaotic observations. Input will be gene sequences, aligned or unaligned, and output will be predicted label for each virus: 0,1, etc. A k-mer table will be created to transfer the input data for analysis. When using this model, the following parameters are predetermined.',
+                'K-mer': 'Consecutive genes of length k that can be important for classification. The range of length of k-mer can be adjusted. For instance, if you set the minimum length to be 3 and maximum length 3 for gene sequence ATGG, two k-mers ATG and TGG are considered.',
+                'K-min': 'The minimum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 2.',
+                'K-max': 'The maximum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 3.',
+                'Number of classes': 'The number of predicted labels. Default is set to be 2.',
+                'Covariance type': 'The type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. See the following figure of how they work: <br><img src="%s">' % cov_type_img
+            }
         }
         if not bool(content) or 'k_min' not in content:
             content = {
@@ -351,6 +382,14 @@ def get_parameters_form(mlmodels, content):
     parameters_form = DynamicParametersInfoForm(content)
     return parameters_form
 
+@register.filter
+def get_item(choices, key):
+    print(choices)
+    print(key)
+    for c in choices:
+       if c[0] == key:
+           return c[1]
+    return ''
 
 def cookie_session(request):
     request.session.set_test_cookie()
@@ -362,6 +401,7 @@ def cookie_delete(request):
     else:
         response = HttpResponse("Dataflair <br> Your browser doesnot accept cookies")
     return response
+
 
 
 def create_session(request):
