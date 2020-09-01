@@ -1,12 +1,13 @@
-{% load fontawesome_5 %}
-{% fontawesome_5_static %} 
+{% load fontawesome %}
+{% fontawesome_stylesheet %}
+
 {% if widget.is_initial %}{{ widget.initial_text }}: <a href="{{ widget.value.url }}">{{ widget.value }}</a>{% if not widget.required %}
 <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}"{% if widget.attrs.disabled %} disabled{% endif %}>
 <label for="{{ widget.checkbox_id }}">{{ widget.clear_checkbox_label }}</label>{% endif %}<br>
 {{ widget.input_text }}:{% endif %}
 
 <div class="upload_container">
-<p class="dragmsg">{% fa5_icon 'file' %} Drag and drop here or Browse files</p>
+<p class="dragmsg"><i class="fa fa-folder"></i> Drag and drop here or Browse files</p>
 <input type="{{ widget.type }}" name="{{ widget.name }}" class="upload" id="inputfile" onChange="getoutput()" {% include "django/forms/widgets/attrs.html" %}>
 <small id="inputfile_name">No File Selected</small>
 </div>

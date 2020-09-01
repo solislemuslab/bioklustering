@@ -1,49 +1,43 @@
 {% extends "./base.html" %}
+{% load static %}
+
 {% block loading %}
-<div id="loading" class="d-flex justify-content-center align-items-center">
-    <div class="spinner-border text-secondary" role="status" style="width: 5rem; height: 5rem;">
-        <span class="sr-only">Loading...</span>
-    </div>
+<script type="text/javascript">window.CSRF_TOKEN = "{{ csrf_token }}";</script>
+<script type="text/javascript" src="{% static 'js/result.js' %}"></script>
+<link rel='stylesheet' href="{% static 'css/result.css' %}">
+
+<div id="loading" >
+    <div style="height: 25%;" ></div>
+    <div  class="d-flex justify-content-center align-items-center">
+        <div class="spinner-border text-secondary" role="status" style="width: 5rem; height: 5rem;">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div><br>
+    <p class="text-center text-secondary">Wait a moment while we making a prediction.</p>
 </div>
+
 
 {% autoescape off %}
 <div id="result">
-    <div class="jumbotron text-center">
+    <header class="jumbotron text-center">
         <h1 class="display-4 ">Thank you!</h1>
         <p class="lead">Please check the bottom below if you want a copy of prediction result.</p>
         <hr class="my-4">
-        <p>Having trouble? <a href="mailto:chuang278@wisc.edu">Contact us</a>.</p>
+        <p>Having trouble? <a href="mailto:mycovirus.website@mail.com">Contact us</a>.</p>
         <input type="button" class="btn btn-primary btn-lg" role="button" value="Download" onclick="window.open('../download_csv')"/>
-    </div>
-    <h2>Result</h2>
-    <div id="result_img" style="width: 40%">
-    </div>
-    <div id="result_label" style="width: 40%">
+    </header>
+    <div class="content container mb-5">
+        <div class="row">
+            <div class="col-12">
+                <h2>Result</h2>
+                <div id="result_img">
+                </div>
+                <div id="result_label" class="result-table-container">
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-{% endautoescape %} 
 
-<script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
-<script>
-    $("#loading").height(screen.height/2);
-    $("#loading").show();
-    $("#result").hide();
-    $.ajax({
-        url: '../process/',
-        type: 'POST',
-        dataType: 'json',
-        data: {csrfmiddlewaretoken: window.CSRF_TOKEN},
-        success: function(result){
-            $("#loading").remove();
-            $('#result_label').append(result.label);
-            $("#result").show();
-            result.image.forEach(i => {
-                $('#result_img').append('<img src="' + "../" + i + '" />');
-            });
-        },
-        error: function(xhr){
-            alert(xhr.responseText); //Remove this when all is fine.
-        },
-    });
-</script>
+{% endautoescape %} 
 {% endblock %}

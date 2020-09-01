@@ -13,7 +13,7 @@ from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.views.generic.edit import FormView
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect, JsonResponse
-from mlmodel.forms import FileInfoForm, FileListInfoForm, PredictInfoForm, ParametersInfoForm
+from mlmodel.forms import MyNumberInput, MySelect, FileInfoForm, FileListInfoForm, PredictInfoForm, ParametersInfoForm
 from mlmodel.parser import kmeans, GMM
 from mlmodel.models import PredictInfo
 from django.core.validators import MinValueValidator
@@ -44,23 +44,15 @@ class PredictionView(FormView):
         # path = os.path.join('mlmodel', self.template)
         # return render(self.request, path, context)
 
-        upload_form = FileInfoForm(prefix = "upload_form")
-
-        filelist_info = request.session.get('filelist_info')
-        if not filelist_info:
-            request.session['filelist_info'] = FileListInfo.objects.create()
-            filelist_info = request.session.get('filelist_info')
-        filelist_form = FileListInfoForm(prefix="filelist_form", initial={'filelist': filelist_info.all()})
-        
-        predict_info = request.session.get('predict_info')
-        if not predict_info:
-            request.session['predict_info'] = PredictInfo.objects.create()
-            predict_info = request.session.get('predict_info')
+        predict_info = PredictInfo.objects.last()
+        if predict_info == None:
+            predict_info = PredictInfo.objects.create()
             predict_info.mlmodels = "kmeansPCA"
-        predict_form = PredictInfoForm(prefix = "predict_form", instance=predict_info)
         parameters_form = get_parameters_form(predict_info.mlmodels, getattr(predict_info, "content", {}))
-
-        
+        upload_form = FileInfoForm(prefix = "upload_form")
+        predict_form = PredictInfoForm(prefix = "predict_form", instance=predict_info)
+        last_filelist = getattr(FileListInfo.objects.last(), 'filelist')
+        filelist_form = FileListInfoForm(prefix="filelist_form", initial={'filelist': last_filelist.all()})
         files = FileInfo.objects.all()
         filelists = FileListInfo.objects.all()
         path = os.path.join('mlmodel', self.template)
@@ -331,11 +323,41 @@ def get_parameters_form(mlmodels, content):
             ('tied', 'Tied'),
             ('full', 'Full'),
         ]
+        cov_type_img = os.path.join("media", "models", "images", "gmm_cov_type.png")
         new_fields = {
-            'k_min': forms.IntegerField(validators=[MinValueValidator(1)]),
-            'k_max': forms.IntegerField(validators=[MinValueValidator(1)]),
-            'num_class': forms.IntegerField(validators=[MinValueValidator(2)]),
-            'cov_type': forms.ChoiceField(choices=cov_types)
+            'k_min': forms.IntegerField(validators=[MinValueValidator(2)], 
+                widget=MyNumberInput(attrs={
+                    "class":"form-control", 
+                    "label":"K-min", 
+                    "help_text":"The minimum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 2."
+            })),
+            'k_max': forms.IntegerField(validators=[MinValueValidator(2)], 
+                widget=MyNumberInput(attrs={
+                    "class":"form-control", 
+                    "label":"K-max", 
+                    "help_text":"The maximum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 3."
+            })),
+            'num_class': forms.IntegerField(validators=[MinValueValidator(2)], 
+                widget=MyNumberInput(attrs={
+                    "class":"form-control", 
+                    "label":"Number of classes", 
+                    "help_text":"The number of predicted labels. You can choose starting from 2. Default is set to be 2."
+            })),
+            'cov_type': forms.ChoiceField(choices=cov_types, 
+                widget=MySelect(attrs={
+                    "class": "custom-select", 
+                    "label":"Covariance type",
+                    "help_text": "Type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. More details see <u>Learn More about GMM</u> above.",
+                    "isHtml": True
+            })),
+            'description': {
+                'Gaussian Mixture Model (GMM)': 'GMM is a probabilistic model that estimates the underlying multiple Gaussian distributions behind the seemingly chaotic observations. Input will be gene sequences, aligned or unaligned, and output will be predicted label for each virus: 0,1, etc. A k-mer table will be created to transfer the input data for analysis. When using this model, the following parameters are predetermined.',
+                'K-mer': 'Consecutive genes of length k that can be important for classification. The range of length of k-mer can be adjusted. For instance, if you set the minimum length to be 3 and maximum length 3 for gene sequence ATGG, two k-mers ATG and TGG are considered.',
+                'K-min': 'The minimum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 2.',
+                'K-max': 'The maximum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 3.',
+                'Number of classes': 'The number of predicted labels. Default is set to be 2.',
+                'Covariance type': 'The type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. See the following figure of how they work: <br><img src="%s">' % cov_type_img
+            }
         }
         if not bool(content) or 'k_min' not in content:
             content = {
@@ -343,7 +365,6 @@ def get_parameters_form(mlmodels, content):
                 'k_max': 3,
                 'num_class': 2,
                 'cov_type': 'full',
-                # 'action': 
             }
     else:
         new_fields = {
@@ -369,6 +390,7 @@ def cookie_delete(request):
     else:
         response = HttpResponse("Dataflair <br> Your browser doesnot accept cookies")
     return response
+
 
 
 def create_session(request):

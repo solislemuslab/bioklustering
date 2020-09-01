@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.PredictionView.as_view(template_name="predict.html"), name="index"),
+    path('', views.PredictionView.as_view(template_name="index.html"), name="index"),
     path('file/<int:pk>/', views.delete, name='delete'),
     path('filelist/<int:pk>/', views.delete_filelists, name='delete_filelists'),
     path('result/', views.result, name='result'),

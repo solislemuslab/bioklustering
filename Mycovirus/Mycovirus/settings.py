@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'mlmodel',
     'crispy_forms',
     'django.forms',
-    'fontawesome_5'
+    'fontawesome'
 ]
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
@@ -143,10 +143,6 @@ EMAIL_HOST_USER = os.environ.get('MYCOVIRUS_EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('MYCOVIRUS_EMAIL_PASS')
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-
-# default uses locally shipped version at 'fontawesome/css/font-awesome.min.css'
-FONTAWESOME_CSS_URL = '//cdn.example.com/fontawesome-min.css'  # absolute url
-FONTAWESOME_CSS_URL = 'myapp/css/fontawesome.min.css'  # relative url
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 10 # set just 10 seconds to test

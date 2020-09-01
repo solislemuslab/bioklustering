@@ -11,7 +11,6 @@ from django.core.mail import send_mail, EmailMessage
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
-from django.template.defaulttags import register
 from django.views.generic.edit import FormView
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect, JsonResponse
 from mlmodel.forms import MyNumberInput, MySelect, FileInfoForm, FileListInfoForm, PredictInfoForm, ParametersInfoForm
@@ -23,7 +22,7 @@ from django.contrib import messages
 
 
 class PredictionView(FormView):
-    template = 'predict.html'
+    template = 'index.html'
         
     def get(self, request, *args, **kwargs):
         # upload_form = FileInfoForm(prefix = "upload_form")
@@ -241,7 +240,7 @@ def process(request):
         # make the index and other column labels to be on same line
         all_df.columns.name = all_df.index.name
         all_df.index.name = None
-        label = all_df.to_html(col_space=110, justify='left')
+        label = all_df.to_html(col_space=110, justify='left', classes='table table-responsive result-table')
         # write to csv
         path = os.path.join("media", "resultfiles", "result.csv")
         all_df.to_csv(path, index_label='ID')
@@ -325,15 +324,14 @@ def get_parameters_form(mlmodels, content):
             ('full', 'Full'),
         ]
         cov_type_img = os.path.join("media", "models", "images", "gmm_cov_type.png")
-        cov_type_help_text = "Type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. More details see <u>Learn More about GMM</u> above."
         new_fields = {
-            'k_min': forms.IntegerField(validators=[MinValueValidator(1)], 
+            'k_min': forms.IntegerField(validators=[MinValueValidator(2)], 
                 widget=MyNumberInput(attrs={
                     "class":"form-control", 
                     "label":"K-min", 
                     "help_text":"The minimum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 2."
             })),
-            'k_max': forms.IntegerField(validators=[MinValueValidator(1)], 
+            'k_max': forms.IntegerField(validators=[MinValueValidator(2)], 
                 widget=MyNumberInput(attrs={
                     "class":"form-control", 
                     "label":"K-max", 
@@ -343,13 +341,13 @@ def get_parameters_form(mlmodels, content):
                 widget=MyNumberInput(attrs={
                     "class":"form-control", 
                     "label":"Number of classes", 
-                    "help_text":"The number of predicted labels. Default is set to be 2."
+                    "help_text":"The number of predicted labels. You can choose starting from 2. Default is set to be 2."
             })),
             'cov_type': forms.ChoiceField(choices=cov_types, 
                 widget=MySelect(attrs={
                     "class": "custom-select", 
                     "label":"Covariance type",
-                    "help_text": cov_type_help_text,
+                    "help_text": "Type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. More details see <u>Learn More about GMM</u> above.",
                     "isHtml": True
             })),
             'description': {
@@ -367,7 +365,6 @@ def get_parameters_form(mlmodels, content):
                 'k_max': 3,
                 'num_class': 2,
                 'cov_type': 'full',
-                # 'action': 
             }
     else:
         new_fields = {
@@ -382,14 +379,6 @@ def get_parameters_form(mlmodels, content):
     parameters_form = DynamicParametersInfoForm(content)
     return parameters_form
 
-@register.filter
-def get_item(choices, key):
-    print(choices)
-    print(key)
-    for c in choices:
-       if c[0] == key:
-           return c[1]
-    return ''
 
 def cookie_session(request):
     request.session.set_test_cookie()
