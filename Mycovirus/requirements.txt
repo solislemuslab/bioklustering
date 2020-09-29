@@ -6,7 +6,7 @@ chardet==3.0.4
 click==7.1.1
 cycler==0.10.0
 dj-database-url==0.5.0
-Django==2.1.5
+Django==2.2.13
 django-bootstrap-form==3.4
 django-crispy-forms==1.8.1
 django-fontawesome==1.0
