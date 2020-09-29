@@ -3,10 +3,8 @@
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import numpy as np
 
 from pandas import Series, DataFrame
 import Bio

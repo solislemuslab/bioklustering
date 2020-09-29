@@ -9,11 +9,10 @@ function resize() {
     }
 }
 
-$(window).load(function() {
+$(window).ready(function() {
     resize();
     // alert message for empty filelist when making a prediction
     $("#submit_params_btn").click(function() {
-        let filelist = "{{filelists.last}}"
         if(filelist.length === 0) {
             $("#submit_params_alert").click();
             return false;

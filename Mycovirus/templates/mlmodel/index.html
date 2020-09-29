@@ -5,7 +5,10 @@
 
 
 {% block index %}
-<script type="text/javascript">window.CSRF_TOKEN = "{{ csrf_token }}";</script>
+<script type="text/javascript">
+    window.CSRF_TOKEN = "{{ csrf_token }}";
+    let filelist = '{{ filelist }}';
+</script>
 <script type="text/javascript" src="{% static 'js/index.js' %}"></script>
 <link rel='stylesheet' href="{% static 'css/index.css' %}">
 {% fontawesome_stylesheet %}
@@ -48,10 +51,8 @@
               </div>
               <div class="row float-right mt-3">
                   <div class="btn-group" style="width: 100%;">
-                      <button id="action_btn" type="button" class="btn btn-secondary" style="width: 100%;">Action</button>
-                      <button id="action_icon_btn" type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      </button>
-                      <div class="dropdown-menu">
+                      <button id="action_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%;">Action </button>
+                      <div class="dropdown-menu" aria-labelledby="action_btn">
                           <button id="add_to_pred_btn" type="submit" value="filelist_form" name="add_filelist" class="dropdown-item">Add to prediction</button>		
                           <button id="del_files_btn" value="filelist_form" name="delete_filelist" class="dropdown-item">Delete files</button>		
                           <div class="dropdown-divider"></div>

@@ -45,7 +45,9 @@ class PredictInfo(models.Model):
         ("Gaussian Mixture Model", (
                 ('gmm', 'GMM'),
         )),
-    ]
+        ("Spectral Clustering", (
+                ('spectralClustering', 'Spectral Clustering'),
+        ))]
     mlmodels = models.CharField('Model',max_length=30, choices=mlmodels_choices, default="kmeansPCA")
     sendbyemail = models.BooleanField('Send prediction to email?', default=False)
     email = models.EmailField('Email', max_length = 254, blank=True, null=True, help_text="If you want to send the result via email, please enter a valid email address here. E.g. xxxxx@gmail.com")

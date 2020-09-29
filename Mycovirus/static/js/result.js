@@ -3,7 +3,7 @@ $(window).load(function() {
     $("#loading").show();
     $("#result").hide();
     $.ajax({
-        url: '../process/',
+        url: process,
         type: 'POST',
         dataType: 'json',
         data: {csrfmiddlewaretoken: window.CSRF_TOKEN},
