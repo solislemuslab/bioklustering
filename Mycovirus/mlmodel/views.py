@@ -187,7 +187,7 @@ class PredictionView(FormView):
                     'k_min': 2,
                     'k_max': 3,
                     'num_class': 2,
-                    'cov_type': 'kmeans',
+                    'cov_type': 'full',
                 }
         elif mlmodels == "spectralClustering":
             assignLabels = [
@@ -216,7 +216,7 @@ class PredictionView(FormView):
                 'assignLabels': forms.ChoiceField(choices=assignLabels, 
                     widget=MySelect(attrs={
                         "class": "custom-select", 
-                        "label":"Covariance type",
+                        "label":"Assign Labels",
                         "help_text": "Type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. More details see <u>Learn More about GMM</u> above.",
                         "isHtml": True
                 }))
