@@ -34,7 +34,8 @@ urlpatterns = [
     path('deletecookie/', views.cookie_delete, name="cookie_delete"),
     path('create/', views.create_session, name="create_session"),
     path('access/', views.access_session, name="access_session"),
-    path('delete/', views.delete_session, name="delete_session")
+    path('delete/', views.delete_session, name="delete_session"),
+    path('django_plotly_dash/', include('django_plotly_dash.urls'))
 ]
 
 # for development purpose

@@ -11,9 +11,14 @@ $(window).load(function() {
             $("#loading").remove();
             $('#result_label').append(result.label);
             $("#result").show();
-            result.image.forEach(i => {
-                $('#result_img').append('<img src="' + "../" + i + '" />');
-            });
+            if(result.image) { // static image
+                result.image.forEach(i => {
+                    $('#result_img').append('<img src="' + "../" + i + '" />');
+                });
+            } else { // dynamic plot
+                $('#result_img').append(result.plotly_dash)
+            }
+
         },
         error: function(xhr){
             alert("error: " + xhr.responseText); //Remove this when all is fine.

@@ -85,25 +85,44 @@ def spectral_clustering(paths, k_min, k_max, num_cluster, assignLabels):
     kmer_table, output_df = get_kmer_table(paths, k_min, k_max)
     spectral_clustering = SpectralClustering(n_clusters= num_cluster, assign_labels = assignLabels, random_state = 0)
     labels = spectral_clustering.fit_predict(kmer_table)
-    
-    # make an image (will separate this process later)
+
+    from django.shortcuts import render
+    from plotly.offline import plot
+    from plotly.graph_objs import Scatter
+    import plotly.express as px
+
+    # plotly dash
     pca = PCA(n_components=2)
     pca_result = pca.fit_transform(kmer_table)
-    d = {'dimension1':pca_result[:,0], 'dimension2':pca_result[:,1], 'label':labels}
+    d = {'x':pca_result[:,0], 'y':pca_result[:,1], 'label':labels}
+    d['label'] = d['label'].astype(str)
     df = pd.DataFrame(d)
-    for i in range(num_cluster):
-        label = df.loc[df['label'] == i]
-        color = 'C'+str(i)
-        plt.scatter(label['dimension1'].tolist(),label['dimension2'].tolist(), c = color )
-    plt.xlabel('principal component 1')
-    plt.ylabel('principal component 2')
-    plt.title('Spectral clustring')
-    path = os.path.join('media', 'images', 'spectral Clustring' + str(i) + '.png')
-    plt.savefig(path, bbox_inches='tight')
-    plt.close()
-    
+    fig = px.scatter(df, x='x', y='y', 
+        title="Spectral clustring",
+        labels=dict(x="Principal component 1", y="Principal component 2", label="Label"), 
+        color='label')
+    plot_div = plot(fig, output_type='div', include_plotlyjs=False)
+
     output_df.insert(0, "Labels", labels)
-    return [[output_df], [path]]
+    return [[output_df], [plot_div]]
+    
+    # # make an image (will separate this process later)
+    # pca = PCA(n_components=2)
+    # pca_result = pca.fit_transform(kmer_table)
+    # d = {'dimension1':pca_result[:,0], 'dimension2':pca_result[:,1], 'label':labels}
+    # df = pd.DataFrame(d)
+    # for i in range(num_cluster):
+    #     label = df.loc[df['label'] == i]
+    #     color = 'C'+str(i)
+    #     plt.scatter(label['dimension1'].tolist(),label['dimension2'].tolist(), c = color )
+    # plt.xlabel('principal component 1')
+    # plt.ylabel('principal component 2')
+    # plt.title('Spectral clustring')
+    # path = os.path.join('media', 'images', 'spectral Clustring' + str(i) + '.png')
+    # plt.savefig(path, bbox_inches='tight')
+    # plt.close()
+    # output_df.insert(0, "Labels", labels)
+    # return [[output_df], [path]]
 
 # this method takes prints the spectral clustering result by using PCA
 # paths: a list of strings. contains file paths

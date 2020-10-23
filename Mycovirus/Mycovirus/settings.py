@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'mlmodel',
     'crispy_forms',
     'django.forms',
-    'fontawesome'
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig',
+    'channels',
+    'channels_redis'
 ]
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
@@ -125,6 +127,29 @@ USE_L10N = True
 
 USE_TZ = True
 
+ASGI_APPLICATION = 'Mycovirus.routing.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1:8000", 6379)],
+        },
+    },
+}
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django_plotly_dash.finders.DashAssetFinder',
+    'django_plotly_dash.finders.DashComponentFinder'
+]
+
+PLOTLY_COMPONENTS = [
+    'dash_core_components',
+    'dash_html_components',
+    'dash_renderer',
+    'dpd_components'
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
@@ -147,3 +172,4 @@ EMAIL_USE_SSL = False
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 10 # set just 10 seconds to test
 SESSION_SAVE_EVERY_REQUEST = True
+

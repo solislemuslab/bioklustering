@@ -251,6 +251,7 @@ class ResultView(FormView):
     
     # actual predict 
     def process(request):
+        context = {}
         files = FileInfo.objects.all()
         if len(files) == 0:
             return redirect('index')
@@ -313,7 +314,13 @@ class ResultView(FormView):
             elif senbyemail == False: # if select sendbyemail but not enter email addr
                 # TODO:
                 email = 1
-        return JsonResponse({'label': label, 'image': result[1]})
+            context['label']= label
+            if(mlmethod == 'spectralClustering'):
+                context['plotly_dash'] = result[1]
+            else:
+                context['image'] = result[1]
+        return JsonResponse(context)
+        # return JsonResponse({'label': label, 'image': result[1]})
         # return JsonResponse({'label': result[0].to_html(), 'image': "media"})
     
     def download_csv(request):
@@ -380,3 +387,8 @@ def delete_session(request):
     except KeyError:
         pass
     return HttpResponse("<h1>dataflair<br>Session Data cleared</h1>")
+
+
+
+
+
