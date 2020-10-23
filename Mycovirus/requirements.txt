@@ -65,7 +65,7 @@ matplotlib==3.2.1
 msgpack==1.0.0
 numpy==1.18.1
 pandas==1.0.1
-Pillow==5.2.0
+Pillow==7.1.0
 plotly==4.11.0
 psycopg2-binary==2.7.7
 pyasn1==0.4.8
