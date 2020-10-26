@@ -98,11 +98,11 @@ def spectral_clustering(paths, k_min, k_max, num_cluster, assignLabels):
     d['label'] = d['label'].astype(str)
     df = pd.DataFrame(d)
     fig = px.scatter(df, x='x', y='y', 
-        title="Spectral clustring",
+        title="Spectral Clustering",
         labels=dict(x="Principal component 1", y="Principal component 2", label="Label"), 
         color='label')
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
-
+    fig.write_image(os.path.join('media', 'images', 'plotly.png'))
     output_df.insert(0, "Labels", labels)
     return [[output_df], [plot_div]]
     
@@ -143,5 +143,5 @@ def PCA_show_spectural_clustering(paths, k_min, k_max, num_cluster, assignLabels
         plt.scatter(label['dimension1'].tolist(),label['dimension2'].tolist(), c = color )
     plt.xlabel('principal component 1')
     plt.ylabel('principal component 2')
-    plt.title('Spectral clustring')
+    plt.title('Spectral Clustering')
 

@@ -1,0 +1,5 @@
+model: Spectral Clustering
+k_min: 2
+k_max: 3
+num_cluster: 2
+assignLabels: kmeans

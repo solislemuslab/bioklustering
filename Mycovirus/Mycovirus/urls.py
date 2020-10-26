@@ -24,7 +24,7 @@ urlpatterns = [
     path('', views.PredictionView.as_view(template_name="index.html"), name="index"),
     path('result/', views.ResultView.as_view(template_name="result.html"), name="result"),
     path('process/', views.ResultView.process, name="process"),
-    path('download_csv/', views.ResultView.download_csv, name='download_csv'),
+    path('download_zip/', views.ResultView.download_zip, name='download_zip'),
     
     # path('download_pdf/', views.download_pdf, name='download_pdf'),
     # path('file/<int:pk>/', views.delete, name='delete'),

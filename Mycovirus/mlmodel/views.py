@@ -19,7 +19,8 @@ from mlmodel.models import PredictInfo
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext as _
 from django.contrib import messages
-
+from io import StringIO
+import zipfile, csv
 
 class PredictionView(FormView):
 
@@ -294,9 +295,11 @@ class ResultView(FormView):
             all_df.index.name = None
             label = all_df.to_html(col_space=110, justify='left', classes='table table-responsive result-table')
             # write to csv
-            result_path = os.path.join("media", "resultfiles", "result.csv")
-            all_df.to_csv(result_path, index_label='ID')
-            if senbyemail and email and len(email) > 0 : # send the result as long as email addr is entered
+            csv_path = os.path.join("media", "resultfiles", "table.csv")
+            all_df.to_csv(csv_path, index_label='ID')
+            ResultView.create_zip()
+            # send by email
+            if senbyemail and email and len(email) > 0 : # send the result when checkbox is checked and email addr is entered
                 from_email = os.environ.get('MYCOVIRUS_EMAIL_USER')
                 to_email = email
                 template_path = os.path.join("email", "email_template.txt")
@@ -307,13 +310,14 @@ class ResultView(FormView):
                     [to_email],
                     reply_to=[from_email],
                 )
-                email_msg.attach_file(result_path)
-                for image in result[1]:
-                    email_msg.attach_file(image)
+                email_msg.attach_file(os.path.join("media", "resultfiles", "results.zip"))
+                # for image in result[1]:
+                #     email_msg.attach_file(image)
                 email_msg.send()
             elif senbyemail == False: # if select sendbyemail but not enter email addr
                 # TODO:
                 email = 1
+            # return the image and table to result page
             context['label']= label
             if(mlmethod == 'spectralClustering'):
                 context['plotly_dash'] = result[1]
@@ -323,16 +327,42 @@ class ResultView(FormView):
         # return JsonResponse({'label': label, 'image': result[1]})
         # return JsonResponse({'label': result[0].to_html(), 'image': "media"})
     
-    def download_csv(request):
-        filepath = os.path.join('media', 'resultfiles')
-        filename = 'result.csv'
-        fs = FileSystemStorage(filepath)
-        response = FileResponse(fs.open(filename, 'rb'), content_type='application/csv')
-        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    # def download_csv(request):
+    #     filepath = os.path.join('media', 'resultfiles')
+    #     filename = 'result.csv'
+    #     fs = FileSystemStorage(filepath)
+    #     response = FileResponse(fs.open(filename, 'rb'), content_type='application/csv')
+    #     response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    #     return response
+
+    def create_zip():
+        from io import StringIO
+        import zipfile, csv
+        # write params info into a text file
+        param_path = os.path.join('media', 'resultfiles', 'params.txt')
+        param_file = open(param_path, 'w')
+        param_file.write('model: ' + PredictInfo.objects.last().get_mlmodels_display() + '\n')
+        params_str = getattr(PredictInfo.objects.last(), "parameters")
+        params_dict = json.loads(params_str)
+        del params_dict['submit_params']
+        for param in params_dict.items():
+            param_file.write(': '.join(param)+'\n')
+        param_file.close()
+        # write csv, params, images into a zipfile
+        csv_path = os.path.join('media', 'resultfiles', 'table.csv')
+        img_path = os.path.join('media', 'images', 'plotly.png')
+        zip_path = os.path.join('media', 'resultfiles', 'results.zip')
+        with zipfile.ZipFile(zip_path, 'w') as zf:
+            zf.write(csv_path)
+            zf.write(param_path)
+            zf.write(img_path)
+            zf.close()
+
+    def download_zip(request):
+        fs = FileSystemStorage()
+        response = FileResponse(fs.open(os.path.join('resultfiles', 'results.zip'), 'rb'), content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % 'results'
         return response
-
-    
-
 
 
 # def delete(request, pk):
