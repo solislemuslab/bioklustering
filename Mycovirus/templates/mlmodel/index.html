@@ -1,3 +1,7 @@
+<!-- Copyright 2020 by Chunrong Huang, Solis-Lemus Lab, WID.
+  All rights reserved.
+  This file is part of the Mycovirus Website.  -->
+
 {% extends "./base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
@@ -34,6 +38,7 @@
           <form id="fileinfoform" method="POST" enctype="multipart/form-data">
               {% csrf_token %}
               {{ upload_form.filepath}}
+              {{ upload_form.labelpath}}
               <button id="file_upload_btn" type="submit" value="upload_form" name="upload_file" class="btn btn-secondary mt-3" style="width: 100%; ">Upload</button>		
           </form>
       </div>  

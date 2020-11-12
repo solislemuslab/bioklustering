@@ -1,4 +1,4 @@
-model: Spectral Clustering
+model: Semi-supervised Spectral Clustering
 k_min: 2
 k_max: 3
 num_cluster: 2

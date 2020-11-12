@@ -1,3 +1,6 @@
+# Copyright 2020 by Luke Selberg, Solis-Lemus Lab, WID.
+# All rights reserved.
+# This file is part of the Mycovirus Website.
 import pandas as pd
 from Bio import SeqIO
 import matplotlib.pyplot as plt

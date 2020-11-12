@@ -1,3 +1,6 @@
+# Copyright 2020 by Chunrong Huang, Solis-Lemus Lab, WID.
+# All rights reserved.
+# This file is part of the Mycovirus Website.
 import os 
 import pandas as pd
 import json

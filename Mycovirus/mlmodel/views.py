@@ -1,3 +1,6 @@
+# Copyright 2020 by Chunrong Huang, Solis-Lemus Lab, WID.
+# All rights reserved.
+# This file is part of the Mycovirus Website.
 import os 
 import pandas as pd
 import json
@@ -22,12 +25,15 @@ from django.contrib import messages
 from io import StringIO
 import zipfile, csv
 
+
+# The home page
 class PredictionView(FormView):
 
     def __init__(self, *args, **kwargs):
         super(FormView, self).__init__(*args, **kwargs)
         self.path = os.path.join('mlmodel', self.template_name)
-        
+
+    # Dispaly the home page
     def get(self, request, *args, **kwargs):
         upload_form = FileInfoForm(prefix = "upload_form")
         filelist_last = FileListInfo.objects.last()
@@ -48,6 +54,7 @@ class PredictionView(FormView):
             'parameters_form': parameters_form,
         })
     
+    # get the input from upload data, select files, choose models, ipnut parameters
     def post(self, request, *args, **kwargs):
         if self.request.method=='POST':
             upload_form = FileInfoForm(self.request.POST, files=self.request.FILES, prefix="upload_form")
@@ -63,8 +70,11 @@ class PredictionView(FormView):
                 upload_form.save()
                 #  process the uploaded file before writing it to database
                 fileval = upload_form['filepath'].value() # actual file
-                filepath = os.path.join("media", "resultfiles", fileval.name)
+                filepath = os.path.join("media", "userfiles", fileval.name)
                 self.handle_uploaded_file(fileval, filepath) 
+                labelval = upload_form['filepath'].value() # actual file
+                labelpath = os.path.join("media", "userfiles", labelval.name)
+                self.handle_uploaded_file(labelval, labelpath) 
             # save the filelist
             elif filelist_form_isvalid and not upload_form_isalid and not predict_form_isvalid:
                 filelist = FileListInfo.objects.last()
@@ -132,12 +142,13 @@ class PredictionView(FormView):
 
         return redirect('index')
     
-    # a function to ensure that large files don’t overwhelm system’s memory
+    # Ensure that large files don’t overwhelm system’s memory
     def handle_uploaded_file(self, fileval, filepath):
         with open(filepath, 'wb+') as destination:
             for chunk in fileval.chunks():
                 destination.write(chunk)
     
+    # Dynamically generate a parameter form based on the selected model 
     def get_parameters_form(self, mlmodels, content):
         if mlmodels == "gmm":
             cov_types = [
@@ -182,7 +193,7 @@ class PredictionView(FormView):
                     'Covariance type': 'The type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. See the following figure of how they work: <br><img src="%s">' % cov_type_img
                 }
             }
-            # set up default values
+            # default values of the paramters
             if not bool(content) or 'k_min' not in content: 
                 content = {
                     'k_min': 2,
@@ -190,7 +201,7 @@ class PredictionView(FormView):
                     'num_class': 2,
                     'cov_type': 'full',
                 }
-        elif mlmodels == "spectralClustering":
+        elif mlmodels == "unsupervisedSpectralClustering" or mlmodels == "semisupervisedSpectralClustering":
             assignLabels = [
                 ('kmeans', 'kmeans'),
                 ('discretize', 'discretize')
@@ -220,9 +231,16 @@ class PredictionView(FormView):
                         "label":"Assign Labels",
                         "help_text": "Type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. More details see <u>Learn More about GMM</u> above.",
                         "isHtml": True
-                }))
+                })),
+                'description': {
+                    "Spectral Clustering": "The spectral clustering method uses the information behind the eigenvalues of the kmer table that is created based on the input dataset. It will successfully reduce the dimensionality of the input data set. This method also shows the visualization of the clustering using two principle components of the kmer table.",
+                    "K-min": "An integer. The minimum of kmer",
+                    "K-max": "An integer. The maximum of kmer",
+                    "Number of Clusters": "An integer. The number of clusters",
+                    "Assign Labels": "A string. The way to assign label at the final stage of spectral clustering. Can be 'kmeans' or 'discretize'."
+                }
             }
-            # set up default values
+            # default values of the paramters
             if not bool(content) or 'k_min' not in content: 
                 content = {
                     'k_min': 2,
@@ -240,6 +258,7 @@ class PredictionView(FormView):
         return parameters_form
 
 
+# The reult page
 class ResultView(FormView):
 
     def __init__(self, *args, **kwargs):
@@ -250,7 +269,8 @@ class ResultView(FormView):
     def get(self, request, *args, **kwargs):
         return render(self.request, self.path)
     
-    # actual predict 
+    # actual predict that runs the selected machine learning algorithm
+    # and generate the plot and the table
     def process(request):
         context = {}
         files = FileInfo.objects.all()
@@ -280,7 +300,7 @@ class ResultView(FormView):
                 num_class = int(params_obj['num_class'])
                 cov_type = str(params_obj['cov_type'])
                 result = GMM.get_predictions(filenames,k_min, k_min, num_class, cov_type)
-            elif(mlmethod == "spectralClustering"):
+            elif(mlmethod == "unsupervisedSpectralClustering"):
                 params_str = getattr(PredictInfo.objects.last(), "parameters")
                 params_obj = json.loads(params_str)
                 k_min = int(params_obj['k_min'])
@@ -288,6 +308,16 @@ class ResultView(FormView):
                 num_cluster = int(params_obj['num_cluster'])
                 assignLabels = str(params_obj['assignLabels'])
                 result = spectralClustering.spectral_clustering(filenames,k_min, k_min, num_cluster, assignLabels)
+            elif(mlmethod == "semisupervisedSpectralClustering"):
+                params_str = getattr(PredictInfo.objects.last(), "parameters")
+                params_obj = json.loads(params_str)
+                k_min = int(params_obj['k_min'])
+                k_max = int(params_obj['k_max'])
+                num_cluster = int(params_obj['num_cluster'])
+                assignLabels = str(params_obj['assignLabels'])
+                # temp_label_file = os.path.join("media", "userfiles", "labels_ten_percent.csv")
+                temp_label_file = os.path.join("media", "userfiles", "labels_fifty_percent.csv")
+                result = spectralClustering.intuitive_semi_supervised(filenames, temp_label_file, k_min, k_min, num_cluster, assignLabels)
             list_of_df = result[0]
             all_df = pd.concat(list_of_df)
             # make the index and other column labels to be on same line
@@ -319,7 +349,7 @@ class ResultView(FormView):
                 email = 1
             # return the image and table to result page
             context['label']= label
-            if(mlmethod == 'spectralClustering'):
+            if(mlmethod == 'unsupervisedSpectralClustering' or mlmethod == 'semisupervisedSpectralClustering'):
                 context['plotly_dash'] = result[1]
             else:
                 context['image'] = result[1]
@@ -335,6 +365,7 @@ class ResultView(FormView):
     #     response['Content-Disposition'] = 'attachment; filename=%s' % filename
     #     return response
 
+    # put the plot, table and parameter information into a zip file
     def create_zip():
         from io import StringIO
         import zipfile, csv
@@ -358,6 +389,7 @@ class ResultView(FormView):
             zf.write(img_path)
             zf.close()
 
+    # down the zip file
     def download_zip(request):
         fs = FileSystemStorage()
         response = FileResponse(fs.open(os.path.join('resultfiles', 'results.zip'), 'rb'), content_type='application/zip')

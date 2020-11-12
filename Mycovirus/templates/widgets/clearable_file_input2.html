@@ -1,0 +1,26 @@
+<!-- Copyright 2020 by Chunrong Huang, Solis-Lemus Lab, WID.
+  All rights reserved.
+  This file is part of the Mycovirus Website.  -->
+
+  {% if widget.is_initial %}{{ widget.initial_text }}: <a href="{{ widget.value.url }}">{{ widget.value }}</a>{% if not widget.required %}
+  <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}"{% if widget.attrs.disabled %} disabled{% endif %}>
+  <label for="{{ widget.checkbox_id }}">{{ widget.clear_checkbox_label }}</label>{% endif %}<br>
+  {{ widget.input_text }}:{% endif %}
+  
+  <div class="input-group mb-3">
+    <div class="custom-file">
+      <input class="custom-file-input" type="{{ widget.type }}" name="{{ widget.name }}" id="inputfile_sequence" {% include "django/forms/widgets/attrs.html" %}>
+      <label class="custom-file-label" for="inputfile" id="inputfile_name_sequence">{{ widget.attrs.labelName }}</label>
+    </div>
+  </div>
+  
+  <script type='text/javascript'>
+    document.getElementById('inputfile_sequence').addEventListener('change', (event) => {
+        console.log("sequence onchange")
+        let filePath = document.getElementById('inputfile_sequence').value;
+        fileName = filePath.substr(filePath.lastIndexOf('\\') + 1);
+        console.log("before", filePath, fileName, document.getElementById('inputfile_name_sequence').innerHTML)
+        document.getElementById('inputfile_name_sequence').innerHTML = fileName;
+        console.log("after", filePath, fileName, document.getElementById('inputfile_name_sequence').innerHTML)
+    });
+  </script>

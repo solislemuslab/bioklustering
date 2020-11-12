@@ -1,5 +1,6 @@
-
-# import packages
+# Copyright 2020 by Zhiwen Xu, Solis-Lemus Lab, WID.
+# All rights reserved.
+# This file is part of the Mycovirus Website.
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt

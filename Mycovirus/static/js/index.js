@@ -1,3 +1,7 @@
+/* Copyright 2020 by Chunrong Huang, Solis-Lemus Lab, WID.
+  All rights reserved.
+  This file is part of the Mycovirus Website. */
+
 // make sure the filelist container size is proportional to the file upload container size
 function resize() {
     let height = $('.upload_container').height();
@@ -10,7 +14,7 @@ function resize() {
 }
 
 $(window).ready(function() {
-    resize();
+    // resize();
     // alert message for empty filelist when making a prediction
     $("#submit_params_btn").click(function() {
         if(filelist.length === 0) {
@@ -60,9 +64,9 @@ $(window).ready(function() {
     });
 })
 
-$(window).resize(function() {
-    resize();
-})
+// $(window).resize(function() {
+//     resize();
+// })
 
 // preserve some data on refresh or submit
 document.addEventListener("DOMContentLoaded", function (event) {

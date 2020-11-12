@@ -1,3 +1,7 @@
+# Copyright 2020 by Chunrong Huang, Solis-Lemus Lab, WID.
+# All rights reserved.
+# This file is part of the Mycovirus Website.
+
 import os
 import django
 from django import forms, template
@@ -11,21 +15,26 @@ class MyNumberInput(forms.NumberInput):
 class MySelect(forms.Select):
     template_name = os.path.join('widgets', 'select.html')
 
-class MyClearableFileInput(forms.ClearableFileInput):
-    template_name = os.path.join('widgets', 'clearable_file_input.html')
+class MyClearableFileInput2(forms.ClearableFileInput):
+    template_name = os.path.join('widgets', 'clearable_file_input2.html')
+
+class MyClearableFileInput3(forms.ClearableFileInput):
+    template_name = os.path.join('widgets', 'clearable_file_input3.html')
 
 class FileInfoForm(forms.ModelForm):
-    filepath = forms.FileField(required=True, widget=MyClearableFileInput)
+    filepath = forms.FileField(required=True, widget=MyClearableFileInput2(attrs={'labelName': 'Upload a sequence file'}))
+    labelpath = forms.FileField(required=False, widget=MyClearableFileInput3(attrs={'labelName': 'Upload a label file'}))
+    # filepath = forms.FileField(widget=forms.ClearableFileInput(attrs={'class': })
     class Meta:
         model = FileInfo
-        fields = ('filepath', )
+        fields = ('filepath', 'labelpath')
 
 class MyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
     template_name = os.path.join('widgets', 'checkbox_select_filelist.html')
 
 class MyModelMultipleChoiceField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
-        return obj.filepath.name[10:]
+        return obj.filepath.name[10:] + "||" + obj.labelpath.name[10:]
 
 class FileListInfoForm(forms.ModelForm):
     filelist = MyModelMultipleChoiceField(queryset=FileInfo.objects.all(), 
