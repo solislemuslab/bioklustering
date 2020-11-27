@@ -13,14 +13,14 @@ from plotly.graph_objs import Scatter
 # interactive functionalities
 # kmer_table: kmer table
 # label: cluster label in ndarray
-def plotly_dash_show_plot(kmer_table, labels):
+def plotly_dash_show_plot(kmer_table, labels, model_title):
     pca = PCA(n_components=2)
     pca_result = pca.fit_transform(kmer_table)
     dots = {'x':pca_result[:,0], 'y':pca_result[:,1], 'label':labels}
     dots['label'] = dots['label'].astype(str)
     df = pd.DataFrame(dots)
     fig = px.scatter(df, x='x', y='y', 
-        title="Spectral Clustering",
+        title=model_title,
         labels=dict(x="Principal component 1", y="Principal component 2", label="Label"), 
         color='label')
     # plotly dashboard in html 

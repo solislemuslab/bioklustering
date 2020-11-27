@@ -13,7 +13,7 @@ class FileInfo(models.Model):
         return self.filepath
     
     def getFilePaths(self):
-        return self.labelpath
+        return self.filepath
 
     def getLabelPaths(self):
         return self.labelpath
@@ -30,6 +30,10 @@ class FileListInfo(models.Model):
     def __str__(self):
         filelist_str = ", ".join(str(f.filepath.name) for f in self.filelist.all())
         return filelist_str
+    
+    def getLabelPaths(self):
+        labelpaths_str = ", ".join(str(f.labelpath.name) for f in self.filelist.all())
+        return labelpaths_str
     
     # delete filelist
     def delete(self, *args, **kwargs):
@@ -55,7 +59,8 @@ class PredictInfo(models.Model):
             )
         ),
         ("Gaussian Mixture Model", (
-                ('gmm', 'GMM'),
+                ('unsupervisedGMM', 'Unsupervised GMM'),
+                ('semisupervisedGMM', 'Semi-supervised GMM'),
         )),
         ("Spectral Clustering", (
                 ('unsupervisedSpectralClustering', 'Unsupervised Spectral Clustering'),

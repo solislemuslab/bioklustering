@@ -22,15 +22,16 @@
 }
 
 .result-table tr th:first-child {
-    position: sticky;
+    /* position: sticky;
+    width: 135px !important;
     left: 0px;
-    z-index: 100;
+    z-index: 100; */
     box-shadow: 1px 0 #dee2e6, 0 -1px #dee2e6;
 }
 
 .result-table tr th:nth-child(2), .result-table tr td:nth-child(2) {
     position: sticky;
-    left: 129px;
+    left: -1px;
     z-index: 100;
     box-shadow: 1px 0 #dee2e6;
 }

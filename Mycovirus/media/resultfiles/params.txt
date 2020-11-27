@@ -1,5 +1,6 @@
-model: Semi-supervised Spectral Clustering
+model: Semi-supervised GMM
 k_min: 2
 k_max: 3
-num_cluster: 2
-assignLabels: kmeans
+num_class: 2
+cov_type: full
+seed: 1606509118

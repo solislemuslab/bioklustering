@@ -19,8 +19,9 @@
         console.log("label onchange")
         let filePath = document.getElementById('inputfile_label').value;
         fileName = filePath.substr(filePath.lastIndexOf('\\') + 1);
-        console.log("before", fileName, document.getElementById('inputfile_name_label').innerHTML)
+        // console.log("before", fileName, document.getElementById('inputfile_name_label').innerHTML)
+        if(fileName == "") fileName = "Choose a label file";
         document.getElementById('inputfile_name_label').innerHTML = fileName;
-        console.log("after", fileName, document.getElementById('inputfile_name_label').innerHTML)
+        // console.log("after", fileName, document.getElementById('inputfile_name_label').innerHTML)
     });
   </script>

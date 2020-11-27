@@ -24,6 +24,8 @@ from django.utils.translation import gettext as _
 from django.contrib import messages
 from io import StringIO
 import zipfile, csv
+import time
+from .parser.readCSVLabels import read_csv_labels
 
 
 # The home page
@@ -150,7 +152,7 @@ class PredictionView(FormView):
     
     # Dynamically generate a parameter form based on the selected model 
     def get_parameters_form(self, mlmodels, content):
-        if mlmodels == "gmm":
+        if mlmodels == "unsupervisedGMM" or mlmodels == "semisupervisedGMM":
             cov_types = [
                 ('spherical', 'Spherical'),
                 ('diag', 'Diag'),
@@ -184,6 +186,12 @@ class PredictionView(FormView):
                         "help_text": "Type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. More details see <u>Learn More about GMM</u> above.",
                         "isHtml": True
                 })),
+                'seed': forms.IntegerField(validators=[MinValueValidator(2)], 
+                    widget=MyNumberInput(attrs={
+                        "class":"form-control", 
+                        "label":"Seed", 
+                        "help_text":"N/A."
+                })),
                 'description': {
                     'Gaussian Mixture Model (GMM)': 'GMM is a probabilistic model that estimates the underlying multiple Gaussian distributions behind the seemingly chaotic observations. Input will be gene sequences, aligned or unaligned, and output will be predicted label for each virus: 0,1, etc. A k-mer table will be created to transfer the input data for analysis. When using this model, the following parameters are predetermined.',
                     'K-mer': 'Consecutive genes of length k that can be important for classification. The range of length of k-mer can be adjusted. For instance, if you set the minimum length to be 3 and maximum length 3 for gene sequence ATGG, two k-mers ATG and TGG are considered.',
@@ -200,6 +208,7 @@ class PredictionView(FormView):
                     'k_max': 3,
                     'num_class': 2,
                     'cov_type': 'full',
+                    'seed': int(time.time())
                 }
         elif mlmodels == "unsupervisedSpectralClustering" or mlmodels == "semisupervisedSpectralClustering":
             assignLabels = [
@@ -292,14 +301,34 @@ class ResultView(FormView):
                 result = kmeans.kmeansMeanshiftPCA(filenames)
             elif(mlmethod == "kmeansMeanshiftTSNE"):
                 result = kmeans.kmeansMeanshiftTSNE(filenames)
-            elif(mlmethod == "gmm"):
+            elif(mlmethod == "unsupervisedGMM"):
                 params_str = getattr(PredictInfo.objects.last(), "parameters")
                 params_obj = json.loads(params_str)
                 k_min = int(params_obj['k_min'])
                 k_max = int(params_obj['k_max'])
                 num_class = int(params_obj['num_class'])
                 cov_type = str(params_obj['cov_type'])
-                result = GMM.get_predictions(filenames,k_min, k_min, num_class, cov_type)
+                seed = int(params_obj['seed'])
+                result = GMM.get_predictions(filenames, k_min, k_min, num_class, cov_type, seed)
+            elif(mlmethod == "semisupervisedGMM"):
+                params_str = getattr(PredictInfo.objects.last(), "parameters")
+                params_obj = json.loads(params_str)
+                k_min = int(params_obj['k_min'])
+                k_max = int(params_obj['k_max'])
+                num_class = int(params_obj['num_class'])
+                cov_type = str(params_obj['cov_type'])
+                seed = int(params_obj['seed'])
+                filenames = []
+                label_filenames = []
+                for obj in FileListInfo.objects.last().filelist.all():
+                    filenames.append(obj.filepath.name)
+                    label_filenames.append(obj.labelpath.name)
+                labels = read_csv_labels(label_filenames)
+                result = GMM.get_predictions_semi(filenames, k_min, k_min, num_class, cov_type, seed, labels)
+                # filenames = str(FileListInfo.objects.last()).split(sep=", ")
+                # temp_label_file = os.path.join("media", "userfiles", "labels_fifty_percent.csv")
+                # label_filenames = str(FileListInfo.objects.last().getLabelPaths()).split(sep=", ")
+                # print(label_filenames)
             elif(mlmethod == "unsupervisedSpectralClustering"):
                 params_str = getattr(PredictInfo.objects.last(), "parameters")
                 params_obj = json.loads(params_str)
@@ -315,8 +344,10 @@ class ResultView(FormView):
                 k_max = int(params_obj['k_max'])
                 num_cluster = int(params_obj['num_cluster'])
                 assignLabels = str(params_obj['assignLabels'])
-                # temp_label_file = os.path.join("media", "userfiles", "labels_ten_percent.csv")
-                temp_label_file = os.path.join("media", "userfiles", "labels_fifty_percent.csv")
+                filenames = str(FileListInfo.objects.last()).split(sep=", ")
+                temp_label_file = os.path.join("media", "userfiles", "labels_fifty_percent.csv") #TODO
+                # label_filenames = str(FileListInfo.objects.last().getLabelPaths()).split(sep=", ")
+                # print(label_filenames)
                 result = spectralClustering.intuitive_semi_supervised(filenames, temp_label_file, k_min, k_min, num_cluster, assignLabels)
             list_of_df = result[0]
             all_df = pd.concat(list_of_df)
@@ -349,7 +380,10 @@ class ResultView(FormView):
                 email = 1
             # return the image and table to result page
             context['label']= label
-            if(mlmethod == 'unsupervisedSpectralClustering' or mlmethod == 'semisupervisedSpectralClustering'):
+            if(mlmethod == 'unsupervisedSpectralClustering' 
+                or mlmethod == 'semisupervisedSpectralClustering'
+                or mlmethod == 'unsupervisedGMM'
+                or mlmethod == 'semisupervisedGMM'):
                 context['plotly_dash'] = result[1]
             else:
                 context['image'] = result[1]

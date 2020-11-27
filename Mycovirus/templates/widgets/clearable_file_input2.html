@@ -19,8 +19,9 @@
         console.log("sequence onchange")
         let filePath = document.getElementById('inputfile_sequence').value;
         fileName = filePath.substr(filePath.lastIndexOf('\\') + 1);
-        console.log("before", filePath, fileName, document.getElementById('inputfile_name_sequence').innerHTML)
+        // console.log("before", filePath, fileName, document.getElementById('inputfile_name_sequence').innerHTML)
+        if(fileName == "") fileName = "Choose a sequence file";
         document.getElementById('inputfile_name_sequence').innerHTML = fileName;
-        console.log("after", filePath, fileName, document.getElementById('inputfile_name_sequence').innerHTML)
+        // console.log("after", filePath, fileName, document.getElementById('inputfile_name_sequence').innerHTML)
     });
   </script>

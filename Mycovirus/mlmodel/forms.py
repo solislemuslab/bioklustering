@@ -22,8 +22,8 @@ class MyClearableFileInput3(forms.ClearableFileInput):
     template_name = os.path.join('widgets', 'clearable_file_input3.html')
 
 class FileInfoForm(forms.ModelForm):
-    filepath = forms.FileField(required=True, widget=MyClearableFileInput2(attrs={'labelName': 'Upload a sequence file'}))
-    labelpath = forms.FileField(required=False, widget=MyClearableFileInput3(attrs={'labelName': 'Upload a label file'}))
+    filepath = forms.FileField(required=True, widget=MyClearableFileInput2(attrs={'labelName': 'Choose a sequence file'}))
+    labelpath = forms.FileField(required=False, widget=MyClearableFileInput3(attrs={'labelName': 'Choose a label file'}))
     # filepath = forms.FileField(widget=forms.ClearableFileInput(attrs={'class': })
     class Meta:
         model = FileInfo

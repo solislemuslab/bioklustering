@@ -69,10 +69,10 @@ def read_fasta(paths, supervisedType):
     for path in paths:
         path = os.path.join('media', path)
         virus = parseFasta(path)
-        if(supervisedType == "unsupervised"):
-            virus = virus.drop_duplicates(keep="last")
+        # if(supervisedType == "unsupervised"): TODO:remove? 
+        #     virus = virus.drop_duplicates(keep="last")
         output_df = pd.concat([output_df, virus])
-        genes = list(virus['Sequence'])
+        genes = list(virus['Sequence']) # TODO: remove? we do not use it
         genes_seq = get_gene_sequences(path)
         gene_len = get_gene_len(genes_seq)
         all_genes = all_genes + genes_seq
@@ -89,7 +89,7 @@ def spectral_clustering(paths, k_min, k_max, num_cluster, assignLabels):
     kmer_table, output_df = get_kmer_table(paths, k_min, k_max, "unsupervised")
     spectral_clustering = SpectralClustering(n_clusters= num_cluster, assign_labels = assignLabels, random_state = 0)
     labels = spectral_clustering.fit_predict(kmer_table)
-    plot_div = plotly_dash_show_plot(kmer_table, labels)
+    plot_div = plotly_dash_show_plot(kmer_table, labels, "Unsupervised Spectral Clustering")
     output_df.insert(0, "Labels", labels)
     return [[output_df], [plot_div]]
 
@@ -152,7 +152,7 @@ def intuitive_semi_supervised(file_path, label_path, k_min, k_max, num_cluster, 
     print("The optimal accuracy based on labeled sequences is: " + str(optimal_accuracy))
     print("The optimal k_min is: " + str(optimal_k_min))
     print("The optimal k_max is: " + str(optimal_k_max))
-    plot_div = plotly_dash_show_plot(kmer_table, res)
+    plot_div = plotly_dash_show_plot(kmer_table, res, "Semi-supervised Spectral Clustering")
     output_df.insert(0, "Labels", res)
     return [[output_df], [plot_div]]
 
