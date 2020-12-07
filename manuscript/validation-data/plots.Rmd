@@ -46,6 +46,13 @@ dat$pred.unsup = tmpdat$X0
 
 ## Data has all columns:
 str(dat)
+
+## Computed raw accuracies:
+sum((dat$label - dat$pred10dis)^2)
+sum((dat$label - dat$pred10k)^2)
+sum((dat$label - dat$pred50dis)^2)
+sum((dat$label - dat$pred10k)^2)
+sum((dat$label - dat$pred.unsup)^2)
 ``` 
 
 Plots:
@@ -121,6 +128,11 @@ p5 = ggplot(dat,aes(x=dimension1, y=dimension2, color=as.factor(pred.unsup),shap
     axis.line = element_line(colour = "grey"),
     legend.position="none"
   )
+p
+p2
+p3
+p4
+p5
 
 ## Saving plots
 pdf("spectral-10dis.pdf",width=5,height=5)
@@ -141,5 +153,189 @@ dev.off()
 
 pdf("spectral-unsup.pdf",width=5,height=5)
 p5
+dev.off()
+```
+
+## k-means
+
+Reading the data:
+```{r}
+dat0 = read.table("kmeans_output/test0_PCA.csv", header=TRUE, sep=",")
+str(dat0)
+dat0$PC1 = dat0$X0
+dat0$PC2 = dat0$X1
+dat0$pred0 = dat0$labels
+dat0$label = dat$label ## using spectral data for the true labels of all
+
+tmpdat = read.table("kmeans_output/test10_PCA.csv", header=TRUE, sep=",")
+str(tmpdat)
+dat0$pred10 = tmpdat$labels
+
+tmpdat = read.table("kmeans_output/test50_PCA.csv", header=TRUE, sep=",")
+str(tmpdat)
+dat0$pred50 = tmpdat$labels
+
+## Data has all columns:
+str(dat0)
+
+## Computed raw accuracies:
+sum((dat0$label - dat0$pred0)^2)
+sum((dat0$label - dat0$pred10)^2)
+sum((dat0$label - dat0$pred50)^2)
+```
+
+Plots:
+```{r}
+library(ggplot2)
+
+p = ggplot(dat0,aes(x=PC1, y=PC2, color=as.factor(pred0),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
+   xlab("PC1") + ylab(" ")+ ggtitle("k-means 0% labels (unsupervised)")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )
+
+p2 = ggplot(dat0,aes(x=PC1, y=PC2, color=as.factor(pred10),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
+   xlab("PC1") + ylab(" ")+ ggtitle("k-means 10% labels")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )
+
+p3 = ggplot(dat0,aes(x=PC1, y=PC2, color=as.factor(pred50),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
+   xlab("PC1") + ylab(" ")+ ggtitle("k-means 50% labels")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )
+
+p
+p2
+p3
+
+## Saving plots
+pdf("kmeans-0.pdf",width=5,height=5)
+p
+dev.off()
+
+pdf("kmeans-10.pdf",width=5,height=5)
+p2
+dev.off()
+
+pdf("kmeans-50.pdf",width=5,height=5)
+p3
+dev.off()
+```
+
+## GMM clustering
+
+Reading data:
+```{r}
+dat = read.table("gmm_output/pca.csv", header=TRUE, sep=",")
+str(dat)
+
+tmpdat = read.table("gmm_output/predictions_10.csv", header=TRUE, sep=",")
+str(tmpdat)
+dat$pred10 = tmpdat$Labels
+
+tmpdat = read.table("gmm_output/predictions_50.csv", header=TRUE, sep=",")
+str(tmpdat)
+dat$pred50 = tmpdat$Labels
+
+tmpdat = read.table("gmm_output/predictions_unsup.csv", header=TRUE, sep=",")
+str(tmpdat)
+dat$pred0 = tmpdat$Labels
+
+## Data has all columns:
+str(dat)
+
+## Computed raw accuracies:
+sum((dat$target - dat$pred0)^2)
+sum((dat$target - dat$pred10)^2)
+sum((dat$target - dat$pred50)^2)
+```
+
+Plots:
+```{r}
+library(ggplot2)
+
+p = ggplot(dat,aes(x=principal.component.1, y=principal.component.2, color=as.factor(pred0),shape=as.factor(target)))+geom_point(cex=4, alpha=0.65)+
+   xlab("PC1") + ylab(" ")+ ggtitle("GMM 0% labels (unsupervised)")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )
+
+p2 = ggplot(dat,aes(x=principal.component.1, y=principal.component.2, color=as.factor(pred10),shape=as.factor(target)))+geom_point(cex=4, alpha=0.65)+
+   xlab("PC1") + ylab(" ")+ ggtitle("GMM 10% labels")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )
+
+p3 = ggplot(dat,aes(x=principal.component.1, y=principal.component.2, color=as.factor(pred50),shape=as.factor(target)))+geom_point(cex=4, alpha=0.65)+
+   xlab("PC1") + ylab(" ")+ ggtitle("GMM 50% labels")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )
+
+p
+p2
+p3
+
+## Saving plots
+pdf("gmm-0.pdf",width=5,height=5)
+p
+dev.off()
+
+pdf("gmm-10.pdf",width=5,height=5)
+p2
+dev.off()
+
+pdf("gmm-50.pdf",width=5,height=5)
+p3
 dev.off()
 ```
