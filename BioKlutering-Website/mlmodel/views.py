@@ -76,12 +76,10 @@ class PredictionView(FormView):
             predict_info_param_dict = json.loads(predict_info_param_str)
             predict_form = PredictInfoForm(prefix = "predict_form", instance=predict_info)
             parameters_form = self.get_parameters_form(predict_info.mlmodels, predict_info_param_dict)
-            # parameters_form = self.get_parameters_form(predict_info.mlmodels, getattr(predict_info, "content", {}))
 
             return render(self.request, self.path, {
                 'upload_form': upload_form,
                 'filelist_form': filelist_form,
-                # 'allFiles': ", ".join(str(f.filepath.name+", "+str(f.user)) for f in FileInfo.objects.all()),
                 'filelist': FileListInfo.objects.filter(user=self.request.user).last(),
                 'predict_form': predict_form,
                 'parameters_form': parameters_form,
@@ -128,8 +126,6 @@ class PredictionView(FormView):
                 upload_form2 = upload_form.save(commit=False)
                 upload_form2.user = self.request.user
                 upload_form2.save()
-                # upload_form.user = self.request.user
-                # upload_form.save()
                 #  process the uploaded file before writing it to database
                 fileval = upload_form['filepath'].value() # actual file
                 filepath = os.path.join("media", "userfiles", fileval.name)
@@ -179,7 +175,6 @@ class PredictionView(FormView):
                             if key != 'csrfmiddlewaretoken':
                                 content[key] = self.request.POST[key]
 
-                # upload_form = FileInfoForm(prefix="upload_form")
                 filelist_last = FileListInfo.objects.filter(user=self.request.user).last()
                 if filelist_form_isvalid or 'add_filelist' not in content:
                     if filelist_last:
