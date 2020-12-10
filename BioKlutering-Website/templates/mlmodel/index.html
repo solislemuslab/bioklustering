@@ -1,0 +1,388 @@
+<!-- Copyright 2020 by Chunrong Huang, Solis-Lemus Lab, WID.
+  All rights reserved.
+  This file is part of the BioKlustering Website.  -->
+
+{% extends "./base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block index %}
+<script type="text/javascript">
+    window.CSRF_TOKEN = "{{ csrf_token }}";
+    let filelist = '{{ filelist }}';
+    let filelistError = '{{ filelist_form.errors.filelist.0 }}';
+</script>
+<script type="text/javascript" src="{% static 'js/index.js' %}"></script>
+<link rel='stylesheet' href="{% static 'css/index.css' %}">
+
+
+<!-- after login -->
+{% if user.is_authenticated %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">BioKlustering</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+        aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="#uploadHeader">Upload <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#predictHeader">Predict</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <a class="text-light mr-3">{{ user }}</a>
+            <a href="{% url 'logout' %}" class="btn btn-outline-light my-2 my-sm-0" type="submit">Log out</a>
+        </form>
+    </div>
+</nav>
+
+<br id="uploadHeader"><br><br>
+<div class="content container mt-5">
+    <h4>Upload File</h4>
+    <p>
+        Please upload files below for prediction.
+        <!-- Button trigger modal -->
+        <a class="badge badge-primary" data-toggle="modal" data-target="#fileUploadIntruction">
+            More Instructions
+        </a>
+    </p>
+
+    <!-- Modal -->
+    <div class="modal fade" id="fileUploadIntruction" tabindex="-1" role="dialog"
+        aria-labelledby="fileUploadIntructionLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fileUploadIntructionLabel">How to upload files</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        (1) If you want to use <strong>unsupervised</strong> algorithm, please upload a <strong>fasta</strong> file
+                        containing genome sequences below. You can upload multiple files and select some for prediction.
+                    </p>
+                    <p>
+                        (2) If you want to use <strong>semi-supervised</strong> algorithm, please upload a pair of files
+                        which include a <strong>fasta</strong> file
+                        containing genome sequences and a corresponding <strong>csv</strong> file containing labels. <u>Make sure the
+                            sequences and labels are in the right order</u>. You can upload
+                        multiple pairs of files and select some for prediction.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- file upload form -->
+    <form id="fileinfoform" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row mt-4">
+            <div class="col-md-4">
+                {{ upload_form.filepath}}
+            </div>
+            <div class="col-md-4">
+                {{ upload_form.labelpath}}
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-8">
+                <button id="file_upload_btn" type="submit" value="upload_form" name="upload_file"
+                    class="btn btn-secondary mt-3 float-right mr-3 mr-md-0">Upload All</button>
+            </div>
+        </div>
+    </form>
+
+    <br><br><br>
+    <h5>Filelist</h5>
+    <p>
+        Please select the files below for prediction.
+        <!-- Button trigger modal -->
+        <a class="badge badge-primary" data-toggle="modal" data-target="#fileListIntruction">
+            More Instructions
+        </a>
+    </p>
+
+    <!-- Modal -->
+    <div class="modal fade" id="fileListIntruction" tabindex="-1" role="dialog"
+        aria-labelledby="fileListIntructionLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fileListIntructionLabel">How to select files</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        (1) If you want to use <strong>unsupervised</strong> algorithm, please select sequence files for
+                        prediction.
+                    </p>
+                    <p>
+                        (2) If you want to use <strong>semi-supervised</strong> algorithm, please select pairs of
+                        sequence file and label file for prediction.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- filelist form -->
+    <form id="filelistform" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row {% if filelist_form.errors.filelist.0 %} invalid {% endif %}">
+            <div class="col-md-10">
+                {{ filelist_form.filelist }}
+            </div>
+        </div>
+        <div class="row invalid_msg">
+            <div class="col-md-10">
+                <strong>{{ filelist_form.errors.filelist.0 }}</strong>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-10">
+                <div class="btn-group float-right">
+                    <button id="action_btn" class="btn btn-secondary dropdown-toggle " type="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action </button>
+                    <div class="dropdown-menu" aria-labelledby="action_btn">
+                        <button id="add_to_pred_btn" type="submit" value="filelist_form" name="add_filelist"
+                            class="dropdown-item">Add to prediction</button>
+                        <button id="del_files_btn" value="filelist_form" name="delete_filelist"
+                            class="dropdown-item">Delete
+                            files</button>
+                        <div class="dropdown-divider"></div>
+                        <button button value="filelist_form" name="action" class="dropdown-item disabled">Save to
+                            database</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <br>
+    <div id="predictHeader" class="dropdown-divider mt-5 mb-5"></div>
+    <br>
+</div>
+
+
+<div class="content container">
+    <h4>Predict</h4>
+    <span>Please fill in the forms below before making a prediction.</span><br><br>
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Choose a model</h5>
+            <!-- model and email form -->
+            <form id="choose_model_form" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-8 mr-3">
+                        {{ predict_form.mlmodels | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8 mr-3">
+                        {{ predict_form.email | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8 mr-3">
+                        {{ predict_form.sendbyemail | as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-8">
+                        <button type="submit" id="choose_model_btn" value="choose_model" name="choose_model"
+                            class="btn btn-secondary float-right mr-3 mr-md-0">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Fill in parameters</h5>
+            <a class="badge badge-primary" data-toggle="modal" data-target="#staticBackdrop">
+                Learn More about {{ predict_form.instance.get_mlmodels_display }}
+            </a>
+            <!-- infomation modal for model and its parameter -->
+            <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel" style="text-transform:uppercase">
+                                {{ predict_form.instance.get_mlmodels_display }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div>
+                                {% if parameters_form.description %}
+                                {% for field, dscp in parameters_form.description.items %}
+                                <u>{{field}}</u>:
+                                <p>{{dscp|safe}}</p>
+                                <br>
+                                {% endfor %}
+                                {% else %}
+                                <p>More details will be posted soon.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- parameters form -->
+            <form method="POST" enctype="multipart/form-data" target="_self">
+                {% csrf_token %}
+                {% if parameters_form.fields|length == 0 %}
+                <span class="help_msg">No required parameters. Please click the predict button to proceed.</span>
+                {% else %}
+                <div class="d-inline-flex flex-wrap">
+                    {% for field in parameters_form%}
+                    <div class="form-group mr-3 flex-fill param {% if field.errors.0 %} invalid {% endif %}">
+                        {{ field }}
+                        <strong class="invalid_msg">{{ field.errors.0 }}</strong>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="row mt-5">
+                    <div class="col-md-12">
+                        <button type="submit" id="submit_params_btn" value="submit_params" name="submit_params"
+                            class="btn btn-secondary float-right mr-3" disabled>Predict</button>
+                        <!-- hidden button for saving parameters once keyup -->
+                        <button type="submit" id="update_params_btn" value="update_params" name="update_params"
+                            style="display:none;"></button>
+                        <!-- hidden error message button for empty file list when making prediction -->
+                            <button type="button" id="submit_params_alert1" class="btn btn-primary" data-toggle="modal"
+                            data-target="#alertModal1" style="display:none;"></button>
+                        <!-- error message modal for empty file list when making prediction -->
+                        <div class="modal fade" id="alertModal1" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalLabel1" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>The filelist is empty!</strong> Please select at least one file before
+                                    making
+                                    prediction.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- hidden error message button for missing label files when using semi-suspervised -->
+                        <button type="button" id="submit_params_alert2" class="btn btn-primary" data-toggle="modal"
+                        data-target="#alertModal2" style="display:none;"></button>
+                        <!-- error message modal for empty file list when making prediction -->
+                        <div class="modal fade" id="alertModal2" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    For semi-supervised model, please ensure each selected row in the filelist contains one sequence file <strong>and</strong> one label file.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<br><br><br><br><br><br>
+
+<footer class="footer bg-dark text-white">
+    <div class="container">
+        <div class="row justify-content-center align-self-center">
+            <a class="btn btn-outline-secondary mt-5 mb-5 mr-5" href="https://github.com/solislemuslab/mycovirus-ml"><i
+                    class="fa fa-github-square fa-lg"></i> Github</a>
+            <a class="btn btn-outline-secondary mt-5 mb-5 mr-5" href=""><i class="fa fa-file fa-lg"></i> Paper</a>
+            <a class="btn btn-outline-secondary mt-5 mb-5 mr-5" href="mailto:mycovirus.website@mail.com"><i
+                    class="fa fa-envelope fa-lg"></i> Email</a>
+            <a class="btn btn-outline-secondary mt-5 mb-5" href="https://solislemuslab.github.io/"><i
+                    class="fa fa-sitemap fa-lg"></i> More Projects</a>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <p class="text-secondary">Designed and built by <a class="text-secondary"
+                        href="https://solislemuslab.github.io/">Solis-Lemus Lab</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- before login -->
+{% else %}
+<div class="bg-dark" style="height: 100vh;">
+    <div class="jumbotron jumbotron-fluid bg-dark text-white pb-0 mb-0" >
+        <!-- header -->
+        <div class="container bg-dark">
+            <div class="row">
+                <div class="col-md-6 align-self-center">
+                    <h1 class="display-4">Welcome to BioKlustering!</h1>
+                    <p class="lead">BioKlustering is a simple tool that determines the labels of viruses.
+                        You can choose from a variety of supervised, unsupervised and semi-supervised machine-learning
+                        methods to analyze virus genome sequence.
+                    </p>
+                    <span>There is no programming requirement! Our models will return predicted labels. For example, a
+                        label can
+                        indicate if the virus can infect Sclerotinia or not.
+                        The label 0 can mean the virus can not kill Sclerotinia and vice versa.
+                        Some methods can return more than two predicted labels.</span><br><br>
+                    <a class="btn btn-primary btn-lg" href="{% url 'index' %}" role="button">Learn more</a><br><br>
+                </div>
+                <div class="col-md-5 ml-5 align-self-center">
+                    <a class="btn btn-primary mt-5" href="{% url 'login' %}" style="width: 100%;"> Login</a>
+                    <a class="btn btn-primary mt-5" href="{% url 'register' %}" style="width: 100%;"> Register</a>
+                </div>
+            </div>
+        </div>
+        <!-- footer -->
+        <div class="container bg-dark">
+            <div class="dropdown-divider mt-5 mb-5" style="border-top: 1px solid #6c757d;"></div>
+            <div class="row justify-content-center align-self-center">
+                <a class="btn btn-outline-secondary mt-1 mb-5 mr-5"
+                    href="https://github.com/solislemuslab/mycovirus-ml"><i class="fa fa-github-square fa-lg"></i>
+                    Github</a>
+                <a class="btn btn-outline-secondary mt-1 mb-5 mr-5" href=""><i class="fa fa-file fa-lg"></i> Paper</a>
+                <a class="btn btn-outline-secondary mt-1 mb-5 mr-5" href="mailto:mycovirus.website@mail.com"><i
+                        class="fa fa-envelope fa-lg"></i> Email</a>
+                <a class="btn btn-outline-secondary mt-1 mb-5" href="https://solislemuslab.github.io/"><i
+                        class="fa fa-sitemap fa-lg"></i> More Projects</a>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <p class="text-secondary">Designed and built by <a class="text-secondary"
+                            href="https://solislemuslab.github.io/">Solis-Lemus Lab</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

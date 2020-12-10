@@ -1,0 +1,68 @@
+<!-- Copyright 2020 by Chunrong Huang, Solis-Lemus Lab, WID.
+  All rights reserved.
+  This file is part of the BioKlustering Website.  -->
+  
+{% extends "./base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block register %}
+<div class="bg-dark" style="height: 100vh;">
+    <div class="jumbotron jumbotron-fluid bg-dark text-white pb-0 mb-0" >
+        <!-- header -->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 align-self-center">
+                    <h1 class="display-4">Welcome to BioKlustering!</h1>
+                    <p class="lead">BioKlustering is a simple tool that determines the labels of viruses.
+                        You can choose from a variety of supervised, unsupervised and semi-supervised machine-learning
+                        methods to analyze virus genome sequence.
+                    </p>
+                    <span>There is no programming requirement! Our models will return predicted labels. For example, a
+                        label can
+                        indicate if the virus can infect Sclerotinia or not.
+                        The label 0 can mean the virus can not kill Sclerotinia and vice versa.
+                        Some methods can return more than two predicted labels.</span><br><br>
+                    <a class="btn btn-primary btn-lg" href="{% url 'index' %}" role="button">Learn more</a><br><br>
+                </div>
+                <div class="col-md-5 ml-5 align-self-center">
+                    <form method="post" action="{% url 'register' %}">
+                        {% csrf_token %}
+                        <h1>Registration</h1>
+
+                        {% if registerForm.errors %}
+                        <p>There are errors in the form!</p>
+                        {% endif %}
+
+                        {{ registerForm.username | as_crispy_field }}
+                        {{ registerForm.password1 | as_crispy_field }}
+                        {{ registerForm.password2 | as_crispy_field }}
+                        <a href="{% url 'login' %}">Already have an account? Login here.</a>
+                        <button type="submit" value="Register" class="btn btn-primary float-right">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- footer -->
+        <div class="container bg-dark">
+            <div class="dropdown-divider mt-5 mb-5" style="border-top: 1px solid #6c757d;"></div>
+            <div class="row justify-content-center align-self-center">
+                <a class="btn btn-outline-secondary mt-1 mb-5 mr-5"
+                    href="https://github.com/solislemuslab/mycovirus-ml"><i class="fa fa-github-square fa-lg"></i>
+                    Github</a>
+                <a class="btn btn-outline-secondary mt-1 mb-5 mr-5" href=""><i class="fa fa-file fa-lg"></i> Paper</a>
+                <a class="btn btn-outline-secondary mt-1 mb-5 mr-5" href="mailto:mycovirus.website@mail.com"><i
+                        class="fa fa-envelope fa-lg"></i> Email</a>
+                <a class="btn btn-outline-secondary mt-1 mb-5" href="https://solislemuslab.github.io/"><i
+                        class="fa fa-sitemap fa-lg"></i> More Projects</a>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <p class="text-secondary">Designed and built by <a class="text-secondary"
+                            href="https://solislemuslab.github.io/">Solis-Lemus Lab</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

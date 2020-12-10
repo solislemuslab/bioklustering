@@ -1,0 +1,140 @@
+/* Copyright 2020 by Chunrong Huang, Solis-Lemus Lab, WID.
+  All rights reserved.
+  This file is part of the BioKlustering Website. */
+
+html, body { 
+    width: 100%; 
+    height: 100%;
+}
+
+h4 {
+    font-size: 32px;
+}
+
+.help_msg {
+    color: #6c757d !important;
+    font-size: 16px;
+}
+
+
+/* upload file drag and drop box */
+.upload_container {
+    position: relative;
+    border: 5px dashed #E9ECEF;
+    border-radius: .5rem;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.upload {
+    width: 100%;
+    height: 100%;
+    padding: 80% 1% 1% 1%;
+    opacity: 0%;
+    /* border: 5px dashed #E9ECEF;
+    border-radius: .5rem;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; */
+    /* text-indent: 999em; */
+    /* text-align: center; */
+}
+
+.dragmsg {
+    position: absolute;
+    top: 40%;
+    left: 15%;
+    right: 15%;
+    bottom: 60%;
+    text-align: center;
+    font-size: larger;
+    border: transparent;
+    color: #6d7378;
+}
+
+#inputfile_name {
+    color: #6d7378;
+    /* padding: 0% 3%; */
+    overflow: auto;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+
+
+.table_header {
+    background-color: #6d7378;
+    color: white;
+}
+
+.table_row {
+    height: 5px;
+}
+
+.filelist_container {
+    overflow: auto;
+    display: inline-block;
+    white-space: nowrap;
+    border: 2px solid #dee2e6;
+    border-radius: .25rem;
+    width: 100%;
+    height: 350px;
+
+}
+
+.filelist_container table {
+    border-collapse: collapse;
+    height: 100%;
+    margin: 0;
+}
+
+.filelist_container thead tr th {
+    position: sticky;
+    top: 0px;
+    box-shadow: 0 1px 0 1px #dee2e6;
+}
+
+.filelist_container thead tr th:first-child {
+    text-align: center;
+}
+
+.filelist_container tbody tr td {
+    font-size: 14px;
+    color: #4c4f52; 
+}
+
+.filelist_container tbody tr:last-child:hover {
+    background-color: white !important;
+}
+
+.invalid_msg {
+    width: 100%;
+    margin-top: .25rem;
+    font-size: 80%;
+    color: #dc3545;
+}
+
+.invalid .filelist_container {
+    border-color: #dc3545;
+}
+
+.invalid input {
+    border-color: #dc3545;
+}
+
+.invalid label {
+    border-color: #dc3545;
+}
+
+.asteriskField {
+    color: #dc3545!important;
+    vertical-align: super;
+}
+
+span svg {
+    vertical-align: text-top;
+}
+

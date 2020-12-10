@@ -1,0 +1,187 @@
+<!-- Copyright 2020 by Chunrong Huang, Solis-Lemus Lab, WID.
+  All rights reserved.
+  This file is part of the BioKlustering Website.  -->
+
+{% extends "./base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block faq %}
+<link rel='stylesheet' href="{% static 'css/index.css' %}">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">BioKlustering</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
+        aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">FAQ</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <a class="text-light mr-3">{{ user }}</a>
+            <a href="{% url 'logout' %}" class="btn btn-outline-light my-2 my-sm-0" type="submit">Log out</a>
+        </form>
+    </div>
+</nav>
+
+<br><br><br>
+<div class="content container">
+    <h4>FAQ</h4>
+    <div class="row mt-3">
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card">
+                    <div class="card-header" id="headingZero">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-left collapsed" type="button"
+                                data-toggle="collapse" data-target="#collapseZero" aria-expanded="false"
+                                aria-controls="collapseZero">
+                                Citation
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseZero" class="collapse" aria-labelledby="headingZero"
+                        data-parent="#accordionExample">
+                        <div class="card-body">
+                            <p>If you use the BioKlustering in your work, we ask that you cite the following paper: <a
+                                    href="#">comming soon</a>.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-header" id="headingOne">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+                            data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            How to make a prediction?
+                        </button>
+                    </h2>
+                </div>
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                    data-parent="#accordionExample">
+                    <div class="card-body">
+                        <p>There are five steps:</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">1. Upload files.</li>
+                            <li class="list-group-item">2. Choose files for prediction under filelist.</li>
+                            <li class="list-group-item">3. Choose a machine learning model.</li>
+                            <li class="list-group-item">4. Fill in the parameters in.</li>
+                            <li class="list-group-item">5. Press 'Predict'.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            How to upload files?
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <p>There are two types of files. One is sequence file and the other is label file:</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">1. Sequence file should be a fasta file that contains genome
+                                sequences</li>
+                            <li class="list-group-item">2. Label file should be a csv file that contains labels of
+                                genome sequences. You should use -1 for unknown labels.</li>
+                        </ul>
+                        <br>
+                        <p>There are two ways of uploading files. The sequence file is required in either way:</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">1. For unsupervised models, you only need to upload a sequence
+                                file.</li>
+                            <li class="list-group-item">2. For semi-supervised models, you need to upload a sequence
+                                file and a label file in<b> a pair</b>. Make sure the order of seqeunces matches the
+                                order of labels.</li>
+                        </ul>
+                        <p>You can upload files multiple times and they will be saved to your filelist. Once you decide
+                            which model to use, you can select files from your filelist for running the prediction.</p>
+                        <br>
+                        <p>Notice that the files will be removed regularly after a period of time for saving space.</p>
+                        <p>Do not save files that contain sensitive data on the website. Please delete such files after
+                            running the prediction.</p>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            How to choose a model and its parameters?
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <p>At the section of 'Fill in parameters', click the button 'Learn more about xxx'. You will see
+                            a description of the selected model and its parameters.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingFour">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            How to download results?
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <p>There are two ways of downloading results.</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">1. Before pressing the 'predict' button, at the section of
+                                'choose a model', fill in the email address and click the checkbox. After running the
+                                prediction, you will get the results in a zip file via email. </li>
+                            <li class="list-group-item">2. After pressing the 'predict' button, the website will show
+                                the result page. Click the 'Download' button at the center of page. You will immediately
+                                get your results in a zip file.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingFive">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            What does the results.zip contain?
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <p>There are three files:</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">1. A png file that contains the plot.</li>
+                            <li class="list-group-item">2. A csv file that contains the original sequences and predicted
+                                labels.</li>
+                            <li class="list-group-item">3. A txt file that contains information such as model name,
+                                parameters and running time.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<br><br><br>
+
+
+{% endblock %}

@@ -1,0 +1,8 @@
+model: Semi-supervised K-Means
+klength_min: 6
+klength_max: 6
+rNum: 50
+visual: PCA
+created time: 2020-12-10T16:55:05.774918+00:00
+running time: 3748.15 ms
+note: if you see the parameter values here are different from what you chose, it is because the underlying model finds the best parameter values with the best accuracy based on your input.
