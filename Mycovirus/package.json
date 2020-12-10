@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.14.0",
-    "bootstrap-icons": "^1.0.0",
-    "popper": "^1.0.1"
-  }
-}

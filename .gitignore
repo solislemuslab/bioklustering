@@ -1,12 +1,14 @@
-Mycovirus/node_modules/
+BioKlutering-Website/node_modules/
 
 # Django #
+*.vscode
+*.idea
 *.log
 *.pot
 *.pyc
 __pycache__
 db.sqlite3
-
+venv2
 
 # Packages #
 ############
