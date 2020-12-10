@@ -19,13 +19,17 @@ git clone https://github.com/solislemuslab/mycorivus-website.git
 # Steps to run this website locally
 
 1. Clone this repository
+   
    git clone https://github.com/solislemuslab/bioklustering
 2. Create and activate a python virtual environment
+   
    https://docs.python.org/3/tutorial/venv.html
 3. In the virtual environment, install the packages by
+   
    pip3 install -r requirements.txt
 
 A list of packages in requirements.txt:
+    
     numpy~=1.19.4
     
     pandas~=1.1.5
@@ -55,7 +59,9 @@ A list of packages in requirements.txt:
     psutil~=5.7.3
 
 4. You might also need to install plotly-orca which is for writing and saving the static plotly images to local
+   
    https://plotly.com/python/orca-management/
 5. Run the website by
+   
    python3 manage.py runserver
 6. Note: We recommend you use Google Chrome to render the website because different browsers might result in different interface and functioinality
