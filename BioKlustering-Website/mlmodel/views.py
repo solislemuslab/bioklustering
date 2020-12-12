@@ -39,8 +39,6 @@ class LoginView(FormView):
                 user = authenticate(username=username, password=password)
                 login(request, user)
                 return redirect('index')
-            else:
-                form = UserCreationForm()
 
         context = {'registerForm' : form}
         path = os.path.join("registration", "register.html")
