@@ -1,0 +1,12 @@
+model: Semi-supervised GMM
+k_min: 2
+k_max: 3
+num_class: 2
+cov_type: full
+seed: 1607824613
+visual: PCA
+model_selection: No
+accuracy: 0.3867924528301887
+created time: 2020-12-13T01:57:09.905702+00:00
+running time: 12355.43 ms
+note: if you see the parameter values here are different from what you chose, it is because the underlying model finds the best parameter values with the best accuracy based on your input.
