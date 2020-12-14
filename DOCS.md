@@ -2,13 +2,13 @@
 BioKlustering is a simple tool that determines the labels of viruses. Users can choose from a variety of supervised, unsupervised and semi-supervised machine-learning methods to analyze virus genome sequence.
 
 The following shows the hirearchy of the wesite:
-* [Welcome Page](#-Welcome-Page)
-* [Sign In](#-Sign-In-Page) / [Sign Up](#-Sign-Up-Page)
-* [Home Page](#-Home-Page)
-    * [Upload Section](#-Upload-Section)
-    * [Predict Section](#-Predict-Section)
-* [FAQ](#-FAQ-Page)
-* [Result Page](#-Result-Page)
+* [Welcome Page](#Welcome-Page)
+* [Sign In](#Sign-In-Page) / [Sign Up](#Sign-Up-Page)
+* [Home Page](#Home-Page)
+    * [Upload Section](#Upload-Section)
+    * [Predict Section](#Predict-Section)
+* [FAQ](#FAQ-Page)
+* [Result Page](#Result-Page)
 
 ## Welcome Page
 The welcome page contains the description of the website and links to sign in and sign up.
