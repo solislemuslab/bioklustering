@@ -344,15 +344,15 @@
             <div class="row">
                 <div class="col-md-6 align-self-center">
                     <h1 class="display-4">Welcome to BioKlustering!</h1>
-                    <p class="lead">BioKlustering is a simple tool that determines the labels of viruses.
+                    <p class="lead">BioKlustering is a web app for learning and visualization of genomic data.
                         You can choose from a variety of supervised, unsupervised and semi-supervised machine-learning
-                        methods to analyze virus genome sequence.
+                        methods to cluster genomic sequences.
                     </p>
-                    <span>There is no programming requirement! Our models will return predicted labels. For example, a
-                        label can
-                        indicate if the virus can infect Sclerotinia or not.
-                        The label 0 can mean the virus can not kill Sclerotinia and vice versa.
-                        Some methods can return more than two predicted labels.</span><br><br>
+                    <span>There is no programming requirement! Our models will return predicted labels from unaligned/aligned sequences.
+                        For example, the input data can be a collection of bacterial sequences. A label of 1 can
+                        indicate that a specific strain is resistant to antibiotics and a label of 0 
+                        that it is susceptible. In general, our web app allows for missing labels (coded as -1),
+                        and for more than two classes.</span><br><br>
                     <a class="btn btn-primary btn-lg" href="{% url 'index' %}" role="button">Learn more</a><br><br>
                 </div>
                 <div class="col-md-5 ml-5 align-self-center">
