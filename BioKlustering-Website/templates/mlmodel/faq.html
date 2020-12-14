@@ -73,7 +73,7 @@
                             <li class="list-group-item">1. Upload files.</li>
                             <li class="list-group-item">2. Choose files for prediction under filelist.</li>
                             <li class="list-group-item">3. Choose a machine learning model.</li>
-                            <li class="list-group-item">4. Fill in the parameters in.</li>
+                            <li class="list-group-item">4. Fill in the parameters.</li>
                             <li class="list-group-item">5. Press 'Predict'.</li>
                         </ul>
                     </div>
@@ -90,7 +90,7 @@
                 </div>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
                     <div class="card-body">
-                        <p>There are two types of files. One is sequence file and the other is label file:</p>
+                        <p>There are two types of files: 1) sequence file (required) and 2) label file (optional).</p>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">1. Sequence file should be a fasta file that contains genome
                                 sequences</li>
@@ -103,15 +103,15 @@
                             <li class="list-group-item">1. For unsupervised models, you only need to upload a sequence
                                 file.</li>
                             <li class="list-group-item">2. For semi-supervised models, you need to upload a sequence
-                                file and a label file in<b> a pair</b>. Make sure the order of seqeunces matches the
+                                file and a label file in<b> a pair</b>. Make sure the order of sequences matches the
                                 order of labels.</li>
                         </ul>
                         <p>You can upload files multiple times and they will be saved to your filelist. Once you decide
-                            which model to use, you can select files from your filelist for running the prediction.</p>
+                            which model to use, you can select files from your filelist for fitting the model.</p>
                         <br>
-                        <p>Notice that the files will be removed regularly after a period of time for saving space.</p>
+                        <p>Note that the files will be removed regularly after a period of time for saving space.</p>
                         <p>Do not save files that contain sensitive data on the website. Please delete such files after
-                            running the prediction.</p>
+                            fitting the model.</p>
                         <br>
                     </div>
                 </div>
@@ -127,7 +127,7 @@
                 </div>
                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
                     <div class="card-body">
-                        <p>At the section of 'Fill in parameters', click the button 'Learn more about xxx'. You will see
+                        <p>At the section of 'Fill in parameters', click the button 'Learn more about X'. You will see
                             a description of the selected model and its parameters.</p>
                     </div>
                 </div>
