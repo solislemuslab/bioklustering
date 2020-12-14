@@ -36,8 +36,15 @@ git clone https://github.com/solislemuslab/bioklustering
 python3 -m venv virtual-env
 source virtual-env/bin/activate
 ```
-   
-3. In the virtual environment, install the necessary packages with
+If you do not have `python3`, you can follow the instructions [here](https://docs.python-guide.org/starting/install3/osx/).
+
+3. Copy the requirements file in the `virtual-env` folder:
+
+```
+cp ../BioKlustering-Website/requirements.txt
+```
+
+4. In the virtual environment, install the necessary packages with
 
 ```  
 pip3 install -r requirements.txt
@@ -61,19 +68,19 @@ A list of packages can be found in the `requirements.txt` file and is listed bel
     psutil~=5.7.3
 ```
 
-4. You might also need to install `plotly-orca` which is for writing and saving the static plotly images locally. To install with conda, you can use the following command (or see [this link](https://plotly.com/python/orca-management/) for other alternatives):
+5. You might also need to install `plotly-orca` which is for writing and saving the static plotly images locally. To install with conda, you can use the following command (or see [this link](https://plotly.com/python/orca-management/) for other alternatives). To install conda in Mac, you can follow the instructions in [this link](https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html). Note that you might need to add a path to `conda` if not in your `PATH`.
 
 ```
 conda install -c plotly plotly-orca==1.2.1 psutil requests
 ```
 
-5. Run the website with
+6. Run the website with
 
 ```
 python3 manage.py runserver
 ```
 
-6. Note: We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionality
+**Note:** We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionality
 
 
 # Contributions

@@ -1,4 +1,5 @@
 BioKlustering-Website/node_modules/
+virtual-env/*
 
 # Django #
 *.vscode
