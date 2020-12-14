@@ -74,7 +74,7 @@ The FAQ Page contains questions and answers to common problems and doubts.
 
 ![Website FAQ Page](figures/Website-Result-Page.png)
 
-## Feedback
+# Feedback
 * Issues reports are encouraged through the [GitHub Issue Tracker](https://github.com/solislemuslab/bioklustering/issues).
 * Feedback is always welcome via the following [Google Form](https://forms.gle/SUYQ6X3WNotpQphj6).
 
