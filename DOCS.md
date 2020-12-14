@@ -17,17 +17,17 @@ The following shows the hirearchy of the wesite:
 ## Welcome Page
 The welcome page contains the description of the website and links to sign in and sign up.
 
-![Website Welcome Page](Docs-Images/Website-Welcome-Page.png)
+![Website Welcome Page](figures/Website-Welcome-Page.png)
 
 ## Sign In Page
 The sign in page is where users log in their account
 
-![Website Sign In Page](Docs-Images/Website-SignIn-Page.png)
+![Website Sign In Page](figures/Website-SignIn-Page.png)
 
 ## Sign Up Page
 The sign up page is where users register a new account
 
-![Website Sign Up Page](Docs-Images/Website-SignUp-Page.png)
+![Website Sign Up Page](figures/Website-SignUp-Page.png)
 
 ## Home Page
 The home page contains two sections: 1) for uploading files and 2) for fitting the machine-learning models.
@@ -56,12 +56,12 @@ The home page contains two sections: 1) for uploading files and 2) for fitting t
     * For more information about how to fill in the parameters, you can find the description of each model and its parameters by clicking 'Learn more about X' button.
 * If you want the results to be sent through email, you can fill in your email address after choosing a model and remember to click the checkbox and save button. Once you click the predict button, the results will be sent through the email after the prediction is done
                                                              
-![Website Home Page](Docs-Images/Website-Home-Page.png)
+![Website Home Page](figures/Website-Home-Page.png)
 
 ## FAQ Page
 The FAQ Page contains questions and answers to common problems and doubts.
 
-![Website FAQ Page](Docs-Images/Website-FAQ-Page.png)
+![Website FAQ Page](figures/Website-FAQ-Page.png)
 
 ## Result Page
 * The result page contains:
@@ -72,7 +72,7 @@ The FAQ Page contains questions and answers to common problems and doubts.
     * a csv that contains the table with predicted labels
     * a txt that contains the parameter information used to run the models
 
-![Website FAQ Page](Docs-Images/Website-Result-Page.png)
+![Website FAQ Page](figures/Website-Result-Page.png)
 
 ## Feedback
 * Issues reports are encouraged through the [GitHub Issue Tracker](https://github.com/solislemuslab/bioklustering/issues).
