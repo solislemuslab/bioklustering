@@ -74,7 +74,7 @@ conda install -c plotly plotly-orca==1.2.1 psutil requests
 python3 manage.py runserver
 ```
 
-6. Note: We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionality
+**Note:** We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionality
 
 
 # Contributions
