@@ -30,7 +30,7 @@ Users with strong programming skills might like to modify the existing code and 
 git clone https://github.com/solislemuslab/bioklustering
 ```
 
-2. Get inside the `BioKlustering-Website` folder, create and activate a [python virtual environment](https://docs.python.org/3/tutorial/venv.html). In the directory:
+2. Get inside the `BioKlustering-Website` folder, create and activate a [python virtual environment](https://docs.python.org/3/tutorial/venv.html):
 
 ```
 cd BioKlustering-Website
@@ -38,7 +38,7 @@ python3 -m venv virtual-env
 source virtual-env/bin/activate
 ```
    
-3. In the virtual environment, install the necessary packages with
+3. Install the necessary packages with
 
 ```  
 pip3 install -r requirements.txt
@@ -62,7 +62,7 @@ A list of packages can be found in the `requirements.txt` file and is listed bel
     psutil~=5.7.3
 ```
 
-4. You might also need to install `plotly-orca` which is for writing and saving the static plotly images locally. To install with conda, you can use the following command (or see [this link](https://plotly.com/python/orca-management/) for other alternatives):
+4. You might also need to install `plotly-orca` which is for writing and saving the static plotly images locally. To install with conda, you can use the following command (or see [this link](https://plotly.com/python/orca-management/) for other alternatives). To install conda, you can follow instructions in [this link](https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html). You might need to add a path to conda if it is not in your `PATH`.
 
 ```
 conda install -c plotly plotly-orca==1.2.1 psutil requests
