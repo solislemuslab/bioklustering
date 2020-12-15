@@ -297,7 +297,10 @@ class PredictionView(FormView):
                 ('Yes', 'Yes'),
                 ('No', 'No')
             ]
-            cov_type_img = os.path.join("media", "models", "images", "gmm_cov_type.png")
+            cov_type_img1 = os.path.join("media", "models", "images", "gmm_cov_type_1.png")
+            cov_type_img2 = os.path.join("media", "models", "images", "gmm_cov_type_2.png")
+            cov_type_img3 = os.path.join("media", "models", "images", "gmm_cov_type_3.png")
+            cov_type_img4 = os.path.join("media", "models", "images", "gmm_cov_type_4.png")
             new_fields = {
                 'k_min': forms.IntegerField(validators=[MinValueValidator(2)], 
                     widget=MyNumberInput(attrs={
@@ -350,7 +353,7 @@ class PredictionView(FormView):
                     'K-min': 'The minimum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 2.',
                     'K-max': 'The maximum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 3.',
                     'Number of classes': 'The number of predicted labels. Default is set to be 2.',
-                    'Covariance type': 'The type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. See the following figure of how they work: <br><img src="%s">' % cov_type_img
+                    'Covariance type': 'The type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. See the following figure of how they work: <br><img src="%s"><br><img src="%s"><br><img src="%s"><br><img src="%s">' % (cov_type_img1, cov_type_img2, cov_type_img3, cov_type_img4)
                 }
             }
             # default values of the paramters
