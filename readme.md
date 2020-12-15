@@ -62,11 +62,12 @@ A list of packages can be found in the `requirements.txt` file and is listed bel
     psutil~=5.7.3
 ```
 
-4. You might also need to install `plotly-orca` which is for writing and saving the static plotly images locally. To install with conda, you can use the following command (or see [this link](https://plotly.com/python/orca-management/) for other alternatives). To install conda, you can follow instructions in [this link](https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html). You might need to add a path to conda if it is not in your `PATH`.
+4. You might also need to install `plotly-orca` which is for writing and saving the static plotly images locally. To install with conda, you can use the following command (or see [this link](https://plotly.com/python/orca-management/) for other alternatives). 
 
 ```
 conda install -c plotly plotly-orca==1.2.1 psutil requests
 ```
+To install conda, you can follow instructions in [this link](https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html). You might need to add a path to conda if it is not in your `PATH`.
 
 5. Run the website with
 
