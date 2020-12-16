@@ -90,7 +90,7 @@ The following describes some directory structures:
     * Note: don't modify files under this directory
     
 * mlmodel/parser
-    * Scripts that are used to run the prediction. They are modified to accommodate with the website. The original scripts can be found [here](#https://github.com/solislemuslab/bioklustering/tree/master/manuscript/scripts).
+    * Scripts that are used to run the prediction. They are modified to accommodate with the website. The original scripts can be found [here](https://github.com/solislemuslab/bioklustering/tree/master/manuscript/scripts).
         * kmeans
         * GMM
         * spectralClustering
