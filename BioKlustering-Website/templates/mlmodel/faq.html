@@ -10,7 +10,7 @@
 <link rel='stylesheet' href="{% static 'css/index.css' %}">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">BioKlustering</a>
+    <a class="navbar-brand" href="{% url 'index' %}">BioKlustering</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
         aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -177,6 +177,40 @@
                     </div>
                 </div>
             </div>
+            <div class="card">
+                <div class="card-header" id="headingSix">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                            How do I report a bug or error?
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Issues reports are encouraged through the <a href="https://github.com/solislemuslab/bioklustering/issues">GitHub Issue Tracker</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingSeven">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                            How can I provide feedback?
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseSeven" class="collapse" aria-labelledby="headingSeven" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Feedback is always welcome via the following <a href="https://forms.gle/SUYQ6X3WNotpQphj6">Google Form</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -186,7 +220,7 @@
 <footer class="footer bg-dark text-white">
     <div class="container">
         <div class="row justify-content-center align-self-center">
-            <a class="btn btn-outline-secondary mt-5 mb-5 mr-5" href="https://github.com/solislemuslab/mycovirus-ml"><i
+            <a class="btn btn-outline-secondary mt-5 mb-5 mr-5" href="https://github.com/solislemuslab/bioklustering"><i
                     class="fa fa-github-square fa-lg"></i> Github</a>
             <a class="btn btn-outline-secondary mt-5 mb-5 mr-5" href=""><i class="fa fa-file fa-lg"></i> Paper</a>
             <a class="btn btn-outline-secondary mt-5 mb-5 mr-5" href="mailto:mycovirus.website@mail.com"><i
