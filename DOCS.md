@@ -5,7 +5,7 @@ We introduce BioKlustering, a user-friendly open-source and publicly available w
 Among its main advantages, BioKlustering 1) allows for maximally unbalanced settings of partially observed labels including cases when only one class is observed, which is currently prohibited in most semi-supervised methods, 2) takes unaligned sequences as input and thus, allows learning for widely diverse sequences (impossible to align) such as virus and bacteria, 3) is easy to use for anyone with little or no programming expertise, and 4) works well with small sample sizes.
 
 
-The following shows the hirearchy of the wesite:
+The following shows the hirearchy of the website:
 * [Welcome Page](#Welcome-Page)
 * [Sign In](#Sign-In-Page) / [Sign Up](#Sign-Up-Page)
 * [Home Page](#Home-Page)
@@ -13,6 +13,7 @@ The following shows the hirearchy of the wesite:
     * [Predict Section](#Predict-Section)
 * [FAQ](#FAQ-Page)
 * [Result Page](#Result-Page)
+
 
 ## Welcome Page
 The welcome page contains the description of the website and links to sign in and sign up.
