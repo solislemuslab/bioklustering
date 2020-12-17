@@ -4,9 +4,9 @@
 In this folder, we have the reproducible scripts of the analyses in the published paper on the _Influenza_ data.
 
 - `scripts` contains the analyses on the three methods: 
-    - k-means in file websiteScripts.ipynb
-    - GMM in file xxxx
-    - spectral clustering in file "clustering and visualization updated.ipynb"
+    - k-means in file `websiteScripts.ipynb`
+    - GMM in file `GMM-Tests-for-Paper.ipynb`
+    - spectral clustering in file `clustering-and-visualization-updated.ipynb`
 - `validation data` contains the sample dataset that we used in our work and the scripts for all the plots in the manuscript:
     - `Semi-supervised-test-dataset` contains the fasta files with the analysis and the labels data for different percentages of observed labels
     - `kmeans_output` contains the results for the kmeans analysis
