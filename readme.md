@@ -11,7 +11,7 @@ Among its main advantages, BioKlustering
 
 # Usage
 
-BioKlustering is browser-based (preferably Google Chrome), and thus, no installation is needed. Users simply need to click on the following link: xxxx.
+BioKlustering is browser-based (preferably Google Chrome), and thus, no installation is needed. Users simply need to click on the following link: xxxxx.
 
 More details are available in the documentation: [DOCS.md](https://github.com/solislemuslab/bioklustering/blob/master/DOCS.md).
 
