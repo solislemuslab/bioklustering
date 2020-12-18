@@ -78,26 +78,6 @@ python3 manage.py runserver
 
 **Note:** We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionality
 
-### File Structure
-The following describes some directory structures:
-* media
-    * This directory contains 4 folders and they are for:
-        * images: plots generated after making predition
-        * models/images: plots shown in description
-        * resultfiles: csv and txt files generated after making predition
-        * userfiles: fasta and csv files uploaded by users
-    * The naming of files is userId + filename, e.g. if the userId is 6 you may see 6results.zip, 6params.txt in above folders
-    * Note: don't modify files under this directory
-    
-* mlmodel/parser
-    * Scripts that are used to run the prediction. They are modified to accommodate with the website. The original scripts can be found [here](https://github.com/solislemuslab/bioklustering/tree/master/manuscript/scripts).
-        * kmeans
-        * GMM
-        * spectralClustering
-    * helpers is used to accommodate updates like saving plots and parameters for the website.
-
-
-
 # Contributions
 
 Users interested in expanding functionalities in BioKlustering are welcome to do so.
