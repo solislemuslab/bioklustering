@@ -54,3 +54,4 @@ Our web app is built using the following resources:
 - [Django](https://www.djangoproject.com/start/overview/)
 - [Plotly Dashboard](https://django-plotly-dash.readthedocs.io/en/latest/)
 - [Bootstrap](https://getbootstrap.com/)
+- [Django crispy form](https://django-crispy-forms.readthedocs.io/en/latest/)
