@@ -7,60 +7,92 @@ Read data:
 dat = read.table("spectral_output/spectral_export_PCA.csv", header=TRUE, sep=",")
 str(dat)
 
+## --------------------------------------------
+## 10 percent labels observed (both classes)
+## --------------------------------------------
 
-## adding predicted labels for semi 10 dis
-tmpdat = read.table("spectral_output/spectral_result_semi_10_dis.csv", header=TRUE, sep=",")
+tmpdat = read.table("spectral_output/Updated_spectral_PCA/10percent_discretize_export_PCA.csv", header=TRUE, sep=",")
 str(tmpdat)
+tmpdat2 = read.table("spectral_output/spectral_result_semi_10_dis.csv", header=TRUE, sep=",")
+str(tmpdat2)
 
 ## add column to dat
-dat$pred10dis = tmpdat$X0
+dat$pred10dis = tmpdat2$X0
+dat$pred10dis.x1 = tmpdat$dimension1
+dat$pred10dis.x2 = tmpdat$dimension2
 
-## adding predicted labels for semi 10 kmeans
-tmpdat = read.table("spectral_output/spectral_result_semi_10_kmeans.csv", header=TRUE, sep=",")
+## --------------------------------------------
+## 10 percent labels observed (only 0)
+## --------------------------------------------
+
+tmpdat = read.table("spectral_output/Updated_spectral_PCA/10percent_only0_discretize_export_PCA.csv", header=TRUE, sep=",")
 str(tmpdat)
+# missing the files with predicted labels:
+#tmpdat2 = read.table("spectral_output/spectral_result_semi_10_dis.csv", header=TRUE, sep=",")
+#str(tmpdat2)
 
 ## add column to dat
-dat$pred10k = tmpdat$X0
+#dat$pred10dis0 = tmpdat2$X0
+dat$pred10dis0 = tmpdat$label
+dat$pred10dis0.x1 = tmpdat$dimension1
+dat$pred10dis0.x2 = tmpdat$dimension2
 
-## adding predicted labels for semi 50 dis
-tmpdat = read.table("spectral_output/spectral_result_semi_50_dis.csv", header=TRUE, sep=",")
+## --------------------------------------------
+## 50 percent labels observed (discretize)
+## --------------------------------------------
+tmpdat = read.table("spectral_output/Updated_spectral_PCA/50percent_discretize_export_PCA.csv", header=TRUE, sep=",")
 str(tmpdat)
+tmpdat2 = read.table("spectral_output/spectral_result_semi_50_dis.csv", header=TRUE, sep=",")
+str(tmpdat2)
 
 ## add column to dat
-dat$pred50dis = tmpdat$X0
+dat$pred50dis = tmpdat2$X0
+dat$pred50dis.x1 = tmpdat$dimension1
+dat$pred50dis.x2 = tmpdat$dimension2
 
-## adding predicted labels for semi 50 kmeans
-tmpdat = read.table("spectral_output/spectral_result_semi_50_kmeans.csv", header=TRUE, sep=",")
+## --------------------------------------------
+## 50 percent labels observed (kmeans)
+## --------------------------------------------
+tmpdat = read.table("spectral_output/Updated_spectral_PCA/50percent_kmeans_export_PCA.csv", header=TRUE, sep=",")
 str(tmpdat)
+tmpdat2 = read.table("spectral_output/spectral_result_semi_50_kmeans.csv", header=TRUE, sep=",")
+str(tmpdat2)
 
 ## add column to dat
-dat$pred50k = tmpdat$X0
+dat$pred50k = tmpdat2$X0
+dat$pred50k.x1 = tmpdat$dimension1
+dat$pred50k.x2 = tmpdat$dimension2
 
-## adding predicted labels for unsupervised
-tmpdat = read.table("spectral_output/spectral_unsupervised_result.csv", header=TRUE, sep=",")
+## --------------------------------------------
+## Unsupervised
+## --------------------------------------------
+tmpdat = read.table("spectral_output/Updated_spectral_PCA/Unsupervised_export_PCA.csv", header=TRUE, sep=",")
 str(tmpdat)
+tmpdat2 = read.table("spectral_output/spectral_unsupervised_result.csv", header=TRUE, sep=",")
+str(tmpdat2)
 
 ## add column to dat
-dat$pred.unsup = tmpdat$X0
-
+dat$pred.unsup = tmpdat2$X0
+dat$predunsup.x1 = tmpdat$dimension1
+dat$predunsup.x2 = tmpdat$dimension2
 
 ## Data has all columns:
 str(dat)
 
 ## Computed raw accuracies:
-sum((dat$label - dat$pred10dis)^2)
-sum((dat$label - dat$pred10k)^2)
-sum((dat$label - dat$pred50dis)^2)
-sum((dat$label - dat$pred10k)^2)
-sum((dat$label - dat$pred.unsup)^2)
+n = length(dat$label)
+1-sum(abs(dat$label - dat$pred10dis))/n
+1-sum(abs(dat$label - dat$pred50dis))/n
+1-sum(abs(dat$label - dat$pred50k))/n
+1-sum(abs(dat$label - dat$pred.unsup))/n
 ``` 
 
 Plots:
 ```{r}
 library(ggplot2)
 
-p = ggplot(dat,aes(x=dimension1, y=dimension2, color=as.factor(pred10dis),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
-   xlab("PC1") + ylab(" ")+ ggtitle("Spectral 10% labels (discretize)")+
+p = ggplot(dat,aes(x=pred10dis.x1, y=pred10dis.x2, color=as.factor(pred10dis),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
+   xlab("PC1") + ylab(" ")+ ggtitle("Spectral 10% labels (both classes)")+
    theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
     axis.title.x = element_text(size=rel(1.4)),
@@ -73,8 +105,8 @@ p = ggplot(dat,aes(x=dimension1, y=dimension2, color=as.factor(pred10dis),shape=
     legend.position="none"
   )
 
-p2 = ggplot(dat,aes(x=dimension1, y=dimension2, color=as.factor(pred10k),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
-   xlab("PC1") + ylab(" ")+ ggtitle("Spectral 10% labels (k-means)")+
+p2 = ggplot(dat,aes(x=pred10dis0.x1, y=pred10dis0.x2, color=as.factor(pred10dis0),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
+   xlab("PC1") + ylab(" ")+ ggtitle("Spectral 10% labels (only 0's)")+
    theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
     axis.title.x = element_text(size=rel(1.4)),
@@ -87,7 +119,7 @@ p2 = ggplot(dat,aes(x=dimension1, y=dimension2, color=as.factor(pred10k),shape=a
     legend.position="none"
   )
 
-p3 = ggplot(dat,aes(x=dimension1, y=dimension2, color=as.factor(pred50dis),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
+p3 = ggplot(dat,aes(x=pred50dis.x1, y=pred50dis.x2, color=as.factor(pred50dis),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
    xlab("PC1") + ylab(" ")+ ggtitle("Spectral 50% labels (discretize)")+
    theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
@@ -101,7 +133,7 @@ p3 = ggplot(dat,aes(x=dimension1, y=dimension2, color=as.factor(pred50dis),shape
     legend.position="none"
   )
 
-p4 = ggplot(dat,aes(x=dimension1, y=dimension2, color=as.factor(pred50k),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
+p4 = ggplot(dat,aes(x=pred50k.x1, y=pred50k.x2, color=as.factor(pred50k),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
    xlab("PC1") + ylab(" ")+ ggtitle("Spectral 50% labels (k-means)")+
    theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
@@ -115,7 +147,7 @@ p4 = ggplot(dat,aes(x=dimension1, y=dimension2, color=as.factor(pred50k),shape=a
     legend.position="none"
   )
 
-p5 = ggplot(dat,aes(x=dimension1, y=dimension2, color=as.factor(pred.unsup),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
+p5 = ggplot(dat,aes(x=predunsup.x1, y=predunsup.x2, color=as.factor(pred.unsup),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
    xlab("PC1") + ylab("PC2")+ ggtitle("Spectral 0% labels (unsupervised)")+
    theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
@@ -139,7 +171,7 @@ pdf("spectral-10dis.pdf",width=5,height=5)
 p
 dev.off()
 
-pdf("spectral-10k.pdf",width=5,height=5)
+pdf("spectral-10dis0.pdf",width=5,height=5)
 p2
 dev.off()
 
@@ -170,18 +202,23 @@ dat0$label = dat$label ## using spectral data for the true labels of all
 tmpdat = read.table("kmeans_output/test10_PCA.csv", header=TRUE, sep=",")
 str(tmpdat)
 dat0$pred10 = tmpdat$labels
+dat0$pred10.x1 = tmpdat$X0
+dat0$pred10.x2 = tmpdat$X1
 
 tmpdat = read.table("kmeans_output/test50_PCA.csv", header=TRUE, sep=",")
 str(tmpdat)
 dat0$pred50 = tmpdat$labels
+dat0$pred50.x1 = tmpdat$X0
+dat0$pred50.x2 = tmpdat$X1
 
 ## Data has all columns:
 str(dat0)
 
 ## Computed raw accuracies:
-sum((dat0$label - dat0$pred0)^2)
-sum((dat0$label - dat0$pred10)^2)
-sum((dat0$label - dat0$pred50)^2)
+n = length(dat0$label)
+1-sum(abs(dat0$label - dat0$pred0))/n
+1-sum(abs(dat0$label - dat0$pred10))/n
+1-sum(abs(dat0$label - dat0$pred50))/n
 ```
 
 Plots:
@@ -202,8 +239,8 @@ p = ggplot(dat0,aes(x=PC1, y=PC2, color=as.factor(pred0),shape=as.factor(label))
     legend.position="none"
   )
 
-p2 = ggplot(dat0,aes(x=PC1, y=PC2, color=as.factor(pred10),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
-   xlab("PC1") + ylab(" ")+ ggtitle("k-means 10% labels")+
+p2 = ggplot(dat0,aes(x=pred10.x1, y=pred10.x2, color=as.factor(pred10),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
+   xlab("PC1") + ylab(" ")+ ggtitle("k-means 10% labels (both classes)")+
    theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
     axis.title.x = element_text(size=rel(1.4)),
@@ -216,7 +253,7 @@ p2 = ggplot(dat0,aes(x=PC1, y=PC2, color=as.factor(pred10),shape=as.factor(label
     legend.position="none"
   )
 
-p3 = ggplot(dat0,aes(x=PC1, y=PC2, color=as.factor(pred50),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
+p3 = ggplot(dat0,aes(x=pred50.x1, y=pred50.x2, color=as.factor(pred50),shape=as.factor(label)))+geom_point(cex=4, alpha=0.65)+
    xlab("PC1") + ylab(" ")+ ggtitle("k-means 50% labels")+
    theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
@@ -252,35 +289,60 @@ dev.off()
 
 Reading data:
 ```{r}
-dat = read.table("gmm_output/pca.csv", header=TRUE, sep=",")
+dat = read.table("gmm_output/actual_labels.csv", header=TRUE, sep=",")
 str(dat)
-
-tmpdat = read.table("gmm_output/predictions_10.csv", header=TRUE, sep=",")
-str(tmpdat)
-dat$pred10 = tmpdat$Labels
-
-tmpdat = read.table("gmm_output/predictions_50.csv", header=TRUE, sep=",")
-str(tmpdat)
-dat$pred50 = tmpdat$Labels
+dat$target = dat$Labels
 
 tmpdat = read.table("gmm_output/predictions_unsup.csv", header=TRUE, sep=",")
 str(tmpdat)
+tmpdat2 = read.table("gmm_output/pca_unsup.csv", header=TRUE, sep=",")
+str(tmpdat2)
 dat$pred0 = tmpdat$Labels
+dat$pred0.x1 = tmpdat2$principal.Component.1
+dat$pred0.x2 = tmpdat2$Principal.Component.2
+
+tmpdat = read.table("gmm_output/predictions_10__bestModel.csv", header=TRUE, sep=",")
+str(tmpdat)
+tmpdat2 = read.table("gmm_output/pca_10_.csv", header=TRUE, sep=",")
+str(tmpdat2)
+dat$pred10 = tmpdat$Labels
+dat$pred10.x1 = tmpdat2$principal.Component.1
+dat$pred10.x2 = tmpdat2$Principal.Component.2
+
+tmpdat = read.table("gmm_output/predictions_10__only0s_bestModel.csv", header=TRUE, sep=",")
+str(tmpdat)
+tmpdat2 = read.table("gmm_output/pca_10__only0.csv", header=TRUE, sep=",")
+str(tmpdat2)
+dat$pred10.0 = tmpdat$Labels
+dat$pred10.0.x1 = tmpdat2$principal.Component.1
+dat$pred10.0.x2 = tmpdat2$Principal.Component.2
+
+
+tmpdat = read.table("gmm_output/predictions_50__bestModel.csv", header=TRUE, sep=",")
+str(tmpdat)
+tmpdat2 = read.table("gmm_output/pca_50_.csv", header=TRUE, sep=",")
+str(tmpdat2)
+dat$pred50 = tmpdat$Labels
+dat$pred50.x1 = tmpdat2$principal.Component.1
+dat$pred50.x2 = tmpdat2$Principal.Component.2
+
 
 ## Data has all columns:
 str(dat)
 
 ## Computed raw accuracies:
-sum((dat$target - dat$pred0)^2)
-sum((dat$target - dat$pred10)^2)
-sum((dat$target - dat$pred50)^2)
+n = length(dat$target)
+1-sum(abs(dat$target - dat$pred0))/n
+1-sum(abs(dat$target - dat$pred10))/n
+1-sum(abs(dat$target - dat$pred10.0))/n
+1-sum(abs(dat$target - dat$pred50))/n
 ```
 
 Plots:
 ```{r}
 library(ggplot2)
 
-p = ggplot(dat,aes(x=principal.component.1, y=principal.component.2, color=as.factor(pred0),shape=as.factor(target)))+geom_point(cex=4, alpha=0.65)+
+p = ggplot(dat,aes(x=pred0.x1, y=pred0.x2, color=as.factor(pred0),shape=as.factor(target)))+geom_point(cex=4, alpha=0.65)+
    xlab("PC1") + ylab(" ")+ ggtitle("GMM 0% labels (unsupervised)")+
    theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
@@ -294,8 +356,8 @@ p = ggplot(dat,aes(x=principal.component.1, y=principal.component.2, color=as.fa
     legend.position="none"
   )
 
-p2 = ggplot(dat,aes(x=principal.component.1, y=principal.component.2, color=as.factor(pred10),shape=as.factor(target)))+geom_point(cex=4, alpha=0.65)+
-   xlab("PC1") + ylab(" ")+ ggtitle("GMM 10% labels")+
+p2 = ggplot(dat,aes(x=pred10.x1, y=pred10.x2, color=as.factor(pred10),shape=as.factor(target)))+geom_point(cex=4, alpha=0.65)+
+   xlab("PC1") + ylab(" ")+ ggtitle("GMM 10% labels (both classes)")+
    theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
     axis.title.x = element_text(size=rel(1.4)),
@@ -308,7 +370,21 @@ p2 = ggplot(dat,aes(x=principal.component.1, y=principal.component.2, color=as.f
     legend.position="none"
   )
 
-p3 = ggplot(dat,aes(x=principal.component.1, y=principal.component.2, color=as.factor(pred50),shape=as.factor(target)))+geom_point(cex=4, alpha=0.65)+
+p2.0 = ggplot(dat,aes(x=pred10.0.x1, y=pred10.0.x2, color=as.factor(pred10.0),shape=as.factor(target)))+geom_point(cex=4, alpha=0.65)+
+   xlab("PC1") + ylab(" ")+ ggtitle("GMM 10% labels (only 0's)")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )
+
+p3 = ggplot(dat,aes(x=pred50.x1, y=pred50.x2, color=as.factor(pred50),shape=as.factor(target)))+geom_point(cex=4, alpha=0.65)+
    xlab("PC1") + ylab(" ")+ ggtitle("GMM 50% labels")+
    theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
@@ -324,6 +400,7 @@ p3 = ggplot(dat,aes(x=principal.component.1, y=principal.component.2, color=as.f
 
 p
 p2
+p2.0
 p3
 
 ## Saving plots
@@ -335,7 +412,16 @@ pdf("gmm-10.pdf",width=5,height=5)
 p2
 dev.off()
 
+pdf("gmm-10-0.pdf",width=5,height=5)
+p2.0
+dev.off()
+
 pdf("gmm-50.pdf",width=5,height=5)
 p3
 dev.off()
+```
+
+For this case, there is one sequence that is weird. The PCs are much bigger compared to other sequences.
+```{r}
+dat[dat$pred50.x1>10,]
 ```
