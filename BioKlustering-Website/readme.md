@@ -3,7 +3,7 @@
 ## Quick overview
 - Requirements to run the code are in `requirements.txt`
 - Automatic test functions can be found in `mlmodel/tests.py`
-- Python scripts for the ML models can be found in xxxx
+- Python scripts for the ML models can be found in `mlmodel/parser`
 - HTML files for the website can be found in `templates`
 
 ## Detailed description of files
