@@ -76,7 +76,9 @@ To install conda, you can follow instructions in [this link](https://docs.conda.
 python3 manage.py runserver
 ```
 
-**Note:** We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionality
+**Note:** We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionalities
+
+**Note:** When you run the website locally, you will have many changes to `.pyc` local files that you should discard prior to any commit with `git checkout -- <file>` and new untracked files created when running the website locally should be deleted prior to any commit if you intent to contribute to the website.
 
 ### File Structure
 The following describes some directory structures:

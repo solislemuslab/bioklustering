@@ -19,7 +19,7 @@ Please use the following steps:
 2. Fork the [BioKlustering repository](https://github.com/solislemuslab/bioklustering)to your GitHub account
 3. Clone your fork locally:
 ```
-$ git clone git@github.com:your-username/bioklustering.git
+$ git clone https://github.com/your-username/bioklustering.git
 ```   
 4. Make your change(s) in the `master` (or `development`) branch of your cloned fork
 5. Make sure that all tests are passed without any errors (upcoming automatic testing available in BioKlustering)
@@ -37,6 +37,8 @@ Make sure to include the following information in your pull request:
 
 - **Tests** of this code to make sure that the previously failed function or the new functionality now works properly
 
+
+**WARNING:** When you run the website locally, you will have many changes to `.pyc` local files that you should discard prior to any commit with `git checkout -- <file>` and new untracked files created when running the website locally should be deleted prior to any commit if you intent to contribute to the website. Make sure that your pull request do not include changes to these files.
 
 ---
 
