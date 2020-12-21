@@ -28,12 +28,11 @@ dat$pred10dis.x2 = tmpdat$dimension2
 tmpdat = read.table("spectral_output/Updated_spectral_PCA/10percent_only0_discretize_export_PCA.csv", header=TRUE, sep=",")
 str(tmpdat)
 # missing the files with predicted labels:
-#tmpdat2 = read.table("spectral_output/spectral_result_semi_10_dis.csv", header=TRUE, sep=",")
-#str(tmpdat2)
+tmpdat2 = read.table("spectral_output//Updated_spectral_PCA/result_semi_10_only0s_discretize.csv", header=TRUE, sep=",")
+str(tmpdat2)
 
 ## add column to dat
-#dat$pred10dis0 = tmpdat2$X0
-dat$pred10dis0 = tmpdat$label
+dat$pred10dis0 = tmpdat2$X0
 dat$pred10dis0.x1 = tmpdat$dimension1
 dat$pred10dis0.x2 = tmpdat$dimension2
 
@@ -81,6 +80,7 @@ str(dat)
 
 ## Computed raw accuracies:
 n = length(dat$label)
+1-sum(abs(dat$label - dat$pred10dis0))/n
 1-sum(abs(dat$label - dat$pred10dis))/n
 1-sum(abs(dat$label - dat$pred50dis))/n
 1-sum(abs(dat$label - dat$pred50k))/n
