@@ -715,6 +715,8 @@ class ResultView(FormView):
             all_df.index.name = None
             label = all_df.to_html(col_space=110, justify='left', classes='table table-responsive result-table')
             # write to csv
+            if not os.path.exists(os.path.join('media', 'resultfiles')):
+                os.makedirs(os.path.join('media', 'resultfiles'))
             csv_path = os.path.join("media", "resultfiles", str(request.user.id)+"table.csv")
             all_df.to_csv(csv_path, index_label='ID')
             duration = (time.time() - start) * 1000
@@ -745,6 +747,8 @@ class ResultView(FormView):
     def create_zip(request, duration):
         predict_obj = PredictInfo.objects.filter(user=request.user).last()
         # write params info into a text file
+        if not os.path.exists(os.path.join('media', 'resultfiles')):
+            os.makedirs(os.path.join('media', 'resultfiles'))
         param_path = os.path.join('media', 'resultfiles', str(request.user.id)+'params.txt')
         param_file = open(param_path, 'w')
         param_file.write('model: ' + predict_obj.get_mlmodels_display() + '\n')

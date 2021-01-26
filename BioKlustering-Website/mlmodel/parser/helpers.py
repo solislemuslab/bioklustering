@@ -36,6 +36,8 @@ def plotly_dash_show_plot(userId, kmer_table, labels, model_title, method):
     # plotly dashboard in html 
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
     # save the static plot into media
+    if not os.path.exists(os.path.join('media', 'images')):
+        os.makedirs(os.path.join('media', 'images'))
     fig.write_image(os.path.join('media', 'images', str(userId)+'plotly.png'))
     
     return plot_div
