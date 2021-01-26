@@ -41,7 +41,7 @@
                         {{ form.username | as_crispy_field }}
                         {{ form.password | as_crispy_field }}
 
-                        <button type="submit" value="login" class="btn btn-primary float-right">Log
+                        <button id="login_button" type="submit" value="login" class="btn btn-primary float-right">Log
                             in</button>
                         <a href="{% url 'register' %}">No account yet? Register here.</a>
                         <input type="hidden" name="next" value="{{ next }}">
