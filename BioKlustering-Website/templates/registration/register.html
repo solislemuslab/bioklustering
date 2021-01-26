@@ -38,7 +38,7 @@
                         {{ registerForm.password1 | as_crispy_field }}
                         {{ registerForm.password2 | as_crispy_field }}
                         <a href="{% url 'login' %}">Already have an account? Login here.</a>
-                        <button type="submit" value="Register" class="btn btn-primary float-right">Register</button>
+                        <button id="register_button" type="submit" value="Register" class="btn btn-primary float-right">Register</button>
                     </form>
                 </div>
             </div>
