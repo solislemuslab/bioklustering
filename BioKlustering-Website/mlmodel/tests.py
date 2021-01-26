@@ -3,13 +3,15 @@ from selenium import webdriver
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
+# NOTE: change PATH to a local path that has your downloaded chromedriver.exe
+PATH = '/Users/hcr/Downloads/chromedriver'
+
 User = get_user_model()
-class TestLogin(TestCase):
+class TestLoginAndRegister(TestCase):
     def setUp(self):
-        # NOTE: change PATH to a local path that has your downloaded chromedriver.exe
-        PATH = '/Users/hcr/Downloads/chromedriver'
+        # webdriver
         self.driver = webdriver.Chrome(PATH)
-        # set up a user
+        # set up users
         user1 = User(username='user1')
         user1_pw = 'test-user1-pwd'
         user1.set_password(user1_pw)
@@ -22,7 +24,6 @@ class TestLogin(TestCase):
         self.base_url = "http://127.0.0.1:8000/"
         self.login_url = self.base_url + "accounts/login/"
         self.register_url = self.base_url + "register/"
-
 
     # fill in correct username and correct password
     def test_login_1(self):
@@ -49,30 +50,30 @@ class TestLogin(TestCase):
         self.driver.find_element_by_id('register_button').click()
         self.assertIn(self.base_url, self.driver.current_url)
     
-    # fill in duplicate username and safe password
+    # fill in unused username and safe password, but wrong password in confirmation
     def test_register_2(self):
         self.driver.get(self.register_url)
-        self.driver.find_element_by_id('id_username').send_keys("user1")
+        self.driver.find_element_by_id('id_username').send_keys("user2")
         self.driver.find_element_by_id('id_password1').send_keys(self.user2_pw)
-        self.driver.find_element_by_id('id_password2').send_keys(self.user2_pw)
+        self.driver.find_element_by_id('id_password2').send_keys("12345678")
         self.driver.find_element_by_id('register_button').click()
         self.assertIn(self.register_url, self.driver.current_url)
-
+    
     # fill in unused username but unsafe password
     def test_register_3(self):
         self.driver.get(self.register_url)
-        self.driver.find_element_by_id('id_username').send_keys("user1")
+        self.driver.find_element_by_id('id_username').send_keys("user2")
         self.driver.find_element_by_id('id_password1').send_keys("12345678")
         self.driver.find_element_by_id('id_password2').send_keys("12345678")
         self.driver.find_element_by_id('register_button').click()
         self.assertIn(self.register_url, self.driver.current_url)
     
-    # fill in unused username and safe password, but wrong password in confirmation
+    # fill in duplicate username and safe password
     def test_register_4(self):
         self.driver.get(self.register_url)
         self.driver.find_element_by_id('id_username').send_keys("user1")
         self.driver.find_element_by_id('id_password1').send_keys(self.user2_pw)
-        self.driver.find_element_by_id('id_password2').send_keys("12345678")
+        self.driver.find_element_by_id('id_password2').send_keys(self.user2_pw)
         self.driver.find_element_by_id('register_button').click()
         self.assertIn(self.register_url, self.driver.current_url)
 
