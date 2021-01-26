@@ -42,7 +42,7 @@ The main code for the web app is stored in 5 folders:
    - `registration` with files for welcome page, sign in and sign up
    - `widgets` with files for Django form field widgets with custom styles
 
-In addition, the file `manage.py` is a common file in Django admin application. We use this file to run the website locally via the command `python3 manage.py runserver` or make a migration when there is a change in the database via the comman `python3 manage.py migrate`
+In addition, the file `manage.py` is a common file in Django admin application. We use this file to run the website locally via the command `python3 manage.py runserver` or make a migration when there is a change in the database via the command `python3 manage.py migrate`
 
 For more information, refer to the [Django Documentation](https://docs.djangoproject.com/en).
 

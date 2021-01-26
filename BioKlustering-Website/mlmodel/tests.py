@@ -4,7 +4,7 @@ from django.test import TestCase
 
 class TestLogin(unittest.TestCase):
     def setUp(self):
-        # a local path that has your downloaded chromedriver.exe
+        # NOTE: change PATH to a local path that has your downloaded chromedriver.exe
         PATH = '/Users/hcr/Downloads/chromedriver'
         self.driver = webdriver.Chrome(PATH)
 
