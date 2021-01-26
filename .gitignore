@@ -6,7 +6,7 @@ BioKlustering-Website/virtual-env/*
 *.idea
 *.log
 *.pot
-venv2
+virtual-env
 
 # Packages #
 ############
