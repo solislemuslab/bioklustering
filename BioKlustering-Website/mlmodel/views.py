@@ -85,7 +85,9 @@ class PredictionView(FormView):
         else:
             upload_form = FileInfoForm(prefix = "upload_form")
             filelist_last = FileListInfo.objects.last()
-            filelist_form = FileListInfoForm(prefix="filelist_form", initial={'filelist': getattr(filelist_last, 'filelist').all()})
+            filelist_form = FileListInfoForm(prefix="filelist_form")
+            if filelist_last:
+                filelist_form = FileListInfoForm(prefix="filelist_form", initial={'filelist': getattr(filelist_last, 'filelist').all()})
             
             predict_info = PredictInfo.objects.last()
             if predict_info is None:
