@@ -6,7 +6,6 @@ BioKlustering-Website/virtual-env/*
 *.idea
 *.log
 *.pot
-virtual-env
 
 # Packages #
 ############
@@ -127,3 +126,6 @@ Backup[ ]of[ ]*.numbers/
 *.fa
 *.dat
 *.paml
+
+### not these files
+!BioKlustering-Website/mlmodel/testfiles/*
