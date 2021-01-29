@@ -73,6 +73,8 @@ To install conda, you can follow instructions in [this link](https://docs.conda.
 5. Run the website with
 
 ```
+python3 manage.py makemigrations
+python3 manage.py migrate
 python3 manage.py runserver
 ```
 
