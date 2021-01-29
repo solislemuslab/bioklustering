@@ -81,20 +81,15 @@ python3 manage.py runserver
 **Note:** When you run the website locally, you will have many changes to `.pyc` local files that you should discard prior to any commit with `git checkout -- <file>` and new untracked files created when running the website locally should be deleted prior to any commit if you intent to contribute to the website.
 
 ### Steps to test this website locally
-1. Run the website locally by following the above steps. Make sure you are in a virtual environment.
+1. Make sure you are in a virtual environment.
 ```
 source virtual-env/bin/activate
-python3 manage.py runserver
 ```
-2. Install [selenium]
+2. Install [selenium](https://selenium-python.readthedocs.io/installation.html)
 ```
 pip3 install selenium
 ```
-3. Download [chromedriver](https://chromedriver.chromium.org/getting-started) and save it to a local path
-4. Open mlmodel/tests.py
-5. Change PATH to a local path that has your downloaded chromedriver.exe
-e.g. PATH = '/Users/hcr/Downloads/chromedriver'
-6. Open another terminal and run
+3. Run the following command
 ```
 python3 manage.py test
 ```
