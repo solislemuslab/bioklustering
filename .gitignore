@@ -9,7 +9,8 @@ BioKlustering-Website/virtual-env/*
 __pycache__/
 db.sqlite3
 BioKlustering-Website/mlmodel/migrations/*.py
-
+!BioKlustering-Website/mlmodel/migrations/__init__.py
+chromedriver
 
 # Packages #
 ############
@@ -130,6 +131,3 @@ Backup[ ]of[ ]*.numbers/
 *.fa
 *.dat
 *.paml
-
-### not these files
-!BioKlustering-Website/mlmodel/testfiles/*

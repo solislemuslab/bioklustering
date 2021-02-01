@@ -11,9 +11,8 @@ from .models import FileInfo, FileListInfo
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 test_file_1 = os.path.abspath(os.path.join(ROOT_DIR, "..", "..", "manuscript", "validation-data", "Semi-supervised-test-dataset", "combined_Bat_Cat_flu.fa"))
 test_file_2 = os.path.abspath(os.path.join(ROOT_DIR, "..", "..", "manuscript", "validation-data", "Semi-supervised-test-dataset", "labels_fifty_percent.csv"))
+webdriver_exe = os.path.abspath(os.path.join(ROOT_DIR, "..", "..", "chromedriver"))
 
-relative_path = os.path.join("testfiles", "chromedriver")
-PATH = os.path.join(os.path.sep, ROOT_DIR, relative_path)
 User = get_user_model()
 
 # test login and register behavior
@@ -23,7 +22,7 @@ class TestLoginAndRegisterView(StaticLiveServerTestCase):
     def setUpClass(cls):
         super().setUpClass()
         # set up web driver
-        cls.selenium = webdriver.Chrome(PATH)
+        cls.selenium = webdriver.Chrome(webdriver_exe)
         cls.selenium.implicitly_wait(10)
         # set up urls
         cls.login_url = cls.live_server_url + "/accounts/login/"
@@ -105,7 +104,7 @@ class TestUploadFilesView(StaticLiveServerTestCase):
     def setUpClass(cls):
         super().setUpClass()
         # set up web driver
-        cls.selenium = webdriver.Chrome(PATH)
+        cls.selenium = webdriver.Chrome(webdriver_exe)
         cls.selenium.implicitly_wait(10)
         # set up urls
         cls.login_url = cls.live_server_url + "/accounts/login/"
