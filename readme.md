@@ -91,7 +91,7 @@ source virtual-env/bin/activate
 ```
 pip3 install selenium
 ```
-3. Download [webdriver] (https://sites.google.com/a/chromium.org/chromedriver/downloads) and put it in the base repository
+3. Download [webdriver](https://sites.google.com/a/chromium.org/chromedriver/downloads) and move it into the git root directory 'bioklustering/'
 4. Run the following command
 ```
 python3 manage.py test
