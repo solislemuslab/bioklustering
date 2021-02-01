@@ -9,6 +9,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from .models import FileInfo, FileListInfo
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+test_file_1 = os.path.abspath(os.path.join(ROOT_DIR, "..", "..", "manuscript", "validation-data", "Semi-supervised-test-dataset", "combined_Bat_Cat_flu.fa"))
+test_file_2 = os.path.abspath(os.path.join(ROOT_DIR, "..", "..", "manuscript", "validation-data", "Semi-supervised-test-dataset", "labels_fifty_percent.csv"))
+
 relative_path = os.path.join("testfiles", "chromedriver")
 PATH = os.path.join(os.path.sep, ROOT_DIR, relative_path)
 User = get_user_model()
@@ -134,12 +137,9 @@ class TestUploadFilesView(StaticLiveServerTestCase):
 
     # upload one sequence file
     def test_upload_file_1(self):
-        # file path
-        re_filepath_seq = os.path.join("testfiles", "combined_Bat_Cat_flu.fa")
-        abs_filepath_seq = os.path.join(os.path.sep, ROOT_DIR, re_filepath_seq)
         # wait for page showing up
         wait_seq = WebDriverWait(self.selenium, 5)
-        wait_seq.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_sequence"))).send_keys(abs_filepath_seq)
+        wait_seq.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_sequence"))).send_keys(test_file_1)
         # upload file
         self.selenium.find_element_by_id('file_upload_btn').click()
         self.assertEqual(self.live_server_url + "/", self.selenium.current_url)
@@ -151,16 +151,11 @@ class TestUploadFilesView(StaticLiveServerTestCase):
     
     # upload one sequence and one label pair
     def test_upload_file_2(self):
-        # file path
-        re_filepath_seq = os.path.join("testfiles", "combined_Bat_Cat_flu.fa")
-        abs_filepath_seq = os.path.join(os.path.sep, ROOT_DIR, re_filepath_seq)
-        re_filepath_label = os.path.join("testfiles", "labels_fifty_percent.csv")
-        abs_filepath_label = os.path.join(os.path.sep, ROOT_DIR, re_filepath_label)
         # wait for page showing up
         wait_seq = WebDriverWait(self.selenium, 5)
-        wait_seq.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_sequence"))).send_keys(abs_filepath_seq)
+        wait_seq.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_sequence"))).send_keys(test_file_1)
         wait_label = WebDriverWait(self.selenium, 5)
-        wait_label.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_label"))).send_keys(abs_filepath_label)
+        wait_label.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_label"))).send_keys(test_file_2)
         # upload file
         self.selenium.find_element_by_id('file_upload_btn').click()
         self.assertEqual(self.live_server_url + "/", self.selenium.current_url)
@@ -173,38 +168,27 @@ class TestUploadFilesView(StaticLiveServerTestCase):
 
     # upload one label file
     def test_upload_file_3(self):
-        # file path
-        re_filepath_label = os.path.join("testfiles", "labels_fifty_percent.csv")
-        abs_filepath_label = os.path.join(os.path.sep, ROOT_DIR, re_filepath_label)
         # wait for page showing up
         wait_label = WebDriverWait(self.selenium, 5)
-        wait_label.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_label"))).send_keys(abs_filepath_label)
+        wait_label.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_label"))).send_keys(test_file_2)
         # upload file
         self.selenium.find_element_by_id('file_upload_btn').click()
         self.assertEqual(self.live_server_url + "/", self.selenium.current_url)
         self.assertEqual(FileInfo.objects.all().count(), 0)
         self.assertEqual(FileListInfo.objects.all().count(), 0)
-        # add one file pair to filelist
-        # filelist = self.selenium.find_element_by_id("id_filelist_form-filelist_0")
-        # self.assertEqual(filelist, None)
+        # upload file should fail so no files in the filelist
         with self.assertRaises(NoSuchElementException):
             self.selenium.find_element_by_id("id_filelist_form-filelist_0")
         self.assertEqual(FileListInfo.objects.all().count(), 0)
     
     # upload multiple sequence and label pair
     def test_upload_file_4(self):
-        # file path
-        re_filepath_seq = os.path.join("testfiles", "combined_Bat_Cat_flu.fa")
-        abs_filepath_seq = os.path.join(os.path.sep, ROOT_DIR, re_filepath_seq)
-        re_filepath_label = os.path.join("testfiles", "labels_fifty_percent.csv")
-        abs_filepath_label = os.path.join(os.path.sep, ROOT_DIR, re_filepath_label)
-        
         # ------- upload 1st pair -------
         # wait for page showing up
         wait_seq = WebDriverWait(self.selenium, 5)
-        wait_seq.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_sequence"))).send_keys(abs_filepath_seq)
+        wait_seq.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_sequence"))).send_keys(test_file_1)
         wait_label = WebDriverWait(self.selenium, 5)
-        wait_label.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_label"))).send_keys(abs_filepath_label)
+        wait_label.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_label"))).send_keys(test_file_2)
         # upload file
         self.selenium.find_element_by_id('file_upload_btn').click()
         self.assertEqual(self.live_server_url + "/", self.selenium.current_url)
@@ -220,9 +204,9 @@ class TestUploadFilesView(StaticLiveServerTestCase):
         # ------- upload 2nd pair -------
         # wait for page showing up
         wait_seq = WebDriverWait(self.selenium, 5)
-        wait_seq.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_sequence"))).send_keys(abs_filepath_seq)
+        wait_seq.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_sequence"))).send_keys(test_file_1)
         wait_label = WebDriverWait(self.selenium, 5)
-        wait_label.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_label"))).send_keys(abs_filepath_label)
+        wait_label.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_label"))).send_keys(test_file_2)
         # upload file
         self.selenium.find_element_by_id('file_upload_btn').click()
         self.assertEqual(self.live_server_url + "/", self.selenium.current_url)
@@ -236,9 +220,9 @@ class TestUploadFilesView(StaticLiveServerTestCase):
         # ------- upload 3rd pair -------
         # wait for page showing up
         wait_seq = WebDriverWait(self.selenium, 5)
-        wait_seq.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_sequence"))).send_keys(abs_filepath_seq)
+        wait_seq.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_sequence"))).send_keys(test_file_1)
         wait_label = WebDriverWait(self.selenium, 5)
-        wait_label.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_label"))).send_keys(abs_filepath_label)
+        wait_label.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#inputfile_label"))).send_keys(test_file_2)
         # upload file
         self.selenium.find_element_by_id('file_upload_btn').click()
         self.assertEqual(self.live_server_url + "/", self.selenium.current_url)

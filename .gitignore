@@ -6,6 +6,10 @@ BioKlustering-Website/virtual-env/*
 *.idea
 *.log
 *.pot
+__pycache__/
+db.sqlite3
+BioKlustering-Website/mlmodel/migrations/*.py
+
 
 # Packages #
 ############
