@@ -1,0 +1,1 @@
+This path `BioKlustering-Website/media/resultfiles` stores the result files from after the prediction

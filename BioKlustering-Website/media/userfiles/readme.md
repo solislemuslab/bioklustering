@@ -1,0 +1,1 @@
+This path `BioKlustering-Website/media/userfiles` is used to store the users' input files.
