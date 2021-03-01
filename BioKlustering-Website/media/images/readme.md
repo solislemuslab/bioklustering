@@ -1,0 +1,1 @@
+This path `BioKlustering-Website/media/images` will store the images produced by the prediction

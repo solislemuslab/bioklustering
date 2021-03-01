@@ -516,8 +516,8 @@ class PredictionView(FormView):
                 'rNum': forms.IntegerField(validators=[MinValueValidator(2)], 
                     widget=MyNumberInput(attrs={
                         "class":"form-control", 
-                        "label":"Random Number", 
-                        "help_text":"Random number, defaulted to 50."
+                        "label":"Random Seed", 
+                        "help_text":"Integer to set random seed, defaulted to 50."
                 })),
                 'cNum': forms.IntegerField(validators=[MinValueValidator(2)], 
                     widget=MyNumberInput(attrs={

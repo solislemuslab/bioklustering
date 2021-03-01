@@ -68,11 +68,11 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, y_hat, 
     ms.fit(PCAembedding_low)
     cluster_centers = ms.cluster_centers_
 
-    # import warnings
-    # with warnings.catch_warnings():
-    #     warnings.simplefilter("ignore")
-    kmms = KMeans(init = cluster_centers, n_clusters = len(cluster_centers))
-    kmms_labels = kmms.fit_predict(PCAembedding_low)
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        kmms = KMeans(init = cluster_centers, n_clusters = len(cluster_centers))
+        kmms_labels = kmms.fit_predict(PCAembedding_low)
 
     # convert all clusters into two clusters
     kmerXTableInput["pLabels"] = kmms_labels
