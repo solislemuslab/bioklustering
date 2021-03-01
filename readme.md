@@ -61,6 +61,7 @@ A list of packages can be found in the `requirements.txt` file and is listed bel
     daphne~=2.5.0
     redis~=3.5.3
     psutil~=5.7.3
+    kaleido~=0.1.0
 ```
 
 4. You might also need to install `plotly-orca` which is for writing and saving the static plotly images locally. To install with conda, you can use the following command (or see [this link](https://plotly.com/python/orca-management/) for other alternatives). 
