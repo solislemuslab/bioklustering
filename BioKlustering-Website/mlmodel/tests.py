@@ -1,12 +1,13 @@
 import os
+import json
 from django.contrib.auth import get_user_model
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
-from .models import FileInfo, FileListInfo
+from .models import FileInfo, FileListInfo, PredictInfo
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 test_file_1 = os.path.abspath(os.path.join(ROOT_DIR, "..", "..", "manuscript", "validation-data", "Semi-supervised-test-dataset", "combined_Bat_Cat_flu.fa"))
@@ -236,3 +237,97 @@ class TestUploadFilesView(StaticLiveServerTestCase):
         self.assertEqual(FileListInfo.objects.all().count(), 1)
 
         
+# test model select and parameter fill in
+class TestModelSelect(StaticLiveServerTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # set up web driver
+        cls.selenium = webdriver.Chrome(webdriver_exe)
+        cls.selenium.implicitly_wait(10)
+        # set up urls
+        cls.login_url = cls.live_server_url + "/accounts/login/"
+        cls.register_url = cls.live_server_url + "/register/"
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+
+    def setUp(self):
+        # set up users
+        user1 = User(username='user1')
+        user1_pw = 'test-user1-pwd'
+        user1.set_password(user1_pw)
+        user1.is_staff = True
+        user1.is_superuser = True
+        user1.save()
+        # login user
+        self.selenium.get(self.login_url)
+        self.selenium.find_element_by_id('id_username').send_keys(user1.get_username())
+        self.selenium.find_element_by_id('id_password').send_keys(user1_pw)
+        self.selenium.find_element_by_id('login_button').click()
+        # upload file
+        self.selenium.find_element_by_id('inputfile_sequence').send_keys(test_file_1)
+        self.selenium.find_element_by_id('inputfile_label').send_keys(test_file_2)
+        self.selenium.find_element_by_id('file_upload_btn').click()
+        # add one file pair to filelist
+        self.selenium.find_element_by_id("id_filelist_form-filelist_0").click()
+    
+    def tearDown(self):
+        filelist = FileListInfo.objects.last()
+        if filelist:
+            filelist.delete_files()
+    
+    # select kmeans and see if the underlying data get updated
+    def test_model_select_1(self):
+        select = Select(self.selenium.find_element_by_id('id_predict_form-mlmodels'))
+        # select semisupervised kmeans
+        select.select_by_index(1)
+        predict_last = PredictInfo.objects.last()
+        mlmodel = getattr(predict_last, 'mlmodels', None)
+        self.assertEqual('semisupervisedKmeans', mlmodel)
+
+    # select gmm and see if the underlying data get updated
+    def test_model_select_2(self):
+        select = Select(self.selenium.find_element_by_id('id_predict_form-mlmodels'))
+        # select unsupervised gmm
+        select.select_by_index(2)
+        predict_last = PredictInfo.objects.last()
+        mlmodel = getattr(predict_last, 'mlmodels', None)
+        self.assertEqual('unsupervisedGMM', mlmodel)
+
+    # select spectral clustering and see if the underlying data get updated
+    def test_model_select_3(self):
+        select = Select(self.selenium.find_element_by_id('id_predict_form-mlmodels'))
+        # select semisupervised spectral clustering
+        select.select_by_index(5)
+        predict_last = PredictInfo.objects.last()
+        mlmodel = getattr(predict_last, 'mlmodels', None)
+        self.assertEqual('semisupervisedSpectralClustering', mlmodel)
+    
+    # update one param and see if the underlying data get updated
+    def test_param_fillin_1(self):
+        # select unsupervised kmeans
+        select = Select(self.selenium.find_element_by_id('id_predict_form-mlmodels'))
+        select.select_by_index(0)
+        # update param
+        self.selenium.find_element_by_id('rNum').clear()
+        self.selenium.find_element_by_id('rNum').send_keys('60')
+        predict_last = PredictInfo.objects.last()
+        params_str = getattr(predict_last, "parameters")
+        params_obj = json.loads(params_str)
+        rNum = int(params_obj['rNum'])
+        self.assertEqual(rNum, 60)
+
+    # have k min > k max and see if there is error message
+    def test_param_fillin_2(self):
+        # select unsupervised kmeans
+        select = Select(self.selenium.find_element_by_id('id_predict_form-mlmodels'))
+        select.select_by_index(3)
+        # update param
+        self.selenium.find_element_by_id('k_min').clear()
+        self.selenium.find_element_by_id('k_min').send_keys('4')
+        err_msg = self.selenium.find_element_by_css_selector("#k_min + .invalid_msg")
+        err_msg_html = err_msg.get_attribute('innerHTML')
+        self.assertNotEqual("", err_msg_html)
