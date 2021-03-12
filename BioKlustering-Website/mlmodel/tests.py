@@ -331,3 +331,66 @@ class TestModelSelect(StaticLiveServerTestCase):
         err_msg = self.selenium.find_element_by_css_selector("#k_min + .invalid_msg")
         err_msg_html = err_msg.get_attribute('innerHTML')
         self.assertNotEqual("", err_msg_html)
+
+
+# test predict
+class TestPredict(StaticLiveServerTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # set up web driver
+        cls.selenium = webdriver.Chrome(webdriver_exe)
+        cls.selenium.implicitly_wait(10)
+        # set up urls
+        cls.login_url = cls.live_server_url + "/accounts/login/"
+        cls.register_url = cls.live_server_url + "/register/"
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+
+    def setUp(self):
+        # set up users
+        user1 = User(username='user1')
+        user1_pw = 'test-user1-pwd'
+        user1.set_password(user1_pw)
+        user1.is_staff = True
+        user1.is_superuser = True
+        user1.save()
+        # login user
+        self.selenium.get(self.login_url)
+        self.selenium.find_element_by_id('id_username').send_keys(user1.get_username())
+        self.selenium.find_element_by_id('id_password').send_keys(user1_pw)
+        self.selenium.find_element_by_id('login_button').click()
+        # upload file
+        self.selenium.find_element_by_id('inputfile_sequence').send_keys(test_file_1)
+        self.selenium.find_element_by_id('inputfile_label').send_keys(test_file_2)
+        self.selenium.find_element_by_id('file_upload_btn').click()
+        # add one file pair to filelist
+        self.selenium.find_element_by_id("id_filelist_form-filelist_0").click()
+    
+    def tearDown(self):
+        filelist = FileListInfo.objects.last()
+        if filelist:
+            filelist.delete_files()
+    
+    # empty filelist and the page should not redirect 
+    def test_empty_filelist(self):
+        # unclick the filelist 
+        self.selenium.find_element_by_id("id_filelist_form-filelist_0").click()
+        # predict
+        self.selenium.find_element_by_id("submit_params_btn").click()
+        self.assertEqual(self.live_server_url+'/', self.selenium.current_url)
+    
+    # invalid param and the page should not redirect 
+    def test_invalid_param(self):
+        # select unsupervised spectral clustering
+        select = Select(self.selenium.find_element_by_id('id_predict_form-mlmodels'))
+        select.select_by_index(4)
+        # update param
+        self.selenium.find_element_by_id('k_min').clear()
+        self.selenium.find_element_by_id('k_min').send_keys('4')        
+        # predict
+        self.selenium.find_element_by_id("submit_params_btn").click()
+        self.assertEqual(self.live_server_url+'/', self.selenium.current_url)
