@@ -541,7 +541,7 @@ class PredictionView(FormView):
                 }
             }
             # default values of the paramters
-            if not bool(content) or 'k_min' not in content: 
+            if not bool(content) or 'klength_min' not in content: 
                 content = {
                     'klength_min': 6,
                     'klength_max': 6,
@@ -588,7 +588,7 @@ class PredictionView(FormView):
                 }
             }
             # default values of the paramters
-            if not bool(content) or 'k_min' not in content: 
+            if not bool(content) or 'klength_min' not in content: 
                 content = {
                     'klength_min': 6,
                     'klength_max': 6,
