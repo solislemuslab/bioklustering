@@ -516,7 +516,7 @@ class PredictionView(FormView):
                 'rNum': forms.IntegerField(validators=[MinValueValidator(2)], 
                     widget=MyNumberInput(attrs={
                         "class":"form-control", 
-                        "label":"Random Seed", 
+                        "label":"Seed", 
                         "help_text":"Integer to set random seed, defaulted to 50."
                 })),
                 'cNum': forms.IntegerField(validators=[MinValueValidator(2)], 
@@ -536,7 +536,7 @@ class PredictionView(FormView):
                     "Unsupervised Kmeans": "kmeans is an unsupervised clustering method that clusters the data into k clusters and assigns labels to each each data point. Every point is assigned to the nearest centroid, and these centroids are formed by minimizing the squared Euclidian distances within each cluster.",
                     "K Length Min": "The minimum kmer length, defaulted to 6.",
                     "K Length Max": "The maximum kmer length, defaulted to 6.",
-                    "Random Number": "Random number, defaulted to 50.",
+                    "Seed": "Random number, defaulted to 50.",
                     "Number of clusters": "Number of clusters, defaulted to 2."
                 }
             }
@@ -570,7 +570,7 @@ class PredictionView(FormView):
                 'rNum': forms.IntegerField(validators=[MinValueValidator(2)], 
                     widget=MyNumberInput(attrs={
                         "class":"form-control", 
-                        "label":"Random Number", 
+                        "label":"Seed", 
                         "help_text":"Random number, defaulted to 50."
                 })),
                 'visual': forms.ChoiceField(choices=visual_types, 
@@ -584,7 +584,7 @@ class PredictionView(FormView):
                     "Semi-supervised Kmeans": "The meanshift algorithm is used to identity locations of high density within the kmer space of the data, and then the unsupervised k-means model is run with these locations as the initial centroid coordinates.  The known labels are then compared against the many predicted labels and these clusters are reassigned into groups that minimize the prediction error.",
                     "K Length Min": "The minimum kmer length, defaulted to 6.",
                     "K Length Max": "The maximum kmer length, defaulted to 6.",
-                    "Random Number": "Random number, defaulted to 50.",
+                    "Seed": "Random number, defaulted to 50.",
                 }
             }
             # default values of the paramters
