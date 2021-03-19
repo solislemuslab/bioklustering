@@ -33,7 +33,7 @@
                 <a class="nav-link" href="#uploadHeader">Upload <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#predictHeader">Predict</a>
+                <a class="nav-link" href="#predictHeader">Analysis</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
@@ -50,7 +50,7 @@
 <div class="content container mt-5">
     <h4>Upload File</h4>
     <p>
-        Please upload files below for prediction.
+        Please upload files below for learning.
         <!-- Button trigger modal -->
         <a class="badge badge-primary" data-toggle="modal" data-target="#fileUploadIntruction">
             More Instructions
@@ -71,13 +71,13 @@
                 <div class="modal-body">
                     <p>
                         (1) If you want to use <strong>unsupervised</strong> algorithm, please upload a <strong>fasta</strong> file
-                        containing genome sequences below. You can upload multiple files and select some for prediction.
+                        containing genome sequences below (aligned or unaligned). You can upload multiple files and select some for clustering.
                     </p>
                     <p>
                         (2) If you want to use <strong>semi-supervised</strong> algorithm, please upload a pair of files
                         which include a <strong>fasta</strong> file
-                        containing genome sequences and a corresponding <strong>csv</strong> file containing labels. <u>Make sure the
-                            sequences and labels are in the right order</u>. You can upload
+                        containing genome sequences (aligned or unaligned) and a corresponding <strong>csv</strong> file containing labels. <u>Make sure the
+                            sequences and labels are in the right order</u>. Missing labels should be coded as -1. You can upload
                         multiple pairs of files and select some for prediction.
                     </p>
                 </div>
@@ -110,7 +110,7 @@
     <br><br><br>
     <h5>Filelist</h5>
     <p>
-        Please select the files below for prediction.
+        Please select the files below for learning.
         <!-- Button trigger modal -->
         <a class="badge badge-primary" data-toggle="modal" data-target="#fileListIntruction">
             More Instructions
@@ -131,7 +131,7 @@
                 <div class="modal-body">
                     <p>
                         (1) If you want to use <strong>unsupervised</strong> algorithm, please select sequence files for
-                        prediction.
+                        clustering.
                     </p>
                     <p>
                         (2) If you want to use <strong>semi-supervised</strong> algorithm, please select pairs of
@@ -164,7 +164,7 @@
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action </button>
                     <div class="dropdown-menu" aria-labelledby="action_btn">
                         <button id="add_to_pred_btn" type="submit" value="filelist_form" name="add_filelist"
-                            class="dropdown-item">Add to prediction</button>
+                            class="dropdown-item">Add to analysis</button>
                         <button id="del_files_btn" value="filelist_form" name="delete_filelist"
                             class="dropdown-item">Delete
                             files</button>
@@ -183,8 +183,8 @@
 
 
 <div class="content container">
-    <h4>Predict</h4>
-    <span>Please fill in the forms below before making a prediction.</span><br><br>
+    <h4>Learning</h4>
+    <span>Please select the model and the parameters corresponding to the unsupervised or semi-supervised algorithm you want to use.</span><br><br>
     <div class="row">
         <div class="col-md-6">
             <h5>Choose a model</h5>

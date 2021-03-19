@@ -231,19 +231,19 @@ class PredictionView(FormView):
                     widget=MyNumberInput(attrs={
                         "class":"form-control", 
                         "label":"K-min", 
-                        "help_text":"The minimum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 2."
+                        "help_text":"The minimum length of k-mer. You can choose a value starting at 2. Less than 6 is recommended according to our experiments. Default is set to be 2."
                 })),
                 'k_max': forms.IntegerField(validators=[MinValueValidator(2)], 
                     widget=MyNumberInput(attrs={
                         "class":"form-control", 
                         "label":"K-max", 
-                        "help_text":"The maximum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 3."
+                        "help_text":"The maximum length of k-mer. You can choose a value starting at 2. Less than 6 is recommended according to our experiments. Default is set to be 3."
                 })),
                 'num_class': forms.IntegerField(validators=[MinValueValidator(2)], 
                     widget=MyNumberInput(attrs={
                         "class":"form-control", 
                         "label":"Number of classes", 
-                        "help_text":"The number of predicted labels. You can choose starting from 2. Default is set to be 2."
+                        "help_text":"The number of predicted labels. You can choose a value starting at 2. Default is set to be 2."
                 })),
                 'cov_type': forms.ChoiceField(choices=cov_types, 
                     widget=MySelect(attrs={
@@ -256,20 +256,20 @@ class PredictionView(FormView):
                     widget=MyNumberInput(attrs={
                         "class":"form-control", 
                         "label":"Seed", 
-                        "help_text":"A number."
+                        "help_text":"The random seed to reproduce the results. If none chosen, it will be internally selected and returned to the used in the logfiles."
                 })),
                 'visual': forms.ChoiceField(choices=visual_types, 
                     widget=MySelect(attrs={
                         "class": "custom-select", 
                         "label":"Visualization",
-                        "help_text": "Different ways for visualization",
+                        "help_text": "Dimension-reduction technique to visualize the clusters",
                         "isHtml": True
                 })),
                 'description': {
-                    'Gaussian Mixture Model (GMM)': 'GMM is a probabilistic model that estimates the underlying multiple Gaussian distributions behind the seemingly chaotic observations. Input will be gene sequences, aligned or unaligned, and output will be predicted label for each virus: 0,1, etc. A k-mer table will be created to transfer the input data for analysis. When using this model, the following parameters are predetermined.',
-                    'K-mer': 'Consecutive genes of length k that can be important for classification. The range of length of k-mer can be adjusted. For instance, if you set the minimum length to be 3 and maximum length 3 for gene sequence ATGG, two k-mers ATG and TGG are considered.',
-                    'K-min': 'The minimum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 2.',
-                    'K-max': 'The maximum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 3.',
+                    'Gaussian Mixture Model (GMM)': 'GMM is a probabilistic model that estimates the underlying multiple Gaussian distributions behind the observations. Input will be gene sequences, aligned or unaligned, coverted to k-mer counts and output will be predicted labels for each sequence: 0,1, etc. A k-mer table will be created to transfer the input data for analysis. When using this model, the following parameters are needed:',
+                    'K-mer': 'Consecutive genes of length k. The range of length of k-mer can be adjusted. For instance, if you set the minimum length to be 3 and maximum length 3 for gene sequence ATGG, two k-mers ATG and TGG are considered.',
+                    'K-min': 'The minimum length of k-mer to include in the k-mer table. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 2.',
+                    'K-max': 'The maximum length of k-mer to include in the k-mer table. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 3.',
                     'Number of classes': 'The number of predicted labels. Default is set to be 2.',
                     'Covariance type': 'The type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. See the following figure of how they work: <br><img src="%s"><br><img src="%s"><br><img src="%s"><br><img src="%s">' % (cov_type_img1, cov_type_img2, cov_type_img3, cov_type_img4)
                 }
@@ -333,13 +333,13 @@ class PredictionView(FormView):
                     widget=MyNumberInput(attrs={
                         "class":"form-control", 
                         "label":"Seed", 
-                        "help_text":"A number determined by current time."
+                        "help_text":"The random seed to reproduce the results. If none are selected, it will be determined by current time."
                 })),
                 'visual': forms.ChoiceField(choices=visual_types, 
                     widget=MySelect(attrs={
                         "class": "custom-select", 
                         "label":"Visualization",
-                        "help_text": "Different ways for visualization",
+                        "help_text": "Dimension-reduction technique to visualize the clusters",
                         "isHtml": True
                 })),
                 'model_selection': forms.ChoiceField(choices=model_selection, 
@@ -350,10 +350,10 @@ class PredictionView(FormView):
                         "isHtml": True
                 })),
                 'description': {
-                    'Gaussian Mixture Model (GMM)': 'GMM is a probabilistic model that estimates the underlying multiple Gaussian distributions behind the seemingly chaotic observations. Input will be gene sequences, aligned or unaligned, and output will be predicted label for each virus: 0,1, etc. A k-mer table will be created to transfer the input data for analysis. When using this model, the following parameters are predetermined.',
-                    'K-mer': 'Consecutive genes of length k that can be important for classification. The range of length of k-mer can be adjusted. For instance, if you set the minimum length to be 3 and maximum length 3 for gene sequence ATGG, two k-mers ATG and TGG are considered.',
-                    'K-min': 'The minimum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 2.',
-                    'K-max': 'The maximum length of k-mer. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 3.',
+                    'Gaussian Mixture Model (GMM)': 'GMM is a probabilistic model that estimates the underlying multiple Gaussian distributions behind the observations. Input will be gene sequences, aligned or unaligned, coverted to k-mer counts and output will be predicted labels for each sequence: 0,1, etc. A k-mer table will be created to transfer the input data for analysis. When using this model, the following parameters are needed:',
+                    'K-mer': 'Consecutive genes of length k. The range of length of k-mer can be adjusted. For instance, if you set the minimum length to be 3 and maximum length 3 for gene sequence ATGG, two k-mers ATG and TGG are considered.',
+                    'K-min': 'The minimum length of k-mer to include in the k-mer table. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 2.',
+                    'K-max': 'The maximum length of k-mer to include in the k-mer table. You can choose starting from 2. However, less than 6 is recommended according to our experiments. Default is set to be 3.',
                     'Number of classes': 'The number of predicted labels. Default is set to be 2.',
                     'Covariance type': 'The type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. See the following figure of how they work: <br><img src="%s"><br><img src="%s"><br><img src="%s"><br><img src="%s">' % (cov_type_img1, cov_type_img2, cov_type_img3, cov_type_img4)
                 }
@@ -401,14 +401,14 @@ class PredictionView(FormView):
                     widget=MySelect(attrs={
                         "class": "custom-select", 
                         "label":"Assign Labels",
-                        "help_text": "Type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. More details see <u>Learn More about GMM</u> above.",
+                        "help_text": "The way to assign label at the final stage of spectral clustering. Can be 'kmeans' or 'discretize'.",
                         "isHtml": True
                 })),
                 'visual': forms.ChoiceField(choices=visual_types, 
                     widget=MySelect(attrs={
                         "class": "custom-select", 
                         "label":"Visualization",
-                        "help_text": "Different ways for visualization",
+                        "help_text": "Dimension-reduction technique to visualize the clusters",
                         "isHtml": True
                 })),
                 'description': {
@@ -461,26 +461,26 @@ class PredictionView(FormView):
                     widget=MySelect(attrs={
                         "class": "custom-select", 
                         "label":"Assign Labels",
-                        "help_text": "Type of covariance. There are four types of covariances: spherical, diagonal, tied, and full. Default is set to be full. More details see <u>Learn More about GMM</u> above.",
+                        "help_text": "The way to assign label at the final stage of spectral clustering. Can be 'kmeans' or 'discretize'.",
                         "isHtml": True
                 })),
                 'seed': forms.IntegerField(validators=[MinValueValidator(2)], 
                     widget=MyNumberInput(attrs={
                         "class":"form-control", 
                         "label":"Seed", 
-                        "help_text":"A number."
+                        "help_text":"The random seed to reproduce the results. If none are selected, it will be determined by current time."
                 })),
                 'visual': forms.ChoiceField(choices=visual_types, 
                     widget=MySelect(attrs={
                         "class": "custom-select", 
                         "label":"Visualization",
-                        "help_text": "Different ways for visualization",
+                        "help_text": "Dimension-reduction technique to visualize the clusters",
                         "isHtml": True
                 })),
                 'description': {
                     "Spectral Clustering": "The spectral clustering method uses the information behind the eigenvalues of the kmer table that is created based on the input dataset. It will successfully reduce the dimensionality of the input data set. This method also shows the visualization of the clustering using two principle components of the kmer table.",
-                    "K-min": "An integer. The minimum of kmer",
-                    "K-max": "An integer. The maximum of kmer",
+                    "K-min": "An integer. The minimum of length of k-mer",
+                    "K-max": "An integer. The maximum of length of k-mer",
                     "Number of Clusters": "An integer. The number of clusters",
                     "Assign Labels": "A string. The way to assign label at the final stage of spectral clustering. Can be 'kmeans' or 'discretize'."
                 }
@@ -492,7 +492,7 @@ class PredictionView(FormView):
                     'k_max': 3,
                     'num_cluster': 2,
                     'assignLabels': 'none',
-                    'seed': 699,
+                    'seed': int(time.time()),
                     'visual': 'PCA'
                 }
         elif mlmodels == "unsupervisedKmeans":
@@ -517,7 +517,7 @@ class PredictionView(FormView):
                     widget=MyNumberInput(attrs={
                         "class":"form-control", 
                         "label":"Seed", 
-                        "help_text":"Integer to set random seed, defaulted to 50."
+                        "help_text":"The random seed to reproduce the results. If none are selected, it will be determined based on the time."
                 })),
                 'cNum': forms.IntegerField(validators=[MinValueValidator(2)], 
                     widget=MyNumberInput(attrs={
@@ -529,14 +529,14 @@ class PredictionView(FormView):
                     widget=MySelect(attrs={
                         "class": "custom-select", 
                         "label":"Visualization",
-                        "help_text": "Different ways for visualization",
+                        "help_text": "Dimension-reduction technique to visualize the clusters",
                         "isHtml": True
                 })),
                 'description': {
                     "Unsupervised Kmeans": "kmeans is an unsupervised clustering method that clusters the data into k clusters and assigns labels to each each data point. Every point is assigned to the nearest centroid, and these centroids are formed by minimizing the squared Euclidian distances within each cluster.",
-                    "K Length Min": "The minimum kmer length, defaulted to 6.",
-                    "K Length Max": "The maximum kmer length, defaulted to 6.",
-                    "Seed": "Random number, defaulted to 50.",
+                    "K Length Min": "The minimum k-mer length, defaulted to 6.",
+                    "K Length Max": "The maximum k-mer length, defaulted to 6.",
+                    "Seed": "Random seed. If none are selected, it will be determined based on the time.",
                     "Number of clusters": "Number of clusters, defaulted to 2."
                 }
             }
@@ -545,7 +545,7 @@ class PredictionView(FormView):
                 content = {
                     'klength_min': 6,
                     'klength_max': 6,
-                    'rNum': 50,
+                    'rNum': int(time.time()),
                     'cNum': 2,
                     'visual': 'PCA'
                 }
@@ -571,20 +571,20 @@ class PredictionView(FormView):
                     widget=MyNumberInput(attrs={
                         "class":"form-control", 
                         "label":"Seed", 
-                        "help_text":"Random number, defaulted to 50."
+                        "help_text":"Random seed number. If none selected, it will be determined based on the time."
                 })),
                 'visual': forms.ChoiceField(choices=visual_types, 
                     widget=MySelect(attrs={
                         "class": "custom-select", 
                         "label":"Visualization",
-                        "help_text": "Different ways for visualization",
+                        "help_text": "Dimension-reduction technique to visualize the clusters",
                         "isHtml": True
                 })),
                 'description': {
-                    "Semi-supervised Kmeans": "The meanshift algorithm is used to identity locations of high density within the kmer space of the data, and then the unsupervised k-means model is run with these locations as the initial centroid coordinates.  The known labels are then compared against the many predicted labels and these clusters are reassigned into groups that minimize the prediction error.",
-                    "K Length Min": "The minimum kmer length, defaulted to 6.",
-                    "K Length Max": "The maximum kmer length, defaulted to 6.",
-                    "Seed": "Random number, defaulted to 50.",
+                    "Semi-supervised Kmeans": "The meanshift algorithm is used to identity locations of high density within the k-mer space of the data, and then the unsupervised k-means model is run with these locations as the initial centroid coordinates.  The known labels are then compared against the many predicted labels and these clusters are reassigned into groups that minimize the prediction error.",
+                    "K Length Min": "The minimum k-mer length, defaulted to 6.",
+                    "K Length Max": "The maximum k-mer length, defaulted to 6.",
+                    "Seed": "Random seed number. If none selected, it will be determined based on the time.",
                 }
             }
             # default values of the paramters
@@ -592,7 +592,7 @@ class PredictionView(FormView):
                 content = {
                     'klength_min': 6,
                     'klength_max': 6,
-                    'rNum': 50,
+                    'rNum': int(time.time()),
                     'visual': 'PCA'
                 }
         else:
