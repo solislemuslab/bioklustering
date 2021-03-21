@@ -632,89 +632,94 @@ class ResultView(FormView):
             sendbyemail = getattr(preidct_obj, "sendbyemail")
             email = getattr(preidct_obj, "email")
             result = []
-            if mlmethod == "unsupervisedKmeans":
-                params_str = getattr(preidct_obj, "parameters")
-                params_obj = json.loads(params_str)
-                klength_min = int(params_obj['klength_min'])
-                klength_max = int(params_obj['klength_max'])
-                rNum = int(params_obj['rNum'])
-                cNum = int(params_obj['cNum'])
-                method = str(params_obj['visual'])
-                result = kmeans.kmeans(request.user.id, filenames, klength_min, klength_max, rNum, cNum, method)
-            elif mlmethod == "semisupervisedKmeans":
-                params_str = getattr(preidct_obj, "parameters")
-                params_obj = json.loads(params_str)
-                klength_min = int(params_obj['klength_min'])
-                klength_max = int(params_obj['klength_max'])
-                rNum = int(params_obj['rNum'])
-                method = str(params_obj['visual'])
-                filenames = []
-                label_filenames = []
-                for obj in filslist_obj.filelist.all():
-                    filenames.append(obj.filepath.name)
-                    label_filenames.append(obj.labelpath.name)
-                labels = read_csv_labels(label_filenames)
-                result = kmeans.kmeans_semiSupervised(request.user.id, filenames, klength_min, klength_max, rNum, labels, method)            
-            elif mlmethod == "unsupervisedGMM":
-                params_str = getattr(preidct_obj, "parameters")
-                params_obj = json.loads(params_str)
-                k_min = int(params_obj['k_min'])
-                k_max = int(params_obj['k_max'])
-                num_class = int(params_obj['num_class'])
-                cov_type = str(params_obj['cov_type'])
-                seed = int(params_obj['seed'])
-                method = str(params_obj['visual'])
-                result = GMM.get_predictions(request.user.id, filenames, k_min, k_max, num_class, cov_type, seed, method)
-            elif mlmethod == "semisupervisedGMM":
-                params_str = getattr(preidct_obj, "parameters")
-                params_obj = json.loads(params_str)
-                k_min = int(params_obj['k_min'])
-                k_max = int(params_obj['k_max'])
-                num_class = int(params_obj['num_class'])
-                cov_type = str(params_obj['cov_type'])
-                seed = int(params_obj['seed'])
-                method = str(params_obj['visual'])
-                model_selection = str(params_obj['model_selection'])
-                filenames = []
-                label_filenames = []
-                for obj in filslist_obj.filelist.all():
-                    filenames.append(obj.filepath.name)
-                    label_filenames.append(obj.labelpath.name)
-                labels = read_csv_labels(label_filenames)
-                if model_selection == "Yes":
-                    result = GMM.model_selection(request.user.id, filenames, labels, num_class, seed, method)
-                else:
-                    result = GMM.get_predictions_semi(request.user.id, filenames, k_min, k_max, num_class, cov_type, seed, labels, method)
-            elif mlmethod == "unsupervisedSpectralClustering":
-                params_str = getattr(preidct_obj, "parameters")
-                params_obj = json.loads(params_str)
-                k_min = int(params_obj['k_min'])
-                k_max = int(params_obj['k_max'])
-                num_cluster = int(params_obj['num_cluster'])
-                assignLabels = str(params_obj['assignLabels'])
-                method = str(params_obj['visual'])
-                result = spectralClustering.spectral_clustering(request.user.id, filenames,k_min, k_max, num_cluster, assignLabels, method)
-            elif mlmethod == "semisupervisedSpectralClustering":
-                params_str = getattr(preidct_obj, "parameters")
-                params_obj = json.loads(params_str)
-                k_min = int(params_obj['k_min'])
-                k_max = int(params_obj['k_max'])
-                num_cluster = int(params_obj['num_cluster'])
-                assignLabels = str(params_obj['assignLabels'])
-                seed = int(params_obj['seed'])
-                method = str(params_obj['visual'])
-                filenames = []
-                label_filenames = []
-                for obj in filslist_obj.filelist.all():
-                    filenames.append(obj.filepath.name)
-                    label_filenames.append(obj.labelpath.name)
-                labels = read_csv_labels(label_filenames)
-                result = spectralClustering.intuitive_semi_supervised(request.user.id, filenames, labels, k_min, k_max, num_cluster, assignLabels, seed, method)
+            try:
+                if mlmethod == "unsupervisedKmeans":
+                    params_str = getattr(preidct_obj, "parameters")
+                    params_obj = json.loads(params_str)
+                    klength_min = int(params_obj['klength_min'])
+                    klength_max = int(params_obj['klength_max'])
+                    rNum = int(params_obj['rNum'])
+                    cNum = int(params_obj['cNum'])
+                    method = str(params_obj['visual'])
+                    result = kmeans.kmeans(request.user.id, filenames, klength_min, klength_max, rNum, cNum, method)
+                elif mlmethod == "semisupervisedKmeans":
+                    params_str = getattr(preidct_obj, "parameters")
+                    params_obj = json.loads(params_str)
+                    klength_min = int(params_obj['klength_min'])
+                    klength_max = int(params_obj['klength_max'])
+                    rNum = int(params_obj['rNum'])
+                    method = str(params_obj['visual'])
+                    filenames = []
+                    label_filenames = []
+                    for obj in filslist_obj.filelist.all():
+                        filenames.append(obj.filepath.name)
+                        label_filenames.append(obj.labelpath.name)
+                    labels = read_csv_labels(label_filenames)
+                    result = kmeans.kmeans_semiSupervised(request.user.id, filenames, klength_min, klength_max, rNum, labels, method)            
+                elif mlmethod == "unsupervisedGMM":
+                    params_str = getattr(preidct_obj, "parameters")
+                    params_obj = json.loads(params_str)
+                    k_min = int(params_obj['k_min'])
+                    k_max = int(params_obj['k_max'])
+                    num_class = int(params_obj['num_class'])
+                    cov_type = str(params_obj['cov_type'])
+                    seed = int(params_obj['seed'])
+                    method = str(params_obj['visual'])
+                    result = GMM.get_predictions(request.user.id, filenames, k_min, k_max, num_class, cov_type, seed, method)
+                elif mlmethod == "semisupervisedGMM":
+                    params_str = getattr(preidct_obj, "parameters")
+                    params_obj = json.loads(params_str)
+                    k_min = int(params_obj['k_min'])
+                    k_max = int(params_obj['k_max'])
+                    num_class = int(params_obj['num_class'])
+                    cov_type = str(params_obj['cov_type'])
+                    seed = int(params_obj['seed'])
+                    method = str(params_obj['visual'])
+                    model_selection = str(params_obj['model_selection'])
+                    filenames = []
+                    label_filenames = []
+                    for obj in filslist_obj.filelist.all():
+                        filenames.append(obj.filepath.name)
+                        label_filenames.append(obj.labelpath.name)
+                    labels = read_csv_labels(label_filenames)
+                    if model_selection == "Yes":
+                        result = GMM.model_selection(request.user.id, filenames, labels, num_class, seed, method)
+                    else:
+                        result = GMM.get_predictions_semi(request.user.id, filenames, k_min, k_max, num_class, cov_type, seed, labels, method)
+                elif mlmethod == "unsupervisedSpectralClustering":
+                    params_str = getattr(preidct_obj, "parameters")
+                    params_obj = json.loads(params_str)
+                    k_min = int(params_obj['k_min'])
+                    k_max = int(params_obj['k_max'])
+                    num_cluster = int(params_obj['num_cluster'])
+                    assignLabels = str(params_obj['assignLabels'])
+                    method = str(params_obj['visual'])
+                    result = spectralClustering.spectral_clustering(request.user.id, filenames,k_min, k_max, num_cluster, assignLabels, method)
+                elif mlmethod == "semisupervisedSpectralClustering":
+                    params_str = getattr(preidct_obj, "parameters")
+                    params_obj = json.loads(params_str)
+                    k_min = int(params_obj['k_min'])
+                    k_max = int(params_obj['k_max'])
+                    num_cluster = int(params_obj['num_cluster'])
+                    assignLabels = str(params_obj['assignLabels'])
+                    seed = int(params_obj['seed'])
+                    method = str(params_obj['visual'])
+                    filenames = []
+                    label_filenames = []
+                    for obj in filslist_obj.filelist.all():
+                        filenames.append(obj.filepath.name)
+                        label_filenames.append(obj.labelpath.name)
+                    labels = read_csv_labels(label_filenames)
+                    result = spectralClustering.intuitive_semi_supervised(request.user.id, filenames, labels, k_min, k_max, num_cluster, assignLabels, seed, method)
+            except:
+                return JsonResponse({'error':'Something wrong with the prediction. If you are using semi-supervised model, please make sure the number of labels match the number of sequences. If you continue to see this error, please report this issue to https://github.com/solislemuslab/bioklustering/issues. Make sure you include the steps to reproduce the error.'}, status=400)
+            
             list_of_df = result[0]
             all_df = pd.concat(list_of_df)
             # make the index and other column labels to be on same line
             all_df.columns.name = all_df.index.name
             all_df.index.name = None
+            print(str(all_df.shape))
             label = all_df.to_html(col_space=110, justify='left', classes='table table-responsive result-table')
             # write to csv
             if not os.path.exists(os.path.join('media', 'resultfiles')):

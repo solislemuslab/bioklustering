@@ -87,6 +87,7 @@ def get_predictions_semi_original(path,k_min,k_max,num_class,cov_type,seed,label
 def get_predictions_semi(userId, path,k_min,k_max,num_class,cov_type,seed,labels, method):
     targets = []
     kmer_table, output_df = get_kmer_table(path, k_min, k_max)
+
     finalDf = pd.concat([kmer_table, labels], axis = 1)
     gmm = GMM(n_components=num_class,covariance_type=cov_type,random_state = seed)
     for i in range(num_class):

@@ -42,15 +42,22 @@ def plotly_dash_show_plot(userId, kmer_table, labels, model_title, method):
     
     return plot_div
 
-# a method that combines the labeles in the label files 
+# a method that combines the labels in the label files 
 # into one array and in the right order
 # label_paths: a list of label paths
 def read_csv_labels(label_paths):
     all_labels = pd.Series()
     for path in label_paths:
         path = os.path.join("media", path)
-        labels = pd.read_csv(path)
-        labels = pd.Series(labels['Labels'])
+        labels = pd.read_csv(path, header=None)
+        # get first column
+        labels = labels.iloc[:,0].tolist()
+        # remove header if the csv has a header
+        if isinstance(labels[0], str):
+            labels.pop(0)
+        # ensure all labels are integers
+        labels = [int(i) for i in labels]
+        labels = pd.Series(labels)
         all_labels = all_labels.append(labels, ignore_index=True)
     all_labels.name = "Labels"
     return all_labels

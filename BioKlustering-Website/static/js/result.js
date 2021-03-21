@@ -22,10 +22,10 @@ $(window).load(function() {
             } else { // dynamic plot
                 $('#result_img').append(result.plotly_dash)
             }
-
         },
-        error: function(xhr){
-            alert("error: " + xhr.responseText); //Remove this when all is fine.
-        },
-    });
+        error: function(data){
+            alert(data.responseJSON.error);
+            window.location.href = index;
+        }
+    })
 })

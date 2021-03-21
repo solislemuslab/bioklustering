@@ -9,6 +9,7 @@
 <script type="text/javascript">
     window.CSRF_TOKEN = "{{ csrf_token }}";
     let process = "{% url 'process' %}";
+    let index = "{% url 'index' %}";
 </script>
 <script type="text/javascript" src="{% static 'js/result.js' %}"></script>
 <link rel='stylesheet' href="{% static 'css/result.css' %}">

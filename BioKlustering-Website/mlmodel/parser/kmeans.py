@@ -77,6 +77,7 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, y_hat, 
     # convert all clusters into two clusters
     kmerXTableInput["pLabels"] = kmms_labels
     kmerXTableInput["aLabels"] = y_hat.tolist()
+
     newLabels_clusters_1 = kmerXTableInput[kmerXTableInput["aLabels"] == 1]["pLabels"].tolist()
     newLabels_clusters_0 = kmerXTableInput[kmerXTableInput["aLabels"] == 0]["pLabels"].tolist()
     newLabels = []
