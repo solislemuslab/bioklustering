@@ -13,6 +13,7 @@ class FileInfo(models.Model):
     )
     filepath = models.FileField('File', upload_to="userfiles/" )
     labelpath = models.FileField('File', upload_to="userfiles/", blank=True)
+    create_date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.filepath.name

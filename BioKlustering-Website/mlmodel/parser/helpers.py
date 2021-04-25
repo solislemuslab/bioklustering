@@ -4,12 +4,14 @@
 
 import os
 import json
+import datetime
 import pandas as pd
 import plotly.express as px
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from plotly.offline import plot
-from mlmodel.models import PredictInfo
+from mlmodel.models import PredictInfo, FileInfo
+from django.http import HttpResponse
 
 # show the prediction in plotly dashboard which allows
 # interactive functionalities
@@ -84,5 +86,18 @@ def update_parameters(userId, new_params):
         predict_info_params_dict[key] = str(value)
     predict_info.parameters = json.dumps(predict_info_params_dict)
     predict_info.save()
+
+# helper that delete files periodically
+def file_cleanup(request):
+    today = datetime.date.today()
+    period = datetime.timedelta(30)
+    filter_date = today - period
+    # filter files that are 30 days ago
+    filter_files = FileInfo.objects.filter(create_date__lte=filter_date)
+    for f in filter_files:
+        # uncomment below to see which files will get deleted
+        # print(str(f.create_date) + ": " + str(f) + ", " + str(f.getLabelPaths()))
+        f.delete()
+    return HttpResponse({"file cleanup success": ""})
 
     

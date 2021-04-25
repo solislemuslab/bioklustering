@@ -24,9 +24,10 @@ from mlmodel.parser import kmeans, GMM, spectralClustering
 from mlmodel.models import PredictInfo
 from .parser.helpers import read_csv_labels
 
-
+# the login page
 class LoginView(FormView):
-
+    
+    # sign up page
     def resigster(request):
         form = UserCreationForm()
         if request.method == 'POST':
@@ -791,7 +792,7 @@ class ResultView(FormView):
         return response
 
 
-# The reult page
+# The FAQ page
 class FAQView(FormView):
 
     def __init__(self, *args, **kwargs):

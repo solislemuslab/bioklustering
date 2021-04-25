@@ -15,13 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from mlmodel import views
+from mlmodel import views, parser
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
     path('', views.PredictionView.as_view(template_name="index.html"), name="index"),
     path('faq/', views.FAQView.as_view(template_name="faq.html") , name="faq"),
     path('result/', views.ResultView.as_view(template_name="result.html"), name="result"),
@@ -29,6 +28,7 @@ urlpatterns = [
     path('download_zip/<int:userId>', views.ResultView.download_zip, name='download_zip'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('register/', views.LoginView.resigster, name='register'),
+    path('file_cleanup/', parser.helpers.file_cleanup, name="file_cleanup"),
     path('django_plotly_dash/', include('django_plotly_dash.urls'))
 ]
 
