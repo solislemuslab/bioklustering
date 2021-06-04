@@ -25,7 +25,7 @@ BioKlustering is an [open source](http://opensource.org) project, and the source
 
 Users with strong programming skills might like to modify the existing code and run a version of the website locally. 
 
-1. Clone this repository
+1. Clone this repository by typing the following line in the terminal
    
 ```
 git clone https://github.com/solislemuslab/bioklustering
@@ -39,7 +39,7 @@ python3 -m venv virtual-env
 source virtual-env/bin/activate
 ```
    
-3. Install the necessary packages with
+3. Install the necessary packages by typing the following line in the terminal
 
 ```  
 pip3 install -r requirements.txt
