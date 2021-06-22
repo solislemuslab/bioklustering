@@ -38,6 +38,7 @@ cd BioKlustering-Website
 python3 -m venv virtual-env
 source virtual-env/bin/activate
 ```
+Note that Mac users might need the whole path to `python3`: `/usr/local/bin/python3`.
    
 3. Install the necessary packages by typing the following line in the terminal
 
