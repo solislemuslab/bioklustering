@@ -37,7 +37,9 @@ def read_fasta_sequences(sequence_paths):
         sequence = parseFasta(path)
         all_sequences = pd.concat([all_sequences, sequence])
     return all_sequences
-    
+
+
+# didn't change because unsupervised k means doesn't require actual labels.
 def kmeans(userId, fasta, klength_min, klength_max, rNum, cNum, method):
     inputData = read_fasta_sequences(fasta)
     inputData["Sequence"] = inputData["Sequence"].apply(lambda x: x.replace("-", ""))
@@ -54,7 +56,22 @@ def kmeans(userId, fasta, klength_min, klength_max, rNum, cNum, method):
     inputData.insert(0, "Labels", y_hat)
         
     return [[inputData], [plot_div]]
-        
+
+
+# added helper method for semi-supervised labeling
+def get_unique_numbers(numbers):
+
+    list_of_unique_numbers = []
+
+    unique_numbers = set(numbers)
+
+    for number in unique_numbers:
+        list_of_unique_numbers.append(number)
+
+    return list_of_unique_numbers
+
+
+# Revised.
 def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, y_hat, method):
     inputData = read_fasta_sequences(fasta)
     inputData["Sequence"] = inputData["Sequence"].apply(lambda x: x.replace("-", ""))
@@ -63,7 +80,7 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, y_hat, 
     PCAembedding = PCA(n_components=10)
     NkmerXTableInput = preprocessing.normalize(kmerXTableInput)
     PCAembedding_low = PCAembedding.fit_transform(NkmerXTableInput)
-    
+
     ms = MeanShift()
     ms.fit(PCAembedding_low)
     cluster_centers = ms.cluster_centers_
@@ -74,19 +91,28 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, y_hat, 
         kmms = KMeans(init = cluster_centers, n_clusters = len(cluster_centers))
         kmms_labels = kmms.fit_predict(PCAembedding_low)
 
-    # convert all clusters into two clusters
     kmerXTableInput["pLabels"] = kmms_labels
-    kmerXTableInput["aLabels"] = y_hat.tolist()
+    kmerXTableInput["aLabels"] = actual_labels = y_hat.tolist()
+    newLabelsClusters = dict()
+    unique_actual_labels = get_unique_numbers(kmerXTableInput["aLabels"])
+    for actual_label in unique_actual_labels:
+        newLabelsClusters[actual_label] = kmerXTableInput[kmerXTableInput["aLabels"] == actual_label]["pLabels"].tolist()
 
-    newLabels_clusters_1 = kmerXTableInput[kmerXTableInput["aLabels"] == 1]["pLabels"].tolist()
-    newLabels_clusters_0 = kmerXTableInput[kmerXTableInput["aLabels"] == 0]["pLabels"].tolist()
+    unique_predicted_labels = get_unique_numbers(kmms_labels)
+    new_labels_dict = dict()
+    for plabel in unique_predicted_labels:
+        l = {}
+        for key in newLabelsClusters.keys():
+            if key != -1:
+                l[key] = newLabelsClusters[key].count(plabel)
+        new_labels_dict[plabel] = max(l, key=l.get)
+
     newLabels = []
-
-    for label in kmms_labels:
-        if newLabels_clusters_1.count(label) > newLabels_clusters_0.count(label):
-            newLabels.append(1)
+    for i in range(len(kmms_labels)):
+        if actual_labels[i] == -1:
+            newLabels.append(new_labels_dict[kmms_labels[i]])
         else:
-            newLabels.append(0)
+            newLabels.append(actual_labels[i])
 
     kmerTable = kmerXTableInput.drop(columns=["pLabels", "aLabels"])
     plotly_kmertable = kmerTable
@@ -95,6 +121,6 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, y_hat, 
         plotly_kmertable = preprocessing.normalize(kmerTable)
     plotly_div = plotly_dash_show_plot(userId, plotly_kmertable, plotly_labels, "Semi-supervised Kmeans", method)
 
-    inputData.insert(0, "Labels", newLabels)       
+    inputData.insert(0, "Labels", newLabels)
 
     return [[inputData], [plotly_div]]
