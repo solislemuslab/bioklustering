@@ -36,8 +36,9 @@ def get_kmer_table(path, k_min, k_max):
 
 def get_gene_sequences(filename):
     genes = []
-    for record in SeqIO.parse(filename, "fasta"):
-        genes.append(str(record.seq))
+    with open(filename) as handle:
+        for record in SeqIO.parse(handle, "fasta"):
+            genes.append(str(record.seq))
     return genes
 
 
@@ -70,6 +71,8 @@ def read_fasta(paths):
 
 def get_predictions(userId, path, k_min, k_max, num_class, cov_type, seed, method):
     kmer_table, output_df = get_kmer_table(path, k_min, k_max)
+    # if len(kmer_table) < num_class:
+    #     raise ValueError()
     gmm = GMM(n_components=num_class, covariance_type=cov_type, random_state=seed).fit(kmer_table)
     predictions = gmm.predict(kmer_table)
     plot_div = plotly_dash_show_plot(userId, kmer_table, predictions, "Unsupervised Gaussian Mixture Model", method)
@@ -113,20 +116,24 @@ def get_predictions_semi_original(path, k_min, k_max, num_class, cov_type, seed,
 # modified for website
 def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, labels, method):
     targets = []
+    unique_given_labels = get_unique_numbers(labels)
+    if num_class < len(unique_given_labels) - 1 and -1 in unique_given_labels:
+        num_class = len(unique_given_labels) - 1
+    if num_class < len(unique_given_labels) and -1 not in unique_given_labels:
+        num_class = len(unique_given_labels)
     kmer_table, output_df = get_kmer_table(path, k_min, k_max)
-
+    # print(f"num_class: {num_class}")
     finalDf = pd.concat([kmer_table, labels], axis=1)
     gmm = GMM(n_components=num_class, covariance_type=cov_type, random_state=seed)
-    print(finalDf[0])
     for i in range(num_class):
-        if i in list(finalDf[0]):
+        if i in list(finalDf.Labels):
             targets.append(i)
     if len(targets) == num_class:
-        gmm.means_init = np.array([kmer_table[finalDf[0] == i].mean(axis=0) for i in targets])
+        gmm.means_init = np.array([kmer_table[finalDf.Labels == i].mean(axis=0) for i in targets])
     gmm.fit(kmer_table)
     predictions = gmm.predict(kmer_table)
-    print(type(predictions))
-    unique_given_labels = get_unique_numbers(labels)
+
+    # Get the counts for the given labels and the predicted labels
     given_labels_count = {}
     labels_list = list(labels)
     for label in unique_given_labels:
@@ -135,18 +142,39 @@ def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, 
     predicted_labels_count = {}
     for label in unique_predicted_labels:
         predicted_labels_count[label] = (predictions == label).sum()
-    del given_labels_count[-1]
+    max_item = max(predicted_labels_count, key=predicted_labels_count.get)
+    if -1 in given_labels_count.keys():
+        del given_labels_count[-1]
     given_labels_count = sorted(given_labels_count.items(), key=lambda x: x[1], reverse=True)
     predicted_labels_count = sorted(predicted_labels_count.items(), key=lambda x: x[1], reverse=True)
+
+    # Map the predicted labels to the given/actual labels
     map_predict_to_actual = {}
+    # shorter_length = min(len(predicted_labels_count), len(given_labels_count))
+    # for i in range(shorter_length):
+    #     map_predict_to_actual[predicted_labels_count[i][0]] = given_labels_count[i][0]
+    max_value = max(unique_given_labels) + 1
     for i in range(len(predicted_labels_count)):
-        map_predict_to_actual[predicted_labels_count[i][0]] = given_labels_count[i][0]
+        if i < len(given_labels_count):
+            map_predict_to_actual[predicted_labels_count[i][0]] = given_labels_count[i][0]
+        else:
+            print(f"{predicted_labels_count[i][0]} mapped to {max_value}")
+            map_predict_to_actual[predicted_labels_count[i][0]] = max_value
+            max_value += 1
+    print(f"map_predict_to_actual: {map_predict_to_actual}")
     predictions_final = []
+
+    # predictions_final contains the final results
+    # it takes care of the case when num_class > number of unique labels given
     for i in range(len(predictions)):
         if labels[i] == -1:
-            predictions_final.append(map_predict_to_actual[predictions[i]])
+            if predictions[i] in map_predict_to_actual.keys():
+                predictions_final.append(map_predict_to_actual[predictions[i]])
+            else:
+                predictions_final.append(map_predict_to_actual[max_item])
         else:
             predictions_final.append(labels[i])
+
     predictions = np.array(predictions_final)
     plot_div = plotly_dash_show_plot(userId, kmer_table, predictions, "Semi-supervised Gaussian Mixture Model", method)
     output_df.insert(0, "Labels", predictions)
@@ -209,16 +237,3 @@ def model_selection(userId, path, labels, num_class, seed, method):
     update_parameters(userId, new_params)
     return get_predictions_semi(userId, path, best_kmin, best_kmax, num_class, best_cov, seed, labels, method)
     # return best_kmin,best_kmax,best_cov,best_prediction
-
-# k_min = 2
-# k_max = 3
-# num_class = 2
-# cov_type = 'full'
-# seed = 0
-# labels_50 = pd.read_csv('labels_59.csv', delimiter=',', header=None)
-# labels_50 = pd.Series(labels_50[0])
-# PATH01 = "sequence_59.fasta"
-# # def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, labels, method)
-# [labels], [plot] = get_predictions_semi(userId=0, path = PATH01, k_min = k_min, k_max = k_max, num_class = num_class,
-#                                         cov_type = cov_type, seed = seed, labels = labels_50, method = 'PCA')
-# print(labels)

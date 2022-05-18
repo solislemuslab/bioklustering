@@ -43,6 +43,8 @@ def read_fasta_sequences(sequence_paths):
 def kmeans(userId, fasta, klength_min, klength_max, rNum, cNum, method):
     inputData = read_fasta_sequences(fasta)
     inputData["Sequence"] = inputData["Sequence"].apply(lambda x: x.replace("-", ""))
+    # if inputData["Sequence"].size < cNum:
+    #     raise ValueError()
 
     kmerXTableInput = kmerXTable(inputData, klength_min, klength_max)
     km = KMeans(random_state = rNum, n_clusters = cNum)
@@ -88,7 +90,7 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, y_hat, 
     import warnings
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        kmms = KMeans(init = cluster_centers, n_clusters = len(cluster_centers))
+        kmms = KMeans(init=cluster_centers, n_clusters=len(cluster_centers))
         kmms_labels = kmms.fit_predict(PCAembedding_low)
 
     kmerXTableInput["pLabels"] = kmms_labels
@@ -100,6 +102,8 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, y_hat, 
 
     unique_predicted_labels = get_unique_numbers(kmms_labels)
     new_labels_dict = dict()
+
+    # Map the predicted labels to the given/actual labels
     for plabel in unique_predicted_labels:
         l = {}
         for key in newLabelsClusters.keys():
@@ -107,6 +111,7 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, y_hat, 
                 l[key] = newLabelsClusters[key].count(plabel)
         new_labels_dict[plabel] = max(l, key=l.get)
 
+    # newLabels contains the final results
     newLabels = []
     for i in range(len(kmms_labels)):
         if actual_labels[i] == -1:

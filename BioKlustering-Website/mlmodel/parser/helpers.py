@@ -6,6 +6,7 @@ import os
 import json
 import datetime
 import pandas as pd
+import numpy as np
 import plotly.express as px
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
@@ -29,7 +30,9 @@ def plotly_dash_show_plot(userId, kmer_table, labels, model_title, method):
         tsne_result = tsne.fit_transform(kmer_table)
         results = tsne_result
     dots = {'x':results[:,0], 'y':results[:,1], 'label':labels}
-    dots['label'] = dots['label'].astype(str)
+    # add the following line for Spectral Clustering
+    numpy_labels = np.array(labels)
+    dots['label'] = numpy_labels.astype(str)
     df = pd.DataFrame(dots)
     fig = px.scatter(df, x='x', y='y', 
         title=model_title + " " + method,
