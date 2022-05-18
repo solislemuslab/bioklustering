@@ -90,15 +90,12 @@ def spectral_clustering(userId, paths, k_min, k_max, num_cluster, assignLabels, 
 
 
 def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_cluster, assignLabels, seed, method):
-    # # get the number of unique labels in the input file and make that num_cluster
-    #
     label_list = inputlabels.to_list()
     unique_given_labels = get_unique_numbers(label_list)
     if num_cluster < len(unique_given_labels) - 1 and -1 in unique_given_labels:
         num_cluster = len(unique_given_labels) - 1
     if num_cluster < len(unique_given_labels) and -1 not in unique_given_labels:
         num_cluster = len(unique_given_labels)
-    # print(f"num_cluster: {num_cluster}")
     total_len = len(label_list)
     unknown_label = -1
     total_labeled = 0
@@ -206,9 +203,6 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
 
     # Map the predicted labels to the given/actual labels
     map_predict_to_actual = {}
-    # shorter_length = min(len(predicted_labels_count), len(given_labels_count))
-    # for i in range(shorter_length):
-    #     map_predict_to_actual[predicted_labels_count[i][0]] = given_labels_count[i][0]
     max_value = max(unique_given_labels) + 1
     for i in range(len(predicted_labels_count)):
         if i < len(given_labels_count):

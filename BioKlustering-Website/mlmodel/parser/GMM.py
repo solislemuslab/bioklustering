@@ -71,8 +71,6 @@ def read_fasta(paths):
 
 def get_predictions(userId, path, k_min, k_max, num_class, cov_type, seed, method):
     kmer_table, output_df = get_kmer_table(path, k_min, k_max)
-    # if len(kmer_table) < num_class:
-    #     raise ValueError()
     gmm = GMM(n_components=num_class, covariance_type=cov_type, random_state=seed).fit(kmer_table)
     predictions = gmm.predict(kmer_table)
     plot_div = plotly_dash_show_plot(userId, kmer_table, predictions, "Unsupervised Gaussian Mixture Model", method)
@@ -122,7 +120,7 @@ def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, 
     if num_class < len(unique_given_labels) and -1 not in unique_given_labels:
         num_class = len(unique_given_labels)
     kmer_table, output_df = get_kmer_table(path, k_min, k_max)
-    # print(f"num_class: {num_class}")
+
     finalDf = pd.concat([kmer_table, labels], axis=1)
     gmm = GMM(n_components=num_class, covariance_type=cov_type, random_state=seed)
     for i in range(num_class):
@@ -150,9 +148,6 @@ def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, 
 
     # Map the predicted labels to the given/actual labels
     map_predict_to_actual = {}
-    # shorter_length = min(len(predicted_labels_count), len(given_labels_count))
-    # for i in range(shorter_length):
-    #     map_predict_to_actual[predicted_labels_count[i][0]] = given_labels_count[i][0]
     max_value = max(unique_given_labels) + 1
     for i in range(len(predicted_labels_count)):
         if i < len(given_labels_count):

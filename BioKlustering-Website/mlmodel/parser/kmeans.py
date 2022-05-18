@@ -43,8 +43,6 @@ def read_fasta_sequences(sequence_paths):
 def kmeans(userId, fasta, klength_min, klength_max, rNum, cNum, method):
     inputData = read_fasta_sequences(fasta)
     inputData["Sequence"] = inputData["Sequence"].apply(lambda x: x.replace("-", ""))
-    # if inputData["Sequence"].size < cNum:
-    #     raise ValueError()
 
     kmerXTableInput = kmerXTable(inputData, klength_min, klength_max)
     km = KMeans(random_state = rNum, n_clusters = cNum)
