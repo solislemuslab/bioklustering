@@ -1,8 +1,12 @@
-model: Semi-supervised K-Means
-klength_min: 6
-klength_max: 7
-rNum: 0530956
+model: Semi-supervised GMM
+k_min: 2
+k_max: 3
+num_class: 2
+cov_type: diag
+seed: 05301013
 visual: PCA
-created time: 2022-05-30T15:36:07.517590+00:00
-running time: 1343.73 ms
+model_selection: No
+accuracy: 1.0
+created time: 2022-05-30T15:46:12.111424+00:00
+running time: 364.63 ms
 note: if you see the parameter values here are different from what you chose, it is because the underlying model finds the best parameter values with the best accuracy based on your input.

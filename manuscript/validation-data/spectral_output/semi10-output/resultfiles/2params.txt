@@ -1,9 +1,11 @@
-model: Unsupervised Spectral Clustering
-k_min: 2
+model: Semi-supervised Spectral Clustering
+k_min: 3
 k_max: 3
 num_cluster: 2
-assignLabels: kmeans
+assignLabels: discretize
+seed: 05301010
 visual: PCA
-created time: 2022-05-30T15:34:29.314419+00:00
-running time: 452.55 ms
+accuracy: 0.6470588235294118
+created time: 2022-05-30T15:42:29.006772+00:00
+running time: 276.33 ms
 note: if you see the parameter values here are different from what you chose, it is because the underlying model finds the best parameter values with the best accuracy based on your input.
