@@ -80,9 +80,36 @@ python3 manage.py migrate
 python3 manage.py runserver
 ```
 
-**Note:** We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionalities
+**Notes:** 
 
-### Steps to test this website locally
+- We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionalities.
+- Sometimes when running `python3 manage.py makemigrations`, you might get the following warning message:
+
+```
+The dash_core_components package is deprecated. Please replace
+`import dash_core_components as dcc` with `from dash import dcc`
+
+The dash_html_components package is deprecated. Please replace
+`import dash_html_components as html` with `from dash import html`
+
+You are trying to add the field 'create_date' with 'auto_now_add=True' to fileinfo without a default; the database needs something to populate existing rows.
+
+ 1) Provide a one-off default now (will be set on all existing rows)
+ 2) Quit, and let me add a default in models.py
+Select an option:
+```
+
+If this happens, select option 1 and then press 'Enter' after the message:
+
+```
+Please enter the default value now, as valid Python
+You can accept the default 'timezone.now' by pressing 'Enter' or you can provide another value.
+The datetime and django.utils.timezone modules are available, so you can do e.g. timezone.now
+Type 'exit' to exit this prompt
+[default: timezone.now] >>>
+```
+
+### Steps to run the unit tests of this website locally
 1. Make sure you are in a virtual environment.
 ```
 source virtual-env/bin/activate
