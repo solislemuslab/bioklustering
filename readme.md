@@ -48,21 +48,21 @@ pip3 install -r requirements.txt
 
 A list of packages can be found in the `requirements.txt` file and is listed below:
 ```
-    numpy~=1.19.4
-    pandas~=1.1.5
-    bio~=0.2.3
-    scikit-learn~=0.23.2
-    plotly~=4.14.1
-    Django~=3.1.2
-    django-crispy-forms~=1.9.2
-    django-plotly-dash~=1.4.2
-    channels~=2.4.0
-    channels-redis~=3.1.0
-    django-redis~=4.12.1
-    daphne~=2.5.0
-    redis~=3.5.3
-    psutil~=5.7.3
-    kaleido~=0.1.0
+numpy~=1.19.4
+pandas~=1.1.5
+bio~=1.3.2
+scikit-learn~=0.23.2
+plotly~=5.4.0
+Django~=3.1.2
+django-plotly-dash~=1.4.2
+channels~=2.4.0
+channels-redis~=3.1.0
+django-crispy-forms~=1.9.2
+django-redis~=4.12.1
+daphne~=2.5.0
+redis~=3.5.3
+psutil~=5.7.3
+kaleido~=0.1.0
 ```
 
 4. You might also need to install `plotly-orca` which is for writing and saving the static plotly images locally. To install with conda, you can use the following command (or see [this link](https://plotly.com/python/orca-management/) for other alternatives). 
