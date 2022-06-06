@@ -66,13 +66,23 @@ dat$pred50k.x2 = tmpdat$dimension2
 ## --------------------------------------------
 tmpdat = read.table("spectral_output/Updated_spectral_PCA/Unsupervised_export_PCA.csv", header=TRUE, sep=",")
 str(tmpdat)
+
+## original results:
 tmpdat2 = read.table("spectral_output/spectral_unsupervised_result.csv", header=TRUE, sep=",")
 str(tmpdat2)
+## after Yuke's fixes:
+tmpdat2 = read.table("spectral_output/unsupervised-output/resultfiles/2table.csv", header=TRUE, sep=",")
+str(tmpdat2)
 
-## add column to dat
+## add column to dat (original results)
 dat$pred.unsup = tmpdat2$X0
+## after Yuke:
+dat$pred.unsup = tmpdat2$Labels
+
 dat$predunsup.x1 = tmpdat$dimension1
 dat$predunsup.x2 = tmpdat$dimension2
+
+
 
 ## Data has all columns:
 str(dat)

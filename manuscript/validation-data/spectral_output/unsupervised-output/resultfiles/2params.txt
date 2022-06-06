@@ -1,0 +1,9 @@
+model: Unsupervised Spectral Clustering
+k_min: 2
+k_max: 3
+num_cluster: 2
+assignLabels: kmeans
+visual: PCA
+created time: 2022-05-30T15:34:29.314419+00:00
+running time: 452.55 ms
+note: if you see the parameter values here are different from what you chose, it is because the underlying model finds the best parameter values with the best accuracy based on your input.
