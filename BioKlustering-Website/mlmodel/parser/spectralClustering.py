@@ -78,11 +78,11 @@ def read_fasta(paths):
 # k_max: int. max of kmer
 # num_cluster: int. number of clusters
 # assignLabels: a string. the way to assign label at the final stage of spectral clustering. Can be "kmeans" or "discretize"
-def spectral_clustering(userId, paths, k_min, k_max, num_cluster, assignLabels, method):
+def spectral_clustering(userId, paths, k_min, k_max, num_cluster, assignLabels, method, seed):
     kmer_table, output_df = get_kmer_table(paths, k_min, k_max)
     # if len(kmer_table) < num_cluster:
     #     raise ValueError()
-    spectral_clustering = SpectralClustering(n_clusters=num_cluster, assign_labels=assignLabels, random_state=0)
+    spectral_clustering = SpectralClustering(n_clusters=num_cluster, assign_labels=assignLabels, random_state=seed)
     labels = spectral_clustering.fit_predict(kmer_table)
     plot_div = plotly_dash_show_plot(userId, kmer_table, labels, "Unsupervised Spectral Clustering", method)
     output_df.insert(0, "Labels", labels)

@@ -262,7 +262,7 @@ class PredictionView(FormView):
                                            widget=MyNumberInput(attrs={
                                                "class": "form-control",
                                                "label": "Seed",
-                                               "help_text": "The random seed to reproduce the results. If none chosen, it will be internally selected and returned to the used in the logfiles."
+                                               "help_text": "The random seed to reproduce the results. Please select an integer less than 10 digits. If none chosen, it will be internally selected and returned to the used in the logfiles."
                                            })),
                 'visual': forms.ChoiceField(choices=visual_types,
                                             widget=MySelect(attrs={
@@ -340,7 +340,7 @@ class PredictionView(FormView):
                                            widget=MyNumberInput(attrs={
                                                "class": "form-control",
                                                "label": "Seed",
-                                               "help_text": "The random seed to reproduce the results. If none are selected, it will be determined by current time."
+                                               "help_text": "The random seed to reproduce the results. Please select an integer less than 10 digits. If none are selected, it will be determined by current time."
                                            })),
                 'visual': forms.ChoiceField(choices=visual_types,
                                             widget=MySelect(attrs={
@@ -412,6 +412,12 @@ class PredictionView(FormView):
                                                       "help_text": "The way to assign label at the final stage of spectral clustering. Can be 'kmeans' or 'discretize'.",
                                                       "isHtml": True
                                                   })),
+                'seed': forms.IntegerField(validators=[MinValueValidator(2)],
+                                           widget=MyNumberInput(attrs={
+                                               "class": "form-control",
+                                               "label": "Seed",
+                                               "help_text": "The random seed to reproduce the results. Please select an integer less than 10 digits. If none are selected, it will be determined by current time."
+                                           })),
                 'visual': forms.ChoiceField(choices=visual_types,
                                             widget=MySelect(attrs={
                                                 "class": "custom-select",
@@ -434,7 +440,8 @@ class PredictionView(FormView):
                     'k_max': 3,
                     'num_cluster': 2,
                     'assignLabels': 'kmeans',
-                    'visual': 'PCA'
+                    'visual': 'PCA',
+                    'seed': int(time.time()),
                 }
         elif mlmodels == "semisupervisedSpectralClustering":
             assignLabels = [
@@ -476,7 +483,7 @@ class PredictionView(FormView):
                                            widget=MyNumberInput(attrs={
                                                "class": "form-control",
                                                "label": "Seed",
-                                               "help_text": "The random seed to reproduce the results. If none are selected, it will be determined by current time."
+                                               "help_text": "The random seed to reproduce the results. Please select an integer less than 10 digits. If none are selected, it will be determined by current time."
                                            })),
                 'visual': forms.ChoiceField(choices=visual_types,
                                             widget=MySelect(attrs={
@@ -525,7 +532,7 @@ class PredictionView(FormView):
                                            widget=MyNumberInput(attrs={
                                                "class": "form-control",
                                                "label": "Seed",
-                                               "help_text": "The random seed to reproduce the results. If none are selected, it will be determined based on the time."
+                                               "help_text": "The random seed to reproduce the results. Please select an integer less than 10 digits. If none are selected, it will be determined based on the time."
                                            })),
                 'cNum': forms.IntegerField(validators=[MinValueValidator(2)],
                                            widget=MyNumberInput(attrs={
@@ -702,11 +709,12 @@ class ResultView(FormView):
                     params_obj = json.loads(params_str)
                     k_min = int(params_obj['k_min'])
                     k_max = int(params_obj['k_max'])
+                    seed = int(params_obj['seed'])
                     num_cluster = int(params_obj['num_cluster'])
                     assignLabels = str(params_obj['assignLabels'])
                     method = str(params_obj['visual'])
                     result = spectralClustering.spectral_clustering(request.user.id, filenames, k_min, k_max,
-                                                                    num_cluster, assignLabels, method)
+                                                                    num_cluster, assignLabels, method, seed)
                 elif mlmethod == "semisupervisedSpectralClustering":
                     params_str = getattr(preidct_obj, "parameters")
                     params_obj = json.loads(params_str)
