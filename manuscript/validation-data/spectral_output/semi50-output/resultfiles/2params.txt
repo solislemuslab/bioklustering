@@ -6,6 +6,6 @@ assignLabels: kmeans
 seed: 05301004
 visual: PCA
 accuracy: 0.7303370786516854
-created time: 2022-05-30T15:38:16.324562+00:00
-running time: 771.96 ms
+created time: 2022-05-31T15:35:38.491722+00:00
+running time: 1561.53 ms
 note: if you see the parameter values here are different from what you chose, it is because the underlying model finds the best parameter values with the best accuracy based on your input.
