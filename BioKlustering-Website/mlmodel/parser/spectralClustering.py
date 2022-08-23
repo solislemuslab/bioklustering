@@ -203,19 +203,29 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
 
     # Map the predicted labels to the given/actual labels
     map_predict_to_actual = {}
+    for label_GIVEN_dict_entry in given_labels_count:
+        label_GIVEN = label_GIVEN_dict_entry[0]
+        predicted_labels_count_GIVEN = {}
+        label_GIVEN_idx = [index for (index, item) in enumerate(labels_list) if item == label_GIVEN]
+        res_GIVEN = [res[i] for i in label_GIVEN_idx]
+        unique_predicted_labels_GIVEN = get_unique_numbers(res_GIVEN)
+        for lab in unique_predicted_labels_GIVEN:
+            predicted_labels_count_GIVEN[lab] = (res_GIVEN == lab).sum()
+        map_predict_to_actual[max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)] = label_GIVEN
+
+
+    
     max_value = max(unique_given_labels) + 1
-    for i in range(len(predicted_labels_count)):
-        if i < len(given_labels_count):
-            map_predict_to_actual[predicted_labels_count[i][0]] = given_labels_count[i][0]
-        else:
-            print(f"{predicted_labels_count[i][0]} mapped to {max_value}")
-            map_predict_to_actual[predicted_labels_count[i][0]] = max_value
+    for upl in unique_predicted_labels:
+        if upl not in map_predict_to_actual.keys():
+            print(f"{upl} mapped to {max_value}")
+            map_predict_to_actual[upl] = max_value
             max_value += 1
 
     # predictions_final contains the final results
     # it takes care of the case when num_class > number of unique labels given
     predictions_final = []
-    print(f"map_predict_to_actual: {map_predict_to_actual}")
+    predictions_tmp = []
     for i in range(len(res)):
         if inputlabels[i] == -1:
             if res[i] in map_predict_to_actual.keys():
@@ -224,8 +234,11 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
                 predictions_final.append(map_predict_to_actual[max_item])
         else:
             predictions_final.append(inputlabels[i])
-    print(predictions_final)
-    res = np.array(predictions_final)
+        if res[i] in map_predict_to_actual.keys():
+            predictions_tmp.append(map_predict_to_actual[res[i]])
+        else:
+            predictions_tmp.append(map_predict_to_actual[max_item])
+    res = np.array(predictions_final) 
 
     plot_div = plotly_dash_show_plot(userId, kmer_table, res, "Semi-supervised Spectral Clustering", method)
     output_df.insert(0, "Labels", res)
