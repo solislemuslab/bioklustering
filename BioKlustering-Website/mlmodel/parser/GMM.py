@@ -10,6 +10,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.mixture import GaussianMixture as GMM
 import os
 from .helpers import plotly_dash_show_plot, update_parameters
+import copy
 
 
 def parseFasta(data):
@@ -129,23 +130,37 @@ def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, 
     res = np.array(predictions)
 
     # Map the predicted labels to the given/actual labels
+    unselected_given = copy.deepcopy(unique_given_labels)
+    if -1 in unselected_given:
+        unselected_given.remove(-1)
+    unselected_pred = copy.deepcopy(unique_predicted_labels)
     map_predict_to_actual = {}
     for label_GIVEN_dict_entry in given_labels_count:
         label_GIVEN = label_GIVEN_dict_entry[0]
         predicted_labels_count_GIVEN = {}
         label_GIVEN_idx = [index for (index, item) in enumerate(labels_list) if item == label_GIVEN]
         res_GIVEN = [res[i] for i in label_GIVEN_idx]
-        unique_predicted_labels_GIVEN = get_unique_numbers(res_GIVEN)
+        unique_predicted_labels_GIVEN = list(set(get_unique_numbers(res_GIVEN)) & set(unselected_pred))
+        if len(unique_predicted_labels_GIVEN) == 0:
+            continue
         for lab in unique_predicted_labels_GIVEN:
             predicted_labels_count_GIVEN[lab] = (res_GIVEN == lab).sum()
         map_predict_to_actual[max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)] = label_GIVEN
-            
-    max_value = max(unique_given_labels) + 1
-    for upl in unique_predicted_labels:
-        if upl not in map_predict_to_actual.keys():
-            print(f"{upl} mapped to {max_value}")
-            map_predict_to_actual[upl] = max_value
-            max_value += 1
+        unselected_given.remove(label_GIVEN)
+        to_rem = max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)
+        unselected_pred.remove(to_rem)
+
+    if len(unique_given_labels) < num_class:
+        max_value = max(unique_given_labels) + 1
+        for upl in unique_predicted_labels:
+            if upl not in map_predict_to_actual.keys():
+                print(f"{upl} mapped to {max_value}")
+                map_predict_to_actual[upl] = max_value
+                max_value += 1
+                unselected_pred.remove(upl)
+
+    
+    
     print(f"map_predict_to_actual: {map_predict_to_actual}")
     predictions_final = []
 
@@ -158,6 +173,7 @@ def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, 
             else:
                 predictions_final.append(map_predict_to_actual[max_item])
         else:
+            print("predicted label ", predictions[i], " mapped to true label ", labels[i], " at index ", i)
             predictions_final.append(labels[i])
 
     predictions = np.array(predictions_final)
