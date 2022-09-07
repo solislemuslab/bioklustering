@@ -64,8 +64,7 @@ tmpdat = read.table("../scripts/spectral/unsupervised_PCA.csv", header=TRUE, sep
 str(tmpdat)
 
 ## add column to dat (original results)
-dat$pred.unsup = tmpdat$labels
-
+dat$pred.unsup = tmpdat$label
 dat$predunsup.x1 = tmpdat$dimension1
 dat$predunsup.x2 = tmpdat$dimension2
 
@@ -332,26 +331,26 @@ dat$pred0 = tmpdat$Labels
 dat$pred0.x1 = tmpdat2$principal.Component.1
 dat$pred0.x2 = tmpdat2$Principal.Component.2
 
-tmpdat = read.table("../scripts/gmm/predictions_10__bestModel.csv", header=TRUE, sep=",")
+tmpdat = read.table("../scripts/gmm/predictions_10%_bestModel.csv", header=TRUE, sep=",")
 str(tmpdat)
-tmpdat2 = read.table("../scripts/gmm/pca_10_.csv", header=TRUE, sep=",")
+tmpdat2 = read.table("../scripts/gmm/pca_10%.csv", header=TRUE, sep=",")
 str(tmpdat2)
 dat$pred10 = tmpdat$Labels
 dat$pred10.x1 = tmpdat2$principal.Component.1
 dat$pred10.x2 = tmpdat2$Principal.Component.2
 
-tmpdat = read.table("../scripts/gmm/predictions_10__only0s_bestModel.csv", header=TRUE, sep=",")
+tmpdat = read.table("../scripts/gmm/predictions_10%_only0s_bestModel.csv", header=TRUE, sep=",")
 str(tmpdat)
-tmpdat2 = read.table("../scripts/gmm/pca_10__only0.csv", header=TRUE, sep=",")
+tmpdat2 = read.table("../scripts/gmm/pca_10%_only0.csv", header=TRUE, sep=",")
 str(tmpdat2)
 dat$pred10.0 = tmpdat$Labels
 dat$pred10.0.x1 = tmpdat2$principal.Component.1
 dat$pred10.0.x2 = tmpdat2$Principal.Component.2
 
 
-tmpdat = read.table("../scripts/gmm/predictions_50__bestModel.csv", header=TRUE, sep=",")
+tmpdat = read.table("../scripts/gmm/predictions_50%_bestModel.csv", header=TRUE, sep=",")
 str(tmpdat)
-tmpdat2 = read.table("../scripts/gmm/pca_50_.csv", header=TRUE, sep=",")
+tmpdat2 = read.table("../scripts/gmm/pca_50%.csv", header=TRUE, sep=",")
 str(tmpdat2)
 dat$pred50 = tmpdat$Labels
 dat$pred50.x1 = tmpdat2$principal.Component.1

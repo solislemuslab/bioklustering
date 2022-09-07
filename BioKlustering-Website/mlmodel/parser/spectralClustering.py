@@ -118,10 +118,67 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
                 spectral_clustering = SpectralClustering(n_clusters=num_cluster, assign_labels="kmeans",
                                                          random_state=seed)
                 labels = spectral_clustering.fit_predict(kmer_table)
+
+                given_labels_count = {}
+                labels_list = list(inputlabels)
+                for label in unique_given_labels:
+                    given_labels_count[label] = labels_list.count(label)
+                unique_predicted_labels = get_unique_numbers(labels)
+                predicted_labels_count = {}
+                for label in unique_predicted_labels:
+                    predicted_labels_count[label] = (labels == label).sum()
+                max_item = max(predicted_labels_count, key=predicted_labels_count.get)
+                if -1 in given_labels_count.keys():
+                    del given_labels_count[-1]
+                given_labels_count = sorted(given_labels_count.items(), key=lambda x: x[1], reverse=True)
+                predicted_labels_count = sorted(predicted_labels_count.items(), key=lambda x: x[1], reverse=True)
+
+                unselected_given = copy.deepcopy(unique_given_labels)
+                if -1 in unselected_given:
+                    unselected_given.remove(-1)
+                unselected_pred = copy.deepcopy(unique_predicted_labels)
+                map_predict_to_actual = {}
+                for label_GIVEN_dict_entry in given_labels_count:
+                    label_GIVEN = label_GIVEN_dict_entry[0]
+                    predicted_labels_count_GIVEN = {}
+                    label_GIVEN_idx = [index for (index, item) in enumerate(labels_list) if item == label_GIVEN]
+                    res_GIVEN = [labels[k] for k in label_GIVEN_idx]
+                    #print(res_GIVEN)
+                    unique_predicted_labels_GIVEN = list(set(get_unique_numbers(res_GIVEN)) & set(unselected_pred))
+                    if len(unique_predicted_labels_GIVEN) == 0:
+                        continue
+                    for lab in unique_predicted_labels_GIVEN:
+                        predicted_labels_count_GIVEN[lab] = (res_GIVEN == lab).sum()
+                    map_predict_to_actual[max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)] = label_GIVEN
+                    unselected_given.remove(label_GIVEN)
+                    unselected_pred.remove(max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get))
+
+
+                if len(unique_given_labels) <= num_cluster:
+                    max_value = max(unique_given_labels) + 1
+                    for upl in unique_predicted_labels:
+                        if upl not in map_predict_to_actual.keys():
+                            map_predict_to_actual[upl] = max_value
+                            max_value += 1
+                            unselected_pred.remove(upl)
+                
+                for l in range(len(unselected_given)):
+                    map_predict_to_actual[unselected_pred[l]] = unselected_given[l]
+                    
+
+                # predictions_final contains the final results
+                # it takes care of the case when num_class > number of unique labels given
+                predictions_tmp = []
+                for k in range(len(labels)):
+                    if labels[k] in map_predict_to_actual.keys():
+                        predictions_tmp.append(map_predict_to_actual[labels[k]])
+                    else:
+                        predictions_tmp.append(map_predict_to_actual[max_item])
+
                 correct_count = 0
                 for k in range(len(label_list)):
                     if label_list[k] != unknown_label:
-                        if label_list[k] == labels[k]:
+                        if label_list[k] == predictions_tmp[k]:
                             correct_count += 1
                 temp_accuracy = correct_count / total_labeled
                 if temp_accuracy > optimal_accuracy:
@@ -137,10 +194,67 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
                 spectral_clustering = SpectralClustering(n_clusters=num_cluster, assign_labels="discretize",
                                                          random_state=seed)
                 labels = spectral_clustering.fit_predict(kmer_table)
+
+                given_labels_count = {}
+                labels_list = list(inputlabels)
+                for label in unique_given_labels:
+                    given_labels_count[label] = labels_list.count(label)
+                unique_predicted_labels = get_unique_numbers(labels)
+                predicted_labels_count = {}
+                for label in unique_predicted_labels:
+                    predicted_labels_count[label] = (labels == label).sum()
+                max_item = max(predicted_labels_count, key=predicted_labels_count.get)
+                if -1 in given_labels_count.keys():
+                    del given_labels_count[-1]
+                given_labels_count = sorted(given_labels_count.items(), key=lambda x: x[1], reverse=True)
+                predicted_labels_count = sorted(predicted_labels_count.items(), key=lambda x: x[1], reverse=True)
+
+                unselected_given = copy.deepcopy(unique_given_labels)
+                if -1 in unselected_given:
+                    unselected_given.remove(-1)
+                unselected_pred = copy.deepcopy(unique_predicted_labels)
+
+                map_predict_to_actual = {}
+                for label_GIVEN_dict_entry in given_labels_count:
+                    label_GIVEN = label_GIVEN_dict_entry[0]
+                    predicted_labels_count_GIVEN = {}
+                    label_GIVEN_idx = [index for (index, item) in enumerate(labels_list) if item == label_GIVEN]
+                    res_GIVEN = [labels[k] for k in label_GIVEN_idx]
+                    unique_predicted_labels_GIVEN = list(set(get_unique_numbers(res_GIVEN)) & set(unselected_pred))
+                    if len(unique_predicted_labels_GIVEN) == 0:
+                        continue
+                    for lab in unique_predicted_labels_GIVEN:
+                        predicted_labels_count_GIVEN[lab] = (res_GIVEN == lab).sum()
+                    map_predict_to_actual[max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)] = label_GIVEN
+                    unselected_given.remove(label_GIVEN)
+                    unselected_pred.remove(max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get))
+
+
+                if len(unique_given_labels) <= num_cluster:
+                    max_value = max(unique_given_labels) + 1
+                    for upl in unique_predicted_labels:
+                        if upl not in map_predict_to_actual.keys():
+                            print(f"{upl} mapped to {max_value}")
+                            map_predict_to_actual[upl] = max_value
+                            max_value += 1
+                            unselected_pred.remove(upl)
+                
+                for l in range(len(unselected_given)):
+                    map_predict_to_actual[unselected_pred[l]] = unselected_given[l]
+
+                # predictions_final contains the final results
+                # it takes care of the case when num_class > number of unique labels given
+                predictions_tmp = []
+                for k in range(len(labels)):
+                    if labels[k] in map_predict_to_actual.keys():
+                        predictions_tmp.append(map_predict_to_actual[labels[k]])
+                    else:
+                        predictions_tmp.append(map_predict_to_actual[max_item])
+
                 correct_count = 0
                 for k in range(len(label_list)):
                     if label_list[k] != unknown_label:
-                        if label_list[k] == labels[k]:
+                        if label_list[k] == predictions_tmp[k]:
                             correct_count += 1
                 temp_accuracy = correct_count / total_labeled
                 if temp_accuracy > optimal_accuracy:
@@ -164,11 +278,70 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
                 spectral_clustering = SpectralClustering(n_clusters=num_cluster, assign_labels=assignLabels,
                                                          random_state=seed)
                 labels = spectral_clustering.fit_predict(kmer_table)
+
+                # Get the counts for the given labels and the predicted labels
+                given_labels_count = {}
+                labels_list = list(inputlabels)
+                for label in unique_given_labels:
+                    given_labels_count[label] = labels_list.count(label)
+                unique_predicted_labels = get_unique_numbers(labels)
+                predicted_labels_count = {}
+                for label in unique_predicted_labels:
+                    predicted_labels_count[label] = (labels == label).sum()
+                max_item = max(predicted_labels_count, key=predicted_labels_count.get)
+                if -1 in given_labels_count.keys():
+                    del given_labels_count[-1]
+                given_labels_count = sorted(given_labels_count.items(), key=lambda x: x[1], reverse=True)
+                predicted_labels_count = sorted(predicted_labels_count.items(), key=lambda x: x[1], reverse=True)
+
+                # Map the predicted labels to the given/actual labels
+                unselected_given = copy.deepcopy(unique_given_labels)
+                if -1 in unselected_given:
+                    unselected_given.remove(-1)
+                unselected_pred = copy.deepcopy(unique_predicted_labels)
+
+                map_predict_to_actual = {}
+                for label_GIVEN_dict_entry in given_labels_count:
+                    label_GIVEN = label_GIVEN_dict_entry[0]
+                    predicted_labels_count_GIVEN = {}
+                    label_GIVEN_idx = [index for (index, item) in enumerate(labels_list) if item == label_GIVEN]
+                    res_GIVEN = [labels[k] for k in label_GIVEN_idx]
+                    unique_predicted_labels_GIVEN = list(set(get_unique_numbers(res_GIVEN)) & set(unselected_pred))
+                    if len(unique_predicted_labels_GIVEN) == 0:
+                        continue
+                    for lab in unique_predicted_labels_GIVEN:
+                        predicted_labels_count_GIVEN[lab] = (res_GIVEN == lab).sum()
+                    map_predict_to_actual[max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)] = label_GIVEN
+                    unselected_given.remove(label_GIVEN)
+                    unselected_pred.remove(max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get))
+
+
+                if len(unique_given_labels) <= num_cluster:
+                    max_value = max(unique_given_labels) + 1
+                    for upl in unique_predicted_labels:
+                        if upl not in map_predict_to_actual.keys():
+                            print(f"{upl} mapped to {max_value}")
+                            map_predict_to_actual[upl] = max_value
+                            max_value += 1
+                            unselected_pred.remove(upl)
+            
+                for l in range(len(unselected_given)):
+                    map_predict_to_actual[unselected_pred[l]] = unselected_given[l]
+
+                # predictions_final contains the final results
+                # it takes care of the case when num_class > number of unique labels given
+                predictions_tmp = []
+                for k in range(len(labels)):
+                    if labels[k] in map_predict_to_actual.keys():
+                        predictions_tmp.append(map_predict_to_actual[labels[k]])
+                    else:
+                        predictions_tmp.append(map_predict_to_actual[max_item])
+
                 correct_count = 0
                 temp_accuracy = 0
                 for k in range(len(label_list)):
                     if label_list[k] != unknown_label:
-                        if label_list[k] == labels[k]:
+                        if label_list[k] == predictions_tmp[k]:
                             correct_count += 1
                 temp_accuracy = correct_count / total_labeled
                 if temp_accuracy > optimal_accuracy:
@@ -213,7 +386,7 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
         label_GIVEN = label_GIVEN_dict_entry[0]
         predicted_labels_count_GIVEN = {}
         label_GIVEN_idx = [index for (index, item) in enumerate(labels_list) if item == label_GIVEN]
-        res_GIVEN = [labels[k] for k in label_GIVEN_idx]
+        res_GIVEN = [res[k] for k in label_GIVEN_idx]
         unique_predicted_labels_GIVEN = list(set(get_unique_numbers(res_GIVEN)) & set(unselected_pred))
         if len(unique_predicted_labels_GIVEN) == 0:
             continue
