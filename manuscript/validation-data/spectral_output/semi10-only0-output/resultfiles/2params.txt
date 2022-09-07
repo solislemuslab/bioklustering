@@ -1,0 +1,11 @@
+model: Semi-supervised Spectral Clustering
+k_min: 2
+k_max: 2
+num_cluster: 2
+assignLabels: discretize
+seed: 05301015
+visual: PCA
+accuracy: 0.35294117647058826
+created time: 2022-05-31T15:41:06.993478+00:00
+running time: 458.46 ms
+note: if you see the parameter values here are different from what you chose, it is because the underlying model finds the best parameter values with the best accuracy based on your input.

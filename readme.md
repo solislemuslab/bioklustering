@@ -48,21 +48,21 @@ pip3 install -r requirements.txt
 
 A list of packages can be found in the `requirements.txt` file and is listed below:
 ```
-    numpy~=1.19.4
-    pandas~=1.1.5
-    bio~=0.2.3
-    scikit-learn~=0.23.2
-    plotly~=4.14.1
-    Django~=3.1.2
-    django-crispy-forms~=1.9.2
-    django-plotly-dash~=1.4.2
-    channels~=2.4.0
-    channels-redis~=3.1.0
-    django-redis~=4.12.1
-    daphne~=2.5.0
-    redis~=3.5.3
-    psutil~=5.7.3
-    kaleido~=0.1.0
+numpy~=1.19.4
+pandas~=1.1.5
+bio~=1.3.2
+scikit-learn~=0.23.2
+plotly~=5.4.0
+Django~=3.1.2
+django-plotly-dash~=1.4.2
+channels~=2.4.0
+channels-redis~=3.1.0
+django-crispy-forms~=1.9.2
+django-redis~=4.12.1
+daphne~=2.5.0
+redis~=3.5.3
+psutil~=5.7.3
+kaleido~=0.1.0
 ```
 
 4. You might also need to install `plotly-orca` which is for writing and saving the static plotly images locally. To install with conda, you can use the following command (or see [this link](https://plotly.com/python/orca-management/) for other alternatives). 
@@ -80,9 +80,36 @@ python3 manage.py migrate
 python3 manage.py runserver
 ```
 
-**Note:** We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionalities
+**Notes:** 
 
-### Steps to test this website locally
+- We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionalities.
+- Sometimes when running `python3 manage.py makemigrations`, you might get the following warning message:
+
+```
+The dash_core_components package is deprecated. Please replace
+`import dash_core_components as dcc` with `from dash import dcc`
+
+The dash_html_components package is deprecated. Please replace
+`import dash_html_components as html` with `from dash import html`
+
+You are trying to add the field 'create_date' with 'auto_now_add=True' to fileinfo without a default; the database needs something to populate existing rows.
+
+ 1) Provide a one-off default now (will be set on all existing rows)
+ 2) Quit, and let me add a default in models.py
+Select an option:
+```
+
+If this happens, select option 1 and then press 'Enter' after the message:
+
+```
+Please enter the default value now, as valid Python
+You can accept the default 'timezone.now' by pressing 'Enter' or you can provide another value.
+The datetime and django.utils.timezone modules are available, so you can do e.g. timezone.now
+Type 'exit' to exit this prompt
+[default: timezone.now] >>>
+```
+
+### Steps to run the unit tests of this website locally
 1. Make sure you are in a virtual environment.
 ```
 source virtual-env/bin/activate

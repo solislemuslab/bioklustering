@@ -1,0 +1,10 @@
+model: Unsupervised GMM
+k_min: 2
+k_max: 6
+num_class: 2
+cov_type: full
+seed: 0530941
+visual: PCA
+created time: 2022-05-31T15:31:37.149261+00:00
+running time: 18259.75 ms
+note: if you see the parameter values here are different from what you chose, it is because the underlying model finds the best parameter values with the best accuracy based on your input.
