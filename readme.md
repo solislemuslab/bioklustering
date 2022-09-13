@@ -48,7 +48,7 @@ pip3 install -r requirements.txt
 
 A list of packages can be found in the `requirements.txt` file and is listed below:
 ```
-numpy~=1.19.4
+numpy~=1.22
 pandas~=1.1.5
 bio~=1.3.2
 scikit-learn~=0.23.2
