@@ -51,7 +51,7 @@ A list of packages can be found in the `requirements.txt` file and is listed bel
 numpy~=1.22
 pandas~=1.1.5
 bio~=1.3.2
-scikit-learn~=0.23.2
+scikit-learn~=1.1.1
 plotly~=5.4.0
 Django~=3.1.2
 django-plotly-dash~=1.4.2
