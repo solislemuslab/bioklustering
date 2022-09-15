@@ -46,7 +46,7 @@ Note that Mac users might need the whole path to `python3`: `/usr/local/bin/pyth
 pip3 install -r requirements.txt
 ```
 
-Note that these requirements assume you are using Python 3.8.13.
+Note that these requirements assume you are using Python 3.8.13. People can manage different python versions with [pyenv](https://github.com/pyenv/pyenv).
 A list of packages can be found in the `requirements.txt` file and is listed below:
 ```
 numpy~=1.22
