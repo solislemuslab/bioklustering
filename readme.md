@@ -46,6 +46,7 @@ Note that Mac users might need the whole path to `python3`: `/usr/local/bin/pyth
 pip3 install -r requirements.txt
 ```
 
+Note that these requirements assume you are using Python 3.8.13.
 A list of packages can be found in the `requirements.txt` file and is listed below:
 ```
 numpy~=1.22
@@ -61,7 +62,7 @@ django-crispy-forms~=1.9.2
 django-redis~=4.12.1
 daphne~=2.5.0
 redis~=3.5.3
-psutil~=5.7.3
+psutil~=5.9.2
 kaleido~=0.1.0
 ```
 
