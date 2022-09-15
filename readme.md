@@ -31,10 +31,10 @@ Users with strong programming skills might like to modify the existing code and 
 git clone https://github.com/solislemuslab/bioklustering
 ```
 
-2. Get inside the `BioKlustering-Website` folder, create and activate a [python virtual environment](https://docs.python.org/3/tutorial/venv.html):
+2. Get inside the `bioklustering/BioKlustering-Website` folder, create and activate a [python virtual environment](https://docs.python.org/3/tutorial/venv.html):
 
 ```
-cd BioKlustering-Website
+cd bioklustering/BioKlustering-Website
 python3 -m venv virtual-env
 source virtual-env/bin/activate
 ```
@@ -83,7 +83,7 @@ python3 manage.py runserver
 
 **Notes:** 
 
-- We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionalities.
+- Even when the web app supports all browsers, we recommend the use Google Chrome to render the web app because different browsers might result in different interface and functionalities.
 - Sometimes when running `python3 manage.py makemigrations`, you might get the following warning message:
 
 ```
