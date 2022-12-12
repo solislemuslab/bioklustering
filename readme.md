@@ -137,7 +137,18 @@ BioKlustering is licensed under the [MIT](https://opensource.org/licenses/MIT) l
 # Citation
 If you use the BioKlustering website in your work, we ask that you cite the following paper:
 ```
-(upcoming)
+@ARTICLE{Ozminkowski2022-bw,
+  title         = "{BioKlustering}: a web app for semi-supervised learning of
+                   maximally imbalanced genomic data",
+  author        = "Ozminkowski, Samuel and Wu, Yuke and Yang, Liule and Xu,
+                   Zhiwen and Selberg, Luke and Huang, Chunrong and
+                   Solis-Lemus, Claudia",
+  month         =  sep,
+  year          =  2022,
+  archivePrefix = "arXiv",
+  primaryClass  = "q-bio.GN",
+  eprint        = "2209.11730"
+}
 ```
 
 # Feedback, issues and questions
