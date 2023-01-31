@@ -10,9 +10,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.mixture import GaussianMixture as GMM
 import os
 from .helpers import plotly_dash_show_plot, update_parameters
+import copy
 
 
 def parseFasta(data):
+    print("data:",data)
     d = {fasta.id: str(fasta.seq) for fasta in SeqIO.parse(data, "fasta")}
     pd.DataFrame([d])
     s = pd.Series(d, name='Sequence')
@@ -89,27 +91,6 @@ def get_predictions_semi_original(path, k_min, k_max, num_class, cov_type, seed,
     return predictions
 
 
-# modified for website
-# def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, labels, method):
-#     targets = []
-#     kmer_table, output_df = get_kmer_table(path, k_min, k_max)
-#
-#     finalDf = pd.concat([kmer_table, labels], axis=1)
-#     gmm = GMM(n_components=num_class, covariance_type=cov_type, random_state=seed)
-#     for i in range(num_class):
-#         if i in list(finalDf.Labels):
-#             targets.append(i)
-#     if len(targets) == num_class:
-#         gmm.means_init = np.array([kmer_table[finalDf.Labels == i].mean(axis=0) for i in targets])
-#     gmm.fit(kmer_table)
-#     predictions = gmm.predict(kmer_table)
-#     plot_div = plotly_dash_show_plot(userId, kmer_table, predictions, "Semi-supervised Gaussian Mixture Model", method)
-#     output_df.insert(0, "Labels", predictions)
-#     # update parameters for predictInfo object (i.e. for front end)
-#     acc = cal_accuracy(labels, predictions)
-#     update_parameters(userId, {"accuracy": acc})
-#     return [[output_df], [plot_div]]
-
 
 # modified for website
 def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, labels, method):
@@ -146,16 +127,40 @@ def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, 
     given_labels_count = sorted(given_labels_count.items(), key=lambda x: x[1], reverse=True)
     predicted_labels_count = sorted(predicted_labels_count.items(), key=lambda x: x[1], reverse=True)
 
+    res = np.array(predictions)
+
     # Map the predicted labels to the given/actual labels
+    unselected_given = copy.deepcopy(unique_given_labels)
+    if -1 in unselected_given:
+        unselected_given.remove(-1)
+    unselected_pred = copy.deepcopy(unique_predicted_labels)
     map_predict_to_actual = {}
-    max_value = max(unique_given_labels) + 1
-    for i in range(len(predicted_labels_count)):
-        if i < len(given_labels_count):
-            map_predict_to_actual[predicted_labels_count[i][0]] = given_labels_count[i][0]
-        else:
-            print(f"{predicted_labels_count[i][0]} mapped to {max_value}")
-            map_predict_to_actual[predicted_labels_count[i][0]] = max_value
-            max_value += 1
+    for label_GIVEN_dict_entry in given_labels_count:
+        label_GIVEN = label_GIVEN_dict_entry[0]
+        predicted_labels_count_GIVEN = {}
+        label_GIVEN_idx = [index for (index, item) in enumerate(labels_list) if item == label_GIVEN]
+        res_GIVEN = [res[i] for i in label_GIVEN_idx]
+        unique_predicted_labels_GIVEN = list(set(get_unique_numbers(res_GIVEN)) & set(unselected_pred))
+        if len(unique_predicted_labels_GIVEN) == 0:
+            continue
+        for lab in unique_predicted_labels_GIVEN:
+            predicted_labels_count_GIVEN[lab] = (res_GIVEN == lab).sum()
+        map_predict_to_actual[max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)] = label_GIVEN
+        unselected_given.remove(label_GIVEN)
+        to_rem = max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)
+        unselected_pred.remove(to_rem)
+
+    if len(unique_given_labels) < num_class:
+        max_value = max(unique_given_labels) + 1
+        for upl in unique_predicted_labels:
+            if upl not in map_predict_to_actual.keys():
+                print(f"{upl} mapped to {max_value}")
+                map_predict_to_actual[upl] = max_value
+                max_value += 1
+                unselected_pred.remove(upl)
+
+    
+    
     print(f"map_predict_to_actual: {map_predict_to_actual}")
     predictions_final = []
 
@@ -168,6 +173,7 @@ def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, 
             else:
                 predictions_final.append(map_predict_to_actual[max_item])
         else:
+            print("predicted label ", predictions[i], " mapped to true label ", labels[i], " at index ", i)
             predictions_final.append(labels[i])
 
     predictions = np.array(predictions_final)

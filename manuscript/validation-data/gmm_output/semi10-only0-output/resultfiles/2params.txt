@@ -7,6 +7,6 @@ seed: 05301013
 visual: PCA
 model_selection: No
 accuracy: 1.0
-created time: 2022-05-30T15:46:12.111424+00:00
-running time: 364.63 ms
+created time: 2022-05-31T15:40:35.494677+00:00
+running time: 486.79 ms
 note: if you see the parameter values here are different from what you chose, it is because the underlying model finds the best parameter values with the best accuracy based on your input.
