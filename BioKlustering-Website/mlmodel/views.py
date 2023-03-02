@@ -764,21 +764,25 @@ class ResultView(FormView):
             # send by email
             if sendbyemail and email and len(
                     email) > 0:  # send the result when checkbox is checked and email addr is entered
-                from_email = os.environ.get('BioKlustering_EMAIL_USER')
-                to_email = email
-                template_path = os.path.join("email", "email_template.txt")
-                email_msg = EmailMessage(
-                    '[BioKlustering Website] Here is your prediction result.',
-                    render_to_string(template_path, {}),
-                    from_email,
-                    [to_email],
-                    reply_to=[from_email],
-                )
-                filename = str(request.user.id) + "results.zip"
-                email_msg.attach_file(os.path.join("media", "resultfiles", filename))
-                # for image in result[1]:
-                #     email_msg.attach_file(image)
-                email_msg.send()
+                try:
+                    from_email = os.environ.get('BioKlustering_EMAIL_USER')
+                    to_email = email
+                    template_path = os.path.join("email", "email_template.txt")
+                    email_msg = EmailMessage(
+                        '[BioKlustering Website] Here is your prediction result.',
+                        render_to_string(template_path, {}),
+                        from_email,
+                        [to_email],
+                        reply_to=[from_email],
+                    )
+                    filename = str(request.user.id) + "results.zip"
+                    email_msg.attach_file(os.path.join("media", "resultfiles", filename))
+                    # for image in result[1]:
+                    #     email_msg.attach_file(image)
+                    email_msg.send()
+                except Exception as e:
+                    print("Exception occured with email")
+                    traceback.print_exc()
             # return the image and table to result page
             context['label'] = label
             context['plotly_dash'] = result[1]

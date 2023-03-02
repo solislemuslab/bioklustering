@@ -38,12 +38,20 @@ def read_fasta_sequences(sequence_paths):
         all_sequences = pd.concat([all_sequences, sequence])
     return all_sequences
 
+def get_ids_from_fasta(sequence_paths):
+    retval = []
+    for path in sequence_paths:
+        path = os.path.join("media", path)
+        d = {fasta.id : str(fasta.seq) for fasta in SeqIO.parse(path, "fasta")}
+        retval = np.concatenate((np.array(retval), np.array(list(d.keys()))))
+    return retval
 
 # didn't change because unsupervised k means doesn't require actual labels.
 def kmeans(userId, fasta, klength_min, klength_max, rNum, cNum, method):
     inputData = read_fasta_sequences(fasta)
     inputData["Sequence"] = inputData["Sequence"].apply(lambda x: x.replace("-", ""))
-
+    IDs = get_ids_from_fasta(fasta)
+    print("IDs:", IDs)
     kmerXTableInput = kmerXTable(inputData, klength_min, klength_max)
     #km = KMeans(random_state = rNum, n_clusters = cNum)
     #km.fit(kmerXTableInput) 
@@ -79,25 +87,25 @@ def kmeans(userId, fasta, klength_min, klength_max, rNum, cNum, method):
             if i < max_value:
                 map_predict_to_actual[predicted_labels_count[i][0]] = i
             else:
-                print(f"{predicted_labels_count[i][0]} mapped to {max_value}")
+                # print(f"{predicted_labels_count[i][0]} mapped to {max_value}")
                 map_predict_to_actual[predicted_labels_count[i][0]] = max_value
 
         # predictions_final contains the final results
         # it takes care of the case when num_class > number of unique labels given
         predictions_final = []
-        print(f"map_predict_to_actual: {map_predict_to_actual}")
+        # print(f"map_predict_to_actual: {map_predict_to_actual}")
         for i in range(len(res)):
             if res[i] in map_predict_to_actual.keys():
                 predictions_final.append(map_predict_to_actual[res[i]])
             else:
                 predictions_final.append(map_predict_to_actual[max_item])
-        print(predictions_final)
+        # print(predictions_final)
         y_hat = np.array(predictions_final)
 
     plotly_kmertable = kmerXTableInput
     if method == "PCA":
         plotly_kmertable = preprocessing.normalize(kmerXTableInput)
-    plot_div = plotly_dash_show_plot(userId, plotly_kmertable, y_hat, "Unsupervised Kmeans", method)
+    plot_div = plotly_dash_show_plot(userId, plotly_kmertable, y_hat, "Unsupervised Kmeans", method, ID=IDs)
     inputData.insert(0, "Labels", y_hat)
         
     return [[inputData], [plot_div]]
@@ -119,6 +127,7 @@ def get_unique_numbers(numbers):
 # Revised.
 def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y_hat, method):
     inputData = read_fasta_sequences(fasta)
+    IDs = get_ids_from_fasta(fasta)
     inputData["Sequence"] = inputData["Sequence"].apply(lambda x: x.replace("-", ""))
     kmerXTableInput = kmerXTable(inputData, klength_min, klength_max)
 
@@ -152,13 +161,13 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
             if i < max_value:
                 map_predict_to_actual[predicted_labels_count[i][0]] = i
             else:
-                print(f"{predicted_labels_count[i][0]} mapped to {max_value}")
+                # print(f"{predicted_labels_count[i][0]} mapped to {max_value}")
                 map_predict_to_actual[predicted_labels_count[i][0]] = max_value
 
         # predictions_final contains the final results
         # it takes care of the case when num_class > number of unique labels given
         predictions_final = []
-        print(f"map_predict_to_actual: {map_predict_to_actual}")
+        # print(f"map_predict_to_actual: {map_predict_to_actual}")
         for i in range(len(res)):
             if res[i] in map_predict_to_actual.keys():
                 predictions_final.append(map_predict_to_actual[res[i]])
@@ -202,7 +211,7 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
     max_value = max(unique_given_labels) + 1
     for upl in unique_predicted_labels:
         if upl not in map_predict_to_actual.keys():
-            print(f"{upl} mapped to {max_value}")
+            # print(f"{upl} mapped to {max_value}")
             map_predict_to_actual[upl] = max_value
             max_value += 1
     
@@ -226,7 +235,7 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
     plotly_labels = np.array(newLabels)
     if method == "PCA":
         plotly_kmertable = preprocessing.normalize(kmerTable)
-    plotly_div = plotly_dash_show_plot(userId, plotly_kmertable, plotly_labels, "Semi-supervised Kmeans", method)
+    plotly_div = plotly_dash_show_plot(userId, plotly_kmertable, plotly_labels, "Semi-supervised Kmeans", method, ID=IDs)
 
     inputData.insert(0, "Labels", newLabels)
 
