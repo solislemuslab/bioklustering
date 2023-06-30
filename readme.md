@@ -11,7 +11,7 @@ Among its main advantages, BioKlustering
 
 # Usage
 
-BioKlustering is browser-based (preferably Google Chrome), and thus, no installation is needed. Users simply need to click on the following link: xxxxx.
+BioKlustering is browser-based (preferably Google Chrome), and thus, no installation is needed. Users simply need to click on the following link: https://bioklustering.wid.wisc.edu/.
 
 More details are available in the documentation: [DOCS.md](https://github.com/solislemuslab/bioklustering/blob/master/DOCS.md).
 
@@ -31,10 +31,10 @@ Users with strong programming skills might like to modify the existing code and 
 git clone https://github.com/solislemuslab/bioklustering
 ```
 
-2. Get inside the `BioKlustering-Website` folder, create and activate a [python virtual environment](https://docs.python.org/3/tutorial/venv.html):
+2. Get inside the `bioklustering/BioKlustering-Website` folder, create and activate a [python virtual environment](https://docs.python.org/3/tutorial/venv.html):
 
 ```
-cd BioKlustering-Website
+cd bioklustering/BioKlustering-Website
 python3 -m venv virtual-env
 source virtual-env/bin/activate
 ```
@@ -46,12 +46,13 @@ Note that Mac users might need the whole path to `python3`: `/usr/local/bin/pyth
 pip3 install -r requirements.txt
 ```
 
+Note that these requirements assume you are using Python 3.8.13. People can manage different python versions with [pyenv](https://github.com/pyenv/pyenv).
 A list of packages can be found in the `requirements.txt` file and is listed below:
 ```
-numpy~=1.19.4
+numpy~=1.22
 pandas~=1.1.5
 bio~=1.3.2
-scikit-learn~=0.23.2
+scikit-learn~=1.1.1
 plotly~=5.4.0
 Django~=3.1.2
 django-plotly-dash~=1.4.2
@@ -61,7 +62,7 @@ django-crispy-forms~=1.9.2
 django-redis~=4.12.1
 daphne~=2.5.0
 redis~=3.5.3
-psutil~=5.7.3
+psutil~=5.9.2
 kaleido~=0.1.0
 ```
 
@@ -82,7 +83,7 @@ python3 manage.py runserver
 
 **Notes:** 
 
-- We recommend you use Google Chrome to render the website because different browsers might result in different interface and functionalities.
+- Even when the web app supports all browsers, we recommend the use Google Chrome to render the web app because different browsers might result in different interface and functionalities.
 - Sometimes when running `python3 manage.py makemigrations`, you might get the following warning message:
 
 ```
@@ -136,7 +137,18 @@ BioKlustering is licensed under the [MIT](https://opensource.org/licenses/MIT) l
 # Citation
 If you use the BioKlustering website in your work, we ask that you cite the following paper:
 ```
-(upcoming)
+@ARTICLE{Ozminkowski2022-bw,
+  title         = "{BioKlustering}: a web app for semi-supervised learning of
+                   maximally imbalanced genomic data",
+  author        = "Ozminkowski, Samuel and Wu, Yuke and Yang, Liule and Xu,
+                   Zhiwen and Selberg, Luke and Huang, Chunrong and
+                   Solis-Lemus, Claudia",
+  month         =  sep,
+  year          =  2022,
+  archivePrefix = "arXiv",
+  primaryClass  = "q-bio.GN",
+  eprint        = "2209.11730"
+}
 ```
 
 # Feedback, issues and questions

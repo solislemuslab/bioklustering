@@ -1,9 +1,8 @@
-These files are in the shared [google drive](https://drive.google.com/drive/u/2/folders/0AOrB5Mv4Dq5cUk9PVA)
+# Internal log of runs (not relevant for users of BioKlustering)
 
 I need to know sample sizes:
-```shell
-cd Dropbox/Documents/solislemus-lab/lab-members/undergrad-student-projects/present/bioklustering-website/manuscript/validation-data/datasets
 
+```shell
 $ grep ">" bat_flu.fa | wc -l
       64
 $ grep ">" cat_flu.fa | wc -l
@@ -11,9 +10,6 @@ $ grep ">" cat_flu.fa | wc -l
 ```
 
 Now, we want to see the proportion of 0/1 on the semi-supervised versions:
-```shell
-cd Dropbox/Documents/solislemus-lab/lab-members/undergrad-student-projects/present/bioklustering-website/manuscript/validation-data/Semi-supervised-test-dataset
-```
 
 ```r
 dat50 = read.table("labels_fifty_percent.csv", header=TRUE)
@@ -80,52 +76,52 @@ dat10$Labels[dat10$Labels == 1] = -1
 write.table(dat10, file="labels_ten_percent_only0s.csv", row.names=FALSE)
 ```
 
-# Running on BioKlustering
+# Running on BioKlustering (old runs)
 
 Note that we had errors after Yuke's implementation because I was choosing a too large seed.
 
 1. Unsupervised: We upload `combined_Bat_Cat_flu.fa` and select the following models:
 - Kmeans:
       - Kmin=6, Kmax=7, Seed=05301128, #clusters=2, visualization=PCA
-            - `2results.zip`, unzipped as `media` and changed named to `unsupervised-output` inside `kmeans_output`
+      - `2results.zip`, unzipped as `media` and changed named to `unsupervised-output` inside `kmeans_output`
 - GMM
       - Kmin=2, Kmax=6, cov=full, Seed=0530941, #clusters=2, visualization=PCA
-            - `2results.zip`, unzipped as `media` and changed named to `unsupervised-output` inside `gmm_output`
+      - `2results.zip`, unzipped as `media` and changed named to `unsupervised-output` inside `gmm_output`
 - Spectral clustering
       - Kmin=2, Kmax=3, assignlabels=kmeans, #clusters=2, visualization=PCA
-            - no seed!
-            - `2results.zip`, unzipped as `media` and changed named to `unsupervised-output` inside `spectral_output`
+      - no seed!
+      - `2results.zip`, unzipped as `media` and changed named to `unsupervised-output` inside `spectral_output`
 
 
 2. Semisupervised 50%: We upload `combined_Bat_Cat_flu.fa` and `labels_fifty_percent.csv`, and select the following models:
 - Kmeans:
       - Kmin=6, Kmax=7, Seed=0530956, #clusters=2, visualization=PCA
-            - output `2results.zip` unzipped as `media` and changed name to `semi50-output` inside `kmeans_output`
+      - output `2results.zip` unzipped as `media` and changed name to `semi50-output` inside `kmeans_output`
 - GMM
       - Kmin=2, Kmax=3, cov=tied, Seed=0530959, #clusters=2, visualization=PCA
-            - output `2results.zip` unzipped as `media` and changed name to `semi50-output` inside `gmm_output`
+      - output `2results.zip` unzipped as `media` and changed name to `semi50-output` inside `gmm_output`
 - Spectral clustering
       - Kmin=2, Kmax=3, assignlabels=kmeans, #clusters=2, visualization=PCA, seed=05301004
-            - output `2results.zip` unzipped as `media` and changed name to `semi50-output` inside `spectral_output`
+      - output `2results.zip` unzipped as `media` and changed name to `semi50-output` inside `spectral_output`
 
 3. Semisupervised 10%: We upload `combined_Bat_Cat_flu.fa` and `labels_ten_percent.csv`, and select the following models:
 - Kmeans:
       - Kmin=6, Kmax=7, Seed=05301008, #clusters=2, visualization=PCA
-            - output `2results.zip` unzipped as `media` and changed name to `semi10-output` inside `kmeans_output`
+      - output `2results.zip` unzipped as `media` and changed name to `semi10-output` inside `kmeans_output`
 - GMM
       - Kmin=2, Kmax=4, cov=tied, Seed=05301009, #clusters=2, visualization=PCA
-            - output `2results.zip` unzipped as `media` and changed name to `semi10-output` inside `gmm_output`
+      - output `2results.zip` unzipped as `media` and changed name to `semi10-output` inside `gmm_output`
 - Spectral clustering
       - Kmin=3, Kmax=3, assignlabels=discretize, #clusters=2, visualization=PCA, seed=05301010
-            - output `2results.zip` unzipped as `media` and changed name to `semi10-output` inside `spectral_output`
+      - output `2results.zip` unzipped as `media` and changed name to `semi10-output` inside `spectral_output`
 
 4. Semisupervised 10% (one class): We upload `combined_Bat_Cat_flu.fa` and `labels_ten_percent_only0s.csv`, and select the following models:
 - Kmeans:
       - Kmin=6, Kmax=7, Seed=05301012, #clusters=2, visualization=PCA
-            - output `2results.zip` unzipped as `media` and changed name to `semi10-only0-output` inside `kmeans_output`
+      - output `2results.zip` unzipped as `media` and changed name to `semi10-only0-output` inside `kmeans_output`
 - GMM
       - Kmin=2, Kmax=3, cov=diagonal, Seed=05301013, #clusters=2, visualization=PCA
-            - output `2results.zip` unzipped as `media` and changed name to `semi10-only0-output` inside `gmm_output`
+      - output `2results.zip` unzipped as `media` and changed name to `semi10-only0-output` inside `gmm_output`
 - Spectral clustering
       - Kmin=2, Kmax=2, assignlabels=discretize, #clusters=2, visualization=PCA, seed=05301015
-            - output `2results.zip` unzipped as `media` and changed name to `semi10-only0-output` inside `spectral_output`
+      - output `2results.zip` unzipped as `media` and changed name to `semi10-only0-output` inside `spectral_output`

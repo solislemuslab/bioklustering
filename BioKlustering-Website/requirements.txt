@@ -11,5 +11,5 @@ django-crispy-forms~=1.9.2
 django-redis~=4.12.1
 daphne~=2.5.0
 redis~=3.5.3
-psutil~=5.7.3
+psutil~=5.9.2
 kaleido~=0.2.0
