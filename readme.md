@@ -50,8 +50,8 @@ Note that these requirements assume you are using Python 3.8.13. People can mana
 A list of packages can be found in the `requirements.txt` file and is listed below:
 ```
 numpy~=1.22
-pandas~=1.1.5
-bio~=1.3.2
+pandas~=2.0.2
+bio~=1.5.9
 scikit-learn~=1.1.1
 plotly~=5.4.0
 Django~=3.1.2
@@ -63,7 +63,7 @@ django-redis~=4.12.1
 daphne~=2.5.0
 redis~=3.5.3
 psutil~=5.9.2
-kaleido~=0.1.0
+kaleido~=0.2.0
 ```
 
 4. You might also need to install `plotly-orca` which is for writing and saving the static plotly images locally. To install with conda, you can use the following command (or see [this link](https://plotly.com/python/orca-management/) for other alternatives). 
