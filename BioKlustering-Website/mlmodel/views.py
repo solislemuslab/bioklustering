@@ -588,6 +588,12 @@ class PredictionView(FormView):
                                                "label": "Seed",
                                                "help_text": "Random seed number. If none selected, it will be determined based on the time."
                                            })),
+                'cNum': forms.IntegerField(validators=[MinValueValidator(2)],
+                                           widget=MyNumberInput(attrs={
+                                               "class": "form-control",
+                                               "label": "Number of clusters",
+                                               "help_text": "Number of clusters, defaulted to 2."
+                                           })),
                 'visual': forms.ChoiceField(choices=visual_types,
                                             widget=MySelect(attrs={
                                                 "class": "custom-select",
@@ -608,6 +614,7 @@ class PredictionView(FormView):
                     'klength_min': 6,
                     'klength_max': 6,
                     'rNum': int(time.time()),
+                    'cNum': 2,
                     'visual': 'PCA'
                 }
         else:
@@ -663,6 +670,7 @@ class ResultView(FormView):
                     klength_min = int(params_obj['klength_min'])
                     klength_max = int(params_obj['klength_max'])
                     rNum = int(params_obj['rNum'])
+                    cNum = int(params_obj['cNum'])
                     method = str(params_obj['visual'])
                     filenames = []
                     label_filenames = []
@@ -670,7 +678,7 @@ class ResultView(FormView):
                         filenames.append(obj.filepath.name)
                         label_filenames.append(obj.labelpath.name)
                     labels = read_csv_labels(label_filenames)
-                    result = kmeans.kmeans_semiSupervised(request.user.id, filenames, klength_min, klength_max, rNum,
+                    result = kmeans.kmeans_semiSupervised(request.user.id, filenames, klength_min, klength_max, rNum, cNum,
                                                           labels, method)
                 elif mlmethod == "unsupervisedGMM":
                     params_str = getattr(preidct_obj, "parameters")
@@ -756,21 +764,25 @@ class ResultView(FormView):
             # send by email
             if sendbyemail and email and len(
                     email) > 0:  # send the result when checkbox is checked and email addr is entered
-                from_email = os.environ.get('BioKlustering_EMAIL_USER')
-                to_email = email
-                template_path = os.path.join("email", "email_template.txt")
-                email_msg = EmailMessage(
-                    '[BioKlustering Website] Here is your prediction result.',
-                    render_to_string(template_path, {}),
-                    from_email,
-                    [to_email],
-                    reply_to=[from_email],
-                )
-                filename = str(request.user.id) + "results.zip"
-                email_msg.attach_file(os.path.join("media", "resultfiles", filename))
-                # for image in result[1]:
-                #     email_msg.attach_file(image)
-                email_msg.send()
+                try:
+                    from_email = os.environ.get('BioKlustering_EMAIL_USER')
+                    to_email = email
+                    template_path = os.path.join("email", "email_template.txt")
+                    email_msg = EmailMessage(
+                        '[BioKlustering Website] Here is your prediction result.',
+                        render_to_string(template_path, {}),
+                        from_email,
+                        [to_email],
+                        reply_to=[from_email],
+                    )
+                    filename = str(request.user.id) + "results.zip"
+                    email_msg.attach_file(os.path.join("media", "resultfiles", filename))
+                    # for image in result[1]:
+                    #     email_msg.attach_file(image)
+                    email_msg.send()
+                except Exception as e:
+                    print("Exception occured with email")
+                    traceback.print_exc()
             # return the image and table to result page
             context['label'] = label
             context['plotly_dash'] = result[1]
