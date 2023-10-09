@@ -68,7 +68,8 @@ def read_csv_labels(label_paths):
         # ensure all labels are integers
         labels = [int(i) for i in labels]
         labels = pd.Series(labels)
-        all_labels = all_labels.append(labels, ignore_index=True)
+        #all_labels = all_labels.append(labels, ignore_index=True)
+        all_labels = pd.concat([all_labels, labels], ignore_index=True)
     all_labels.name = "Labels"
     return all_labels
 

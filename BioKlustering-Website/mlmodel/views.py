@@ -9,7 +9,6 @@ import time
 import zipfile
 from .models import FileInfo, FileListInfo
 from django import forms
-from django.core.mail import send_mail, EmailMessage
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
@@ -163,16 +162,10 @@ class PredictionView(FormView):
                 if self.request.method == 'POST':
                     if 'mlmodels' in self.request.POST:  # choose model
                         predict_info.mlmodels = self.request.POST['mlmodels']
-                        predict_info.email = self.request.POST.get('email', '')
-                        predict_info.sendbyemail = True if self.request.POST.get('sendbyemail',
-                                                                                 'off') == 'on' else False
                         predict_info.save()
                         content = {}
                     elif 'predict_form-mlmodels' in self.request.POST:  # choose model
                         predict_info.mlmodels = self.request.POST['predict_form-mlmodels']
-                        predict_info.email = self.request.POST.get('predict_form-email', '')
-                        predict_info.sendbyemail = True if self.request.POST.get('predict_form-sendbyemail',
-                                                                                 'off') == 'on' else False
                         predict_info.save()
                         content = {}
                     else:  # submit params (or handle other invalid forms)
@@ -651,8 +644,6 @@ class ResultView(FormView):
             preidct_obj = PredictInfo.objects.filter(user=request.user).last()
             filenames = str(filslist_obj).split(sep=", ")
             mlmethod = getattr(preidct_obj, "mlmodels")
-            sendbyemail = getattr(preidct_obj, "sendbyemail")
-            email = getattr(preidct_obj, "email")
             result = []
             try:
                 if mlmethod == "unsupervisedKmeans":
@@ -761,28 +752,7 @@ class ResultView(FormView):
             all_df.to_csv(csv_path, index_label='ID')
             duration = (time.time() - start) * 1000
             ResultView.create_zip(request, duration)
-            # send by email
-            if sendbyemail and email and len(
-                    email) > 0:  # send the result when checkbox is checked and email addr is entered
-                try:
-                    from_email = os.environ.get('BioKlustering_EMAIL_USER')
-                    to_email = email
-                    template_path = os.path.join("email", "email_template.txt")
-                    email_msg = EmailMessage(
-                        '[BioKlustering Website] Here is your prediction result.',
-                        render_to_string(template_path, {}),
-                        from_email,
-                        [to_email],
-                        reply_to=[from_email],
-                    )
-                    filename = str(request.user.id) + "results.zip"
-                    email_msg.attach_file(os.path.join("media", "resultfiles", filename))
-                    # for image in result[1]:
-                    #     email_msg.attach_file(image)
-                    email_msg.send()
-                except Exception as e:
-                    print("Exception occured with email")
-                    traceback.print_exc()
+            
             # return the image and table to result page
             context['label'] = label
             context['plotly_dash'] = result[1]

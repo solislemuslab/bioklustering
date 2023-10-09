@@ -51,7 +51,7 @@ def kmeans(userId, fasta, klength_min, klength_max, rNum, cNum, method):
     inputData = read_fasta_sequences(fasta)
     inputData["Sequence"] = inputData["Sequence"].apply(lambda x: x.replace("-", ""))
     IDs = get_ids_from_fasta(fasta)
-    print("IDs:", IDs)
+    #print("IDs:", IDs)
     kmerXTableInput = kmerXTable(inputData, klength_min, klength_max)
     #km = KMeans(random_state = rNum, n_clusters = cNum)
     #km.fit(kmerXTableInput) 

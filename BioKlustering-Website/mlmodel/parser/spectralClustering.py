@@ -15,7 +15,6 @@ import copy
 # parseFasta(data) credit to Luke
 def parseFasta(data):
     d = {fasta.id: str(fasta.seq) for fasta in SeqIO.parse(data, "fasta")}
-    pd.DataFrame([d])
     s = pd.Series(d, name='Sequence')
     s.index.name = 'ID'
     s.reset_index()

@@ -188,22 +188,12 @@
     <div class="row">
         <div class="col-md-6">
             <h5>Choose a model</h5>
-            <!-- model and email form -->
+            <!-- model form -->
             <form id="choose_model_form" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-8 mr-3">
                         {{ predict_form.mlmodels | as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-8 mr-3">
-                        {{ predict_form.email | as_crispy_field }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-8 mr-3">
-                        {{ predict_form.sendbyemail | as_crispy_field }}
                     </div>
                 </div>
                 <div class="row mt-2">

@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.forms',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'channels',
-    'channels_redis'
+    'channels_redis',
+    'bootstrap4'
 ]
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
@@ -159,13 +160,6 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
-EMAIL_HOST =  'smtp.mail.com'
-EMAIL_PORT =  '587'
-EMAIL_HOST_USER = os.environ.get('BioKlustering_EMAIL_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('BioKlustering_EMAIL_PASS')
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'

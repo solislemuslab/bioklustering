@@ -55,7 +55,6 @@ The home page contains two sections: 1) for uploading files and 2) for fitting t
     * In case you are not sure about how to fill in the parameters, we provide default values and they are already filled in the form
     * You can change the parameter values as you need
     * For more information about how to fill in the parameters, you can find the description of each model and its parameters by clicking 'Learn more about X' button.
-* If you want the results to be sent through email, you can fill in your email address after choosing a model and remember to click the checkbox and save button. Once you click the predict button, the results will be sent through the email after the prediction is done
                                                              
 ![Website Home Page](figures/Website-Home-Page.png)
 

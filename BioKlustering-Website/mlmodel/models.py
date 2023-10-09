@@ -82,8 +82,6 @@ class PredictInfo(models.Model):
                 ('semisupervisedSpectralClustering', 'Semi-supervised Spectral Clustering'),
         ))]
     mlmodels = models.CharField('Model',max_length=100, choices=mlmodels_choices, default="unsupervisedKmeans")
-    sendbyemail = models.BooleanField('Send prediction to email?', default=False)
-    email = models.EmailField('Email', max_length = 254, blank=True, null=True, help_text="If you want to send the result via email, please enter a valid email address here. E.g. xxxxx@gmail.com")
     parameters = models.CharField(max_length=1024)
     
     def __str__(self):
@@ -92,8 +90,6 @@ class PredictInfo(models.Model):
     def delete(self, *args, **kwargs):
         if self.mlmodels:
             self.mlmodels = None
-        if self.email:
-            self.email = None
         if self.parameters:
             self.parameters = None
         super().delete(*args, **kwargs)
