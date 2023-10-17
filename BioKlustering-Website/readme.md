@@ -37,7 +37,6 @@ The main code for the web app is stored in 5 folders:
       - `views.py`: views that render the website
 - `static` which contains js and css files
 - `templates` which contains html files
-   - `email` with files for email template
    - `mlmodel` with files for home page, result page and FAQ
    - `registration` with files for welcome page, sign in and sign up
    - `widgets` with files for Django form field widgets with custom styles

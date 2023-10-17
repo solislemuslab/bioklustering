@@ -20,7 +20,7 @@ from django.http import HttpResponse
 # kmer_table: kmer table
 # label: cluster label in ndarray
 # model_title: the name of the plot
-def plotly_dash_show_plot(userId, kmer_table, labels, model_title, method):
+def plotly_dash_show_plot(userId, kmer_table, labels, model_title, method, ID = None):
     if method == "PCA":
         pca = PCA(n_components=2)
         pca_result = pca.fit_transform(kmer_table)
@@ -29,7 +29,12 @@ def plotly_dash_show_plot(userId, kmer_table, labels, model_title, method):
         tsne = TSNE(n_components=2, random_state = 0)
         tsne_result = tsne.fit_transform(kmer_table)
         results = tsne_result
-    dots = {'x':results[:,0], 'y':results[:,1], 'label':labels}
+    random_list = []
+    for i in range(len(results[:,0])):
+        random_list.append(None)
+    if ID is None:
+        ID = random_list
+    dots = {'x':results[:,0], 'y':results[:,1], 'label':labels, "ID":ID}
     # add the following line for Spectral Clustering
     numpy_labels = np.array(labels)
     dots['label'] = numpy_labels.astype(str)
@@ -37,7 +42,7 @@ def plotly_dash_show_plot(userId, kmer_table, labels, model_title, method):
     fig = px.scatter(df, x='x', y='y', 
         title=model_title + " " + method,
         labels=dict(x="Principal component 1", y="Principal component 2", label="Label"), 
-        color='label')
+        color='label', hover_data=['ID'])
     # plotly dashboard in html 
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
     # save the static plot into media
@@ -63,7 +68,8 @@ def read_csv_labels(label_paths):
         # ensure all labels are integers
         labels = [int(i) for i in labels]
         labels = pd.Series(labels)
-        all_labels = all_labels.append(labels, ignore_index=True)
+        #all_labels = all_labels.append(labels, ignore_index=True)
+        all_labels = pd.concat([all_labels, labels], ignore_index=True)
     all_labels.name = "Labels"
     return all_labels
 

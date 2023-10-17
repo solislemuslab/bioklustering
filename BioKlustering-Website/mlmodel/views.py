@@ -9,7 +9,6 @@ import time
 import zipfile
 from .models import FileInfo, FileListInfo
 from django import forms
-from django.core.mail import send_mail, EmailMessage
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
@@ -163,16 +162,10 @@ class PredictionView(FormView):
                 if self.request.method == 'POST':
                     if 'mlmodels' in self.request.POST:  # choose model
                         predict_info.mlmodels = self.request.POST['mlmodels']
-                        predict_info.email = self.request.POST.get('email', '')
-                        predict_info.sendbyemail = True if self.request.POST.get('sendbyemail',
-                                                                                 'off') == 'on' else False
                         predict_info.save()
                         content = {}
                     elif 'predict_form-mlmodels' in self.request.POST:  # choose model
                         predict_info.mlmodels = self.request.POST['predict_form-mlmodels']
-                        predict_info.email = self.request.POST.get('predict_form-email', '')
-                        predict_info.sendbyemail = True if self.request.POST.get('predict_form-sendbyemail',
-                                                                                 'off') == 'on' else False
                         predict_info.save()
                         content = {}
                     else:  # submit params (or handle other invalid forms)
@@ -262,7 +255,7 @@ class PredictionView(FormView):
                                            widget=MyNumberInput(attrs={
                                                "class": "form-control",
                                                "label": "Seed",
-                                               "help_text": "The random seed to reproduce the results. If none chosen, it will be internally selected and returned to the used in the logfiles."
+                                               "help_text": "The random seed to reproduce the results. Please select an integer less than 10 digits. If none chosen, it will be internally selected and returned to the used in the logfiles."
                                            })),
                 'visual': forms.ChoiceField(choices=visual_types,
                                             widget=MySelect(attrs={
@@ -340,7 +333,7 @@ class PredictionView(FormView):
                                            widget=MyNumberInput(attrs={
                                                "class": "form-control",
                                                "label": "Seed",
-                                               "help_text": "The random seed to reproduce the results. If none are selected, it will be determined by current time."
+                                               "help_text": "The random seed to reproduce the results. Please select an integer less than 10 digits. If none are selected, it will be determined by current time."
                                            })),
                 'visual': forms.ChoiceField(choices=visual_types,
                                             widget=MySelect(attrs={
@@ -412,6 +405,12 @@ class PredictionView(FormView):
                                                       "help_text": "The way to assign label at the final stage of spectral clustering. Can be 'kmeans' or 'discretize'.",
                                                       "isHtml": True
                                                   })),
+                'seed': forms.IntegerField(validators=[MinValueValidator(2)],
+                                           widget=MyNumberInput(attrs={
+                                               "class": "form-control",
+                                               "label": "Seed",
+                                               "help_text": "The random seed to reproduce the results. Please select an integer less than 10 digits. If none are selected, it will be determined by current time."
+                                           })),
                 'visual': forms.ChoiceField(choices=visual_types,
                                             widget=MySelect(attrs={
                                                 "class": "custom-select",
@@ -434,7 +433,8 @@ class PredictionView(FormView):
                     'k_max': 3,
                     'num_cluster': 2,
                     'assignLabels': 'kmeans',
-                    'visual': 'PCA'
+                    'visual': 'PCA',
+                    'seed': int(time.time()),
                 }
         elif mlmodels == "semisupervisedSpectralClustering":
             assignLabels = [
@@ -476,7 +476,7 @@ class PredictionView(FormView):
                                            widget=MyNumberInput(attrs={
                                                "class": "form-control",
                                                "label": "Seed",
-                                               "help_text": "The random seed to reproduce the results. If none are selected, it will be determined by current time."
+                                               "help_text": "The random seed to reproduce the results. Please select an integer less than 10 digits. If none are selected, it will be determined by current time."
                                            })),
                 'visual': forms.ChoiceField(choices=visual_types,
                                             widget=MySelect(attrs={
@@ -525,7 +525,7 @@ class PredictionView(FormView):
                                            widget=MyNumberInput(attrs={
                                                "class": "form-control",
                                                "label": "Seed",
-                                               "help_text": "The random seed to reproduce the results. If none are selected, it will be determined based on the time."
+                                               "help_text": "The random seed to reproduce the results. Please select an integer less than 10 digits. If none are selected, it will be determined based on the time."
                                            })),
                 'cNum': forms.IntegerField(validators=[MinValueValidator(2)],
                                            widget=MyNumberInput(attrs={
@@ -644,8 +644,6 @@ class ResultView(FormView):
             preidct_obj = PredictInfo.objects.filter(user=request.user).last()
             filenames = str(filslist_obj).split(sep=", ")
             mlmethod = getattr(preidct_obj, "mlmodels")
-            sendbyemail = getattr(preidct_obj, "sendbyemail")
-            email = getattr(preidct_obj, "email")
             result = []
             try:
                 if mlmethod == "unsupervisedKmeans":
@@ -710,11 +708,12 @@ class ResultView(FormView):
                     params_obj = json.loads(params_str)
                     k_min = int(params_obj['k_min'])
                     k_max = int(params_obj['k_max'])
+                    seed = int(params_obj['seed'])
                     num_cluster = int(params_obj['num_cluster'])
                     assignLabels = str(params_obj['assignLabels'])
                     method = str(params_obj['visual'])
                     result = spectralClustering.spectral_clustering(request.user.id, filenames, k_min, k_max,
-                                                                    num_cluster, assignLabels, method)
+                                                                    num_cluster, assignLabels, method, seed)
                 elif mlmethod == "semisupervisedSpectralClustering":
                     params_str = getattr(preidct_obj, "parameters")
                     params_obj = json.loads(params_str)
@@ -753,24 +752,7 @@ class ResultView(FormView):
             all_df.to_csv(csv_path, index_label='ID')
             duration = (time.time() - start) * 1000
             ResultView.create_zip(request, duration)
-            # send by email
-            if sendbyemail and email and len(
-                    email) > 0:  # send the result when checkbox is checked and email addr is entered
-                from_email = os.environ.get('BioKlustering_EMAIL_USER')
-                to_email = email
-                template_path = os.path.join("email", "email_template.txt")
-                email_msg = EmailMessage(
-                    '[BioKlustering Website] Here is your prediction result.',
-                    render_to_string(template_path, {}),
-                    from_email,
-                    [to_email],
-                    reply_to=[from_email],
-                )
-                filename = str(request.user.id) + "results.zip"
-                email_msg.attach_file(os.path.join("media", "resultfiles", filename))
-                # for image in result[1]:
-                #     email_msg.attach_file(image)
-                email_msg.send()
+            
             # return the image and table to result page
             context['label'] = label
             context['plotly_dash'] = result[1]

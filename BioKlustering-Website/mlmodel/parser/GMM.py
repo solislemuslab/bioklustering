@@ -14,7 +14,6 @@ import copy
 
 
 def parseFasta(data):
-    print("data:",data)
     d = {fasta.id: str(fasta.seq) for fasta in SeqIO.parse(data, "fasta")}
     pd.DataFrame([d])
     s = pd.Series(d, name='Sequence')
@@ -73,12 +72,20 @@ def read_fasta(paths):
 
 def get_predictions(userId, path, k_min, k_max, num_class, cov_type, seed, method):
     kmer_table, output_df = get_kmer_table(path, k_min, k_max)
+    IDs = get_ids_from_fasta(path)
     gmm = GMM(n_components=num_class, covariance_type=cov_type, random_state=seed).fit(kmer_table)
     predictions = gmm.predict(kmer_table)
-    plot_div = plotly_dash_show_plot(userId, kmer_table, predictions, "Unsupervised Gaussian Mixture Model", method)
+    plot_div = plotly_dash_show_plot(userId, kmer_table, predictions, "Unsupervised Gaussian Mixture Model", method, ID=IDs)
     output_df.insert(0, "Labels", predictions)
     return [[output_df], [plot_div]]
 
+def get_ids_from_fasta(sequence_paths):
+    retval = []
+    for path in sequence_paths:
+        path = os.path.join("media", path)
+        d = {fasta.id : str(fasta.seq) for fasta in SeqIO.parse(path, "fasta")}
+        retval = np.concatenate((np.array(retval), np.array(list(d.keys()))))
+    return retval     
 
 # original
 def get_predictions_semi_original(path, k_min, k_max, num_class, cov_type, seed, labels):
@@ -94,6 +101,7 @@ def get_predictions_semi_original(path, k_min, k_max, num_class, cov_type, seed,
 
 # modified for website
 def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, labels, method):
+    IDs = get_ids_from_fasta(path)
     targets = []
     unique_given_labels = get_unique_numbers(labels)
     if num_class < len(unique_given_labels) - 1 and -1 in unique_given_labels:
@@ -154,14 +162,14 @@ def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, 
         max_value = max(unique_given_labels) + 1
         for upl in unique_predicted_labels:
             if upl not in map_predict_to_actual.keys():
-                print(f"{upl} mapped to {max_value}")
+                # print(f"{upl} mapped to {max_value}")
                 map_predict_to_actual[upl] = max_value
                 max_value += 1
                 unselected_pred.remove(upl)
 
     
     
-    print(f"map_predict_to_actual: {map_predict_to_actual}")
+    # print(f"map_predict_to_actual: {map_predict_to_actual}")
     predictions_final = []
 
     # predictions_final contains the final results
@@ -173,11 +181,11 @@ def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, 
             else:
                 predictions_final.append(map_predict_to_actual[max_item])
         else:
-            print("predicted label ", predictions[i], " mapped to true label ", labels[i], " at index ", i)
+            # print("predicted label ", predictions[i], " mapped to true label ", labels[i], " at index ", i)
             predictions_final.append(labels[i])
 
     predictions = np.array(predictions_final)
-    plot_div = plotly_dash_show_plot(userId, kmer_table, predictions, "Semi-supervised Gaussian Mixture Model", method)
+    plot_div = plotly_dash_show_plot(userId, kmer_table, predictions, "Semi-supervised Gaussian Mixture Model", method, ID=IDs)
     output_df.insert(0, "Labels", predictions)
     # update parameters for predictInfo object (i.e. for front end)
     acc = cal_accuracy(labels, predictions_final)

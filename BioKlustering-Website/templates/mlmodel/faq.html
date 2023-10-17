@@ -10,11 +10,8 @@
 <link rel='stylesheet' href="{% static 'css/index.css' %}">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="{% url 'index' %}">BioKlustering</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02"
-        aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+
+    <a class="navbar-brand">BioKlustering</a>
 
     <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -26,7 +23,7 @@
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">
-            <a class="text-light mr-3">{{ user }}</a>
+            <a class="text-light mr-3" style = "pointer-events: none;">{{ user }}</a>
             <a href="{% url 'logout' %}" class="btn btn-outline-light my-2 my-sm-0" type="submit">Log out</a>
         </form>
     </div>
@@ -143,12 +140,9 @@
                 </div>
                 <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
                     <div class="card-body">
-                        <p>There are two ways of downloading results.</p>
+                        <p>You can download your results.</p>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item">1. Before pressing the 'predict' button, at the section of
-                                'choose a model', fill in the email address and click the checkbox. After running the
-                                prediction, you will get the results in a zip file via email. </li>
-                            <li class="list-group-item">2. After pressing the 'predict' button, the website will show
+                            <li class="list-group-item">After pressing the 'predict' button, the website will show
                                 the result page. Click the 'Download' button at the center of page. You will immediately
                                 get your results in a zip file.</li>
                         </ul>

@@ -48,7 +48,7 @@ class PredictInfoForm(forms.ModelForm):
 
     class Meta:
         model = PredictInfo
-        # fields = ('predict_model', 'kmer', 'email', 'sendbyemail')
+        # fields = ('predict_model', 'kmer')
         exclude = ['parameters']
 
 class ParametersInfoForm(forms.Form):

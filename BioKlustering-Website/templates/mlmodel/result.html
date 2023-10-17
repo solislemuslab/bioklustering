@@ -21,39 +21,44 @@
             <span class="sr-only">Loading...</span>
         </div>
     </div><br>
-    <p class="text-center text-secondary">Wait a moment while we making a prediction.</p>
+    <p class="text-center text-secondary">Please wait a moment while we are working on your data.</p>
 </div>
 
 
 {% autoescape off %}
 <div id="result">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <a class="navbar-brand" href="#">BioKlustering</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <a class="navbar-brand">BioKlustering</a>
       
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
           <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'index' %}">Home</a>
+              <a class="nav-link" href="{% url 'index' %}#uploadHeader">Upload</a>
+            </li>
+            {% comment %} <li class="nav-item">
+                <a class="nav-link" href="#">Result <span class="sr-only">(current)</span></a>
+              </li> {% endcomment %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'index' %}#predictHeader">Analysis</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Result <span class="sr-only">(current)</span></a>
-              </li>
+              <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
+            </li>
           </ul>
           <form class="form-inline my-2 my-lg-0">
-            <a class="text-light mr-3">{{ user }}</a>
+            <a class="text-light mr-3" style = "pointer-events: none;">{{ user }}</a>
             <a href="{% url 'logout' %}" class="btn btn-outline-light my-2 my-sm-0" type="submit">Log out</a>
         </form>
         </div>
       </nav>
     <header class="jumbotron text-center mt-5">
         <h1 class="display-4 ">Thank you!</h1>
-        <p class="lead">Please check the bottom below if you want a copy of prediction result.</p>
+        {% comment %} <p class="lead">Please check the bottom below if you want a copy of prediction result.</p> {% endcomment %}
+        <p class="lead">Please click the Download button to save a copy of your results.</p>
+        <p class="lead">Please download all your results before leaving this page. Results will not be saved.</p>
         <hr class="my-4">
-        <p>Having trouble? <a href="https://github.com/solislemuslab/bioklustering/issues">Contact us</a>.</p>
         <input type="button" class="btn btn-primary btn-lg" role="button" value="Download" onclick="window.open('../download_zip/{{user.id}}')"/>
+        <p><br>Having trouble? <a href="https://github.com/solislemuslab/bioklustering/issues">Contact us</a>.</p>
     
       </header>
     <div class="content container mb-5">
