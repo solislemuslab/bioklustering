@@ -153,5 +153,6 @@ If you use the BioKlustering website in your work, we ask that you cite the foll
 
 # Feedback, issues and questions
 
+- More details are available in the documentation: [DOCS.md](https://github.com/solislemuslab/bioklustering/blob/master/DOCS.md).
 - Issues reports are encouraged through the [GitHub issue tracker](https://github.com/solislemuslab/bioklustering/issues)
 - Feedback is always welcome via the following [google form](https://forms.gle/tpJtiqn7FkNuJ2dc7)
