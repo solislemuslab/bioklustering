@@ -13,7 +13,7 @@ function resize() {
     }
 }
 
-$(window).ready(function() {
+$(window).on('load', function() {
     $("#submit_params_btn").attr("disabled",false);
     $("#inputfile_sequence").attr("accept", ".fa, .fasta");
     $("#inputfile_label").attr("accept", ".csv");

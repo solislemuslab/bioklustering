@@ -1,8 +1,8 @@
-/* Copyright 2020 by Chunrong Huang, Solis-Lemus Lab, WID.
+/* Copyright 2023 by Sam Ozminkowski, Chunrong Huang, Solis-Lemus Lab, WID.
   All rights reserved.
   This file is part of the BioKlustering Website. */
   
-$(window).load(function() {
+$(window).on('load', function() {
     $("#loading").height(screen.height/2);
     $("#loading").show();
     $("#result").hide();
