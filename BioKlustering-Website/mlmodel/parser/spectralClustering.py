@@ -417,11 +417,11 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
     if len(unselected_given) != len(unselected_pred):
         print("error: num unselected given =",len(unselected_given), "!= unselected pred =",len(unselected_pred))
     
-    #for l in range(len(unselected_given)):
-    #    map_predict_to_actual[unselected_pred[l]] = unselected_given[l]
+    for l in range(len(unselected_given)):
+        map_predict_to_actual[unselected_pred[l]] = unselected_given[l]
     
     
-    # print(f"map_predict_to_actual: {map_predict_to_actual}")
+    print(f"map_predict_to_actual: {map_predict_to_actual}")
 
 
     # predictions_final contains the final results
