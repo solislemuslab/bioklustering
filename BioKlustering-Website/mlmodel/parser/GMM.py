@@ -158,7 +158,7 @@ def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, 
         to_rem = max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)
         unselected_pred.remove(to_rem)
 
-    if len(unique_given_labels) < num_class:
+    if len(unique_given_labels) <= num_class:
         max_value = max(unique_given_labels) + 1
         for upl in unique_predicted_labels:
             if upl not in map_predict_to_actual.keys():
