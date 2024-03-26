@@ -157,8 +157,19 @@ def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, 
         unselected_given.remove(label_GIVEN)
         to_rem = max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)
         unselected_pred.remove(to_rem)
+        
+    # in the case where multiple given labels completely map to the same 
+    # predicted label, we need to finish assigning given labels to any 
+    # predicted label
+    for lab_remain in unselected_given:
+        for upl in unique_predicted_labels:
+            if upl not in map_predict_to_actual.keys():
+                map_predict_to_actual[upl] = lab_remain
+                unselected_given.remove(lab_remain)
+                unselected_pred.remove(upl)
+                break
 
-    if len(unique_given_labels) <= num_class:
+    if len(unique_given_labels) < num_class:
         max_value = max(unique_given_labels) + 1
         for upl in unique_predicted_labels:
             if upl not in map_predict_to_actual.keys():
@@ -169,7 +180,7 @@ def get_predictions_semi(userId, path, k_min, k_max, num_class, cov_type, seed, 
 
     
     
-    # print(f"map_predict_to_actual: {map_predict_to_actual}")
+    print(f"map_predict_to_actual: {map_predict_to_actual}")
     predictions_final = []
 
     # predictions_final contains the final results
