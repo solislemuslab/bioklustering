@@ -136,6 +136,8 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
     PCAembedding = PCA(n_components=10)
     NkmerXTableInput = preprocessing.normalize(kmerXTableInput)
     PCAembedding_low = PCAembedding.fit_transform(NkmerXTableInput)
+    
+    np.random.seed(rNum)
 
     ms = MeanShift()
     ms.fit(PCAembedding_low)
