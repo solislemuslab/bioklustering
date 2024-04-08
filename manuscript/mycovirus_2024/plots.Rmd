@@ -1,0 +1,202 @@
+# R script for manuscript plots for nucleotides
+
+```{r}
+nuc_data = read.table("new_analysis_2024/results/nuc_gmm_pca.csv",header=TRUE,sep=",")
+colnames(nuc_data) <- c("ID", "gmm_pc1","gmm_pc2","gmm_label")
+str(nuc_data)
+
+tmp = read.table("new_analysis_2024/results/nuc_kmeans_pca.csv",header=TRUE,sep=",")
+nuc_data$kmeans_pc1 <- tmp$principal.Component.1
+nuc_data$kmeans_pc2 <- tmp$principal.Component.2
+nuc_data$kmeans_label <- tmp$label
+
+tmp = read.table("new_analysis_2024/results/nuc_spectral_pca.csv",header=TRUE,sep=",")
+nuc_data$spectral_pc1 <- tmp$principal.Component.1
+nuc_data$spectral_pc2 <- tmp$principal.Component.2
+nuc_data$spectral_label <- tmp$label
+
+nuc_data$known_label <- c(rep(-1,350), rep(1,16))
+```
+
+```{r}
+library(ggplot2)
+
+# add known labeled points in different shape (color?)
+# add plot for points labeled positive or negative or mixed by all three methods
+# add to table number of points labeled positive or negative by all three methods
+# add results to drive with sequences
+
+p1 = ggplot(nuc_data,aes(x=gmm_pc1, y=gmm_pc2, color=as.factor(gmm_label),  
+                        shape=as.factor(known_label), 
+                        alpha=as.factor(known_label)))+ 
+   geom_point(cex=2) + scale_alpha_discrete(range=c(0.5,1)) +
+   xlab("PC1") + ylab("PC2")+ ggtitle("GMM")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )+
+  scale_color_manual(values=c("#56B4E9", "#009E73"))
+
+
+p2 = ggplot(nuc_data,aes(x=kmeans_pc1, y=kmeans_pc2, color=as.factor(kmeans_label),  
+                        shape=as.factor(known_label), 
+                        alpha=as.factor(known_label)))+ 
+   geom_point(cex=2) + scale_alpha_discrete(range=c(0.5,1)) +
+   xlab("PC1") + ylab("PC2")+ ggtitle("KMeans")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )+
+  scale_color_manual(values=c("#56B4E9", "#009E73"))
+
+p3 = ggplot(nuc_data,aes(x=spectral_pc1, y=spectral_pc2, color=as.factor(spectral_label), 
+                        shape=as.factor(known_label), 
+                        alpha=as.factor(known_label)))+ 
+   geom_point(cex=2) + scale_alpha_discrete(range=c(0.5,1)) +
+   xlab("PC1") + ylab("PC2")+ ggtitle("Spectral Clustering")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )+
+  scale_color_manual(values=c("#56B4E9", "#009E73"))
+```
+
+
+# R script for manuscript plots for amino acids
+
+```{r}
+am_data = read.table("new_analysis_2024/results/am_gmm_pca.csv",header=TRUE,sep=",")
+colnames(am_data) <- c("ID","gmm_pc1","gmm_pc2","gmm_label")
+str(am_data)
+
+tmp = read.table("new_analysis_2024/results/am_kmeans_pca.csv",header=TRUE,sep=",")
+am_data$kmeans_pc1 <- tmp$principal.Component.1
+am_data$kmeans_pc2 <- tmp$principal.Component.2
+am_data$kmeans_label <- tmp$label
+
+tmp = read.table("new_analysis_2024/results/am_spectral_pca.csv",header=TRUE,sep=",")
+am_data$spectral_pc1 <- tmp$principal.Component.1
+am_data$spectral_pc2 <- tmp$principal.Component.2
+am_data$spectral_label <- tmp$label
+
+am_data$known_label <- c(rep(-1,465), rep(1,16))
+```
+
+```{r}
+library(ggplot2)
+
+p4 = ggplot(am_data,aes(x=gmm_pc1, y=gmm_pc2, color=as.factor(gmm_label), 
+                        shape=as.factor(known_label), 
+                        alpha=as.factor(known_label)))+ 
+   geom_point(cex=2) + scale_alpha_discrete(range=c(0.5,1)) +
+   xlab("PC1") + ylab("PC2")+ ggtitle("GMM")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )+
+  scale_color_manual(values=c("#56B4E9", "#009E73"))
+p4
+
+p5 = ggplot(am_data,aes(x=kmeans_pc1, y=kmeans_pc2, color=as.factor(kmeans_label), 
+                        shape=as.factor(known_label), 
+                        alpha=as.factor(known_label)))+ 
+   geom_point(cex=2) + scale_alpha_discrete(range=c(0.5,1)) +
+   xlab("PC1") + ylab("PC2")+ ggtitle("KMeans")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )+
+  scale_color_manual(values=c("#56B4E9", "#009E73"))
+
+p6 = ggplot(am_data,aes(x=spectral_pc1, y=spectral_pc2, color=as.factor(spectral_label),  
+                        shape=as.factor(known_label), 
+                        alpha=as.factor(known_label)))+ 
+   geom_point(cex=2) + scale_alpha_discrete(range=c(0.5,1)) +
+   xlab("PC1") + ylab("PC2")+ ggtitle("Spectral Clustering")+
+   theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none"
+  )+
+  scale_color_manual(values=c("#56B4E9", "#009E73"))
+```
+
+```{r}
+pdf("new_analysis_2024/plots/gmm_nucleotide_pca.pdf",width=5,height=5)
+p1
+dev.off()
+
+pdf("new_analysis_2024/plots/kmeans_nucleotide_pca.pdf",width=5,height=5)
+p2
+dev.off()
+
+pdf("new_analysis_2024/plots/spectral_nucleotide_pca.pdf",width=5,height=5)
+p3
+dev.off()
+
+pdf("new_analysis_2024/plots/gmm_amino_pca.pdf",width=5,height=5)
+p4
+dev.off()
+
+pdf("new_analysis_2024/plots/kmeans_amino_pca.pdf",width=5,height=5)
+p5
+dev.off()
+
+pdf("new_analysis_2024/plots/spectral_amino_pca.pdf",width=5,height=5)
+p6
+dev.off()
+```
+
+## correspondence stats
+
+```{r}
+library(dplyr)
+nuc_match <- nuc_data %>% filter((gmm_label == kmeans_label) & (kmeans_label == spectral_label))
+sum(nuc_match$gmm_label)
+sum(1 - nuc_match$gmm_label)
+
+am_match <- am_data %>% filter((gmm_label == kmeans_label) & (kmeans_label == spectral_label))
+sum(am_match$gmm_label)
+sum(1 - am_match$gmm_label)
+```
