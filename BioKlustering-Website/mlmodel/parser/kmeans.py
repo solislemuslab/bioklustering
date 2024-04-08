@@ -12,6 +12,7 @@ from sklearn import preprocessing
 import numpy as np
 import os
 from .helpers import plotly_dash_show_plot
+import copy
 
 def parseFasta(data):
     d = {fasta.id : str(fasta.seq) for fasta in SeqIO.parse(data, "fasta")}
@@ -72,6 +73,7 @@ def kmeans(userId, fasta, klength_min, klength_max, rNum, cNum, method):
         kmms = KMeans(init = cluster_centers, n_clusters = n_cluster_centers)
         #kmms = KMeans(init = 'k-means++', n_clusters = 2, n_init=20, max_iter=600)
         y_hat = kmms.fit_predict(PCAembedding_low)
+
 
     if n_cluster_centers > cNum:
         res = y_hat
@@ -134,6 +136,8 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
     PCAembedding = PCA(n_components=10)
     NkmerXTableInput = preprocessing.normalize(kmerXTableInput)
     PCAembedding_low = PCAembedding.fit_transform(NkmerXTableInput)
+    
+    np.random.seed(rNum)
 
     ms = MeanShift()
     ms.fit(PCAembedding_low)
@@ -146,6 +150,9 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
         warnings.simplefilter("ignore")
         kmms = KMeans(init=cluster_centers, n_clusters=n_cluster_centers, random_state=rNum)
         kmms_labels = kmms.fit_predict(PCAembedding_low)
+        
+    print("clusters: ", n_cluster_centers)
+    print("wanted ", cNum)
 
     if n_cluster_centers > cNum:
         res = kmms_labels
@@ -195,6 +202,14 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
     predicted_labels_count = sorted(predicted_labels_count.items(), key=lambda x: x[1], reverse=True)
 
     res = np.array(predictions)
+    
+    # Map the predicted labels to the given/actual labels
+    unselected_given = copy.deepcopy(unique_given_labels)
+    if -1 in unselected_given:
+        unselected_given.remove(-1)
+    unselected_pred = copy.deepcopy(unique_predicted_labels)
+    
+    print("unselected pred ", unselected_pred)
 
     # Map the predicted labels to the given/actual labels
     map_predict_to_actual = {}
@@ -203,17 +218,42 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
         predicted_labels_count_GIVEN = {}
         label_GIVEN_idx = [index for (index, item) in enumerate(labels_list) if item == label_GIVEN]
         res_GIVEN = [res[i] for i in label_GIVEN_idx]
-        unique_predicted_labels_GIVEN = get_unique_numbers(res_GIVEN)
+        unique_predicted_labels_GIVEN = list(set(get_unique_numbers(res_GIVEN)) & set(unselected_pred))
         for lab in unique_predicted_labels_GIVEN:
             predicted_labels_count_GIVEN[lab] = (res_GIVEN == lab).sum()
         map_predict_to_actual[max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)] = label_GIVEN
+        unselected_given.remove(label_GIVEN)
+        unselected_pred.remove(max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get))
+
             
-    max_value = max(unique_given_labels) + 1
-    for upl in unique_predicted_labels:
-        if upl not in map_predict_to_actual.keys():
-            # print(f"{upl} mapped to {max_value}")
-            map_predict_to_actual[upl] = max_value
-            max_value += 1
+    # in the case where multiple given labels completely map to the same 
+    # predicted label, we need to finish assigning given labels to any 
+    # predicted label
+    for lab_remain in unselected_given:
+        for upl in unique_predicted_labels:
+            if upl not in map_predict_to_actual.keys():
+                map_predict_to_actual[upl] = lab_remain
+                unselected_given.remove(lab_remain)
+                unselected_pred.remove(upl)
+                break
+    
+    if len(unique_given_labels) <= cNum:
+        max_value = max(unique_given_labels) + 1
+        for upl in unique_predicted_labels:
+            if upl not in map_predict_to_actual.keys():
+                # print(f"{upl} mapped to {max_value}")
+                map_predict_to_actual[upl] = max_value
+                max_value += 1
+                
+            
+    print(f"map_predict_to_actual: {map_predict_to_actual}")
+    if len(unselected_given) != len(unselected_pred):
+        print("error: num unselected given =",len(unselected_given), "!= unselected pred =",len(unselected_pred))
+        
+    print(f"map_predict_to_actual: {map_predict_to_actual}")
+    
+    for l in range(len(unselected_given)):
+        map_predict_to_actual[unselected_pred[l]] = unselected_given[l]
     
     predictions_final = []
 

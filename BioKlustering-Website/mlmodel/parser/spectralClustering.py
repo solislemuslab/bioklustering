@@ -33,7 +33,7 @@ def get_kmer_table(paths, k_min, k_max):
     genes, gene_len, output_df = read_fasta(paths)
     count_vect = CountVectorizer(analyzer='char', ngram_range=(k_min, k_max))
     X = count_vect.fit_transform(genes)
-    chars = count_vect.get_feature_names()
+    chars = count_vect.get_feature_names_out()
     kmers = X.toarray()
     kmer_freq = []
     for i in range(len(genes)):
@@ -151,7 +151,6 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
                     predicted_labels_count_GIVEN = {}
                     label_GIVEN_idx = [index for (index, item) in enumerate(labels_list) if item == label_GIVEN]
                     res_GIVEN = [labels[k] for k in label_GIVEN_idx]
-                    #print(res_GIVEN)
                     unique_predicted_labels_GIVEN = list(set(get_unique_numbers(res_GIVEN)) & set(unselected_pred))
                     if len(unique_predicted_labels_GIVEN) == 0:
                         continue
@@ -160,6 +159,17 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
                     map_predict_to_actual[max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)] = label_GIVEN
                     unselected_given.remove(label_GIVEN)
                     unselected_pred.remove(max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get))
+                    
+                # in the case where multiple given labels completely map to the same 
+                # predicted label, we need to finish assigning given labels to any 
+                # predicted label
+                for lab_remain in unselected_given:
+                    for upl in unique_predicted_labels:
+                        if upl not in map_predict_to_actual.keys():
+                            map_predict_to_actual[upl] = lab_remain
+                            unselected_given.remove(lab_remain)
+                            unselected_pred.remove(upl)
+                            break
 
 
                 if len(unique_given_labels) <= num_cluster:
@@ -238,11 +248,21 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
                     unselected_pred.remove(max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get))
 
 
+                # in the case where multiple given labels completely map to the same 
+                # predicted label, we need to finish assigning given labels to any 
+                # predicted label
+                for lab_remain in unselected_given:
+                    for upl in unique_predicted_labels:
+                        if upl not in map_predict_to_actual.keys():
+                            map_predict_to_actual[upl] = lab_remain
+                            unselected_given.remove(lab_remain)
+                            unselected_pred.remove(upl)
+                            break
+                        
                 if len(unique_given_labels) <= num_cluster:
                     max_value = max(unique_given_labels) + 1
                     for upl in unique_predicted_labels:
                         if upl not in map_predict_to_actual.keys():
-                            # print(f"{upl} mapped to {max_value}")
                             map_predict_to_actual[upl] = max_value
                             max_value += 1
                             unselected_pred.remove(upl)
@@ -307,7 +327,7 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
                 if -1 in unselected_given:
                     unselected_given.remove(-1)
                 unselected_pred = copy.deepcopy(unique_predicted_labels)
-
+                
                 map_predict_to_actual = {}
                 for label_GIVEN_dict_entry in given_labels_count:
                     label_GIVEN = label_GIVEN_dict_entry[0]
@@ -323,15 +343,31 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
                     unselected_given.remove(label_GIVEN)
                     unselected_pred.remove(max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get))
 
+                
+                # in the case where multiple given labels completely map to the same 
+                # predicted label, we need to finish assigning given labels to any 
+                # predicted label
+                for lab_remain in unselected_given:
+                    for upl in unique_predicted_labels:
+                        if upl not in map_predict_to_actual.keys():
+                            map_predict_to_actual[upl] = lab_remain
+                            unselected_given.remove(lab_remain)
+                            unselected_pred.remove(upl)
+                            break
+                                        
 
                 if len(unique_given_labels) <= num_cluster:
                     max_value = max(unique_given_labels) + 1
                     for upl in unique_predicted_labels:
                         if upl not in map_predict_to_actual.keys():
-                            # print(f"{upl} mapped to {max_value}")
                             map_predict_to_actual[upl] = max_value
                             max_value += 1
                             unselected_pred.remove(upl)
+                            
+                if len(unselected_given) != len(unselected_pred):
+                    print("error: num unselected given =",len(unselected_given), "!= unselected pred =",len(unselected_pred))
+                    
+                print(f"map_predict_to_actual: {map_predict_to_actual}")
             
                 for l in range(len(unselected_given)):
                     map_predict_to_actual[unselected_pred[l]] = unselected_given[l]
@@ -405,6 +441,17 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
         unselected_pred.remove(max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get))
 
 
+    # in the case where multiple given labels completely map to the same 
+    # predicted label, we need to finish assigning given labels to any 
+    # predicted label
+    for lab_remain in unselected_given:
+        for upl in unique_predicted_labels:
+            if upl not in map_predict_to_actual.keys():
+                map_predict_to_actual[upl] = lab_remain
+                unselected_given.remove(lab_remain)
+                unselected_pred.remove(upl)
+                break
+            
     if len(unique_given_labels) <= num_cluster:
         max_value = max(unique_given_labels) + 1
         for upl in unique_predicted_labels:
@@ -416,12 +463,11 @@ def intuitive_semi_supervised(userId, file_path, inputlabels, k_min, k_max, num_
     
     if len(unselected_given) != len(unselected_pred):
         print("error: num unselected given =",len(unselected_given), "!= unselected pred =",len(unselected_pred))
+        
+    print(f"map_predict_to_actual: {map_predict_to_actual}")
     
-    #for l in range(len(unselected_given)):
-    #    map_predict_to_actual[unselected_pred[l]] = unselected_given[l]
-    
-    
-    # print(f"map_predict_to_actual: {map_predict_to_actual}")
+    for l in range(len(unselected_given)):
+        map_predict_to_actual[unselected_pred[l]] = unselected_given[l]
 
 
     # predictions_final contains the final results
