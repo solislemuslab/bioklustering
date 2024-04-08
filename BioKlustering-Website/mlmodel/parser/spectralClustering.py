@@ -33,7 +33,7 @@ def get_kmer_table(paths, k_min, k_max):
     genes, gene_len, output_df = read_fasta(paths)
     count_vect = CountVectorizer(analyzer='char', ngram_range=(k_min, k_max))
     X = count_vect.fit_transform(genes)
-    chars = count_vect.get_feature_names()
+    chars = count_vect.get_feature_names_out()
     kmers = X.toarray()
     kmer_freq = []
     for i in range(len(genes)):
