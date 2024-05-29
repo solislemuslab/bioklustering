@@ -136,9 +136,8 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
     PCAembedding = PCA(n_components=10)
     NkmerXTableInput = preprocessing.normalize(kmerXTableInput)
     PCAembedding_low = PCAembedding.fit_transform(NkmerXTableInput)
-    
-    np.random.seed(rNum)
 
+    np.random.seed(rNum)
     ms = MeanShift()
     ms.fit(PCAembedding_low)
     cluster_centers = ms.cluster_centers_
@@ -210,6 +209,7 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
     unselected_pred = copy.deepcopy(unique_predicted_labels)
     
     print("unselected pred ", unselected_pred)
+    print("unselected given: ", unselected_given)
 
     # Map the predicted labels to the given/actual labels
     map_predict_to_actual = {}
@@ -219,6 +219,8 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
         label_GIVEN_idx = [index for (index, item) in enumerate(labels_list) if item == label_GIVEN]
         res_GIVEN = [res[i] for i in label_GIVEN_idx]
         unique_predicted_labels_GIVEN = list(set(get_unique_numbers(res_GIVEN)) & set(unselected_pred))
+        if len(unique_predicted_labels_GIVEN) == 0:
+                        continue
         for lab in unique_predicted_labels_GIVEN:
             predicted_labels_count_GIVEN[lab] = (res_GIVEN == lab).sum()
         map_predict_to_actual[max(predicted_labels_count_GIVEN, key=predicted_labels_count_GIVEN.get)] = label_GIVEN
@@ -237,7 +239,6 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
                 unselected_pred.remove(upl)
                 break
     
-    if len(unique_given_labels) <= cNum:
         max_value = max(unique_given_labels) + 1
         for upl in unique_predicted_labels:
             if upl not in map_predict_to_actual.keys():
@@ -249,6 +250,17 @@ def kmeans_semiSupervised(userId, fasta, klength_min, klength_max, rNum, cNum, y
     print(f"map_predict_to_actual: {map_predict_to_actual}")
     if len(unselected_given) != len(unselected_pred):
         print("error: num unselected given =",len(unselected_given), "!= unselected pred =",len(unselected_pred))
+        # at this point basically just assign randomly
+        max_value = max(unique_predicted_labels) + 1
+        if len(unselected_given) > len(unselected_pred):
+            for ugl in unselected_given:
+                if ugl not in map_predict_to_actual.keys():
+                    map_predict_to_actual[ugl] = ugl
+                    unselected_given.remove(ugl)
+                else:
+                    map_predict_to_actual[max_value] = ugl
+                    max_value += 1
+                    unselected_given.remove(ugl)
         
     print(f"map_predict_to_actual: {map_predict_to_actual}")
     
