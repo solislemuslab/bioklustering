@@ -8,6 +8,8 @@
 
 Sam combined all sequences into `combined_amino.fasta` and `combined_nucleotide.fasta`, and Hailey run IQ-Tree on `combined_amino.fasta` to produce the tree in `collab_dat_march_24/collab_amino_aligned.fasta.contree` (consensus tree is described in `collab_dat_march_24/collab_amino_aligned.fasta.iqtree` along with the MLE tree).
 
+Note that we decided not to use the aminoacids because the estimated labels were too biased towards biocontrol. So, now we use the nucleotides: `collab_NT_results/combined_nucleotide_aligned.fasta.treefile`
+
 Sam also ran BioKlustering and we have a table with estimated labels that we want to plot as traits.
 
 We download the BioKlustering output files from our [google drive](https://drive.google.com/drive/u/2/folders/1oQo3a91ObtL4rniwcVJTnBxffGqzOJRa). Specifically, we focus on:
@@ -26,7 +28,136 @@ if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
 BiocManager::install("treeio")
+BiocManager::install("ggtree")
 ```
+
+# Nucleotide tree
+
+Reading tree:
+```{r}
+library(ggtree)
+library(treeio)
+
+tre <- read.tree("collab_NT_results/combined_nucleotide_aligned.fasta.treefile")
+```
+
+Plotting the tree:
+```{r}
+ggtree(tre, branch.length='none', layout='circular')
+```
+
+We need to read the estimated labels, and put in the same table.
+```{r}
+d1 = read.csv("mycovirus_new/nuc_gmm_pca.csv", header=TRUE)
+dim(d1) ## 366,4
+d2 = read.csv("mycovirus_new/nuc_kmeans_pca.csv", header=TRUE)
+dim(d2) ## 366,4
+d3 = read.csv("mycovirus_new/nuc_spectral_pca.csv", header=TRUE)
+dim(d3) ## 366,4
+```
+First we extract only the estimated labels:
+```{r}
+d11 = d1[c("ID","label")]
+d22 = d2[c("ID","label")]
+d33 = d3[c("ID","label")]
+```
+
+Let's map all tables into one:
+```{r}
+d12 = merge(x=d11, y=d22, by="ID")
+dim(d12) ## 366, 3
+head(d12)
+
+d123 = merge(x=d12, y=d33, by="ID")
+dim(d123) ## 366, 4
+head(d123)
+```
+
+
+We want to check if the tips in the tree have the same names as the tables. It is hard to look at this within R, so I will write out into a csv:
+```{r}
+df = data.frame(tree=sort(tre$tip.label), table=sort(d123$ID))
+write.csv(df,file="comparison-ids-nt.csv")
+```
+
+We look at the table in excel (:S), and notice that taxon name discrepancies. 
+
+We have to change the table to match the tree labels (one by one, manually):
+```{r}
+d123[d123$ID=="AB690372.1:3799201_Valsa_ceratosperma_hypovirus_1_RNA_complete_genome_strain:_MVC86",1] = "AB690372.1_3799201_Valsa_ceratosperma_hypovirus_1_RNA_complete_genome_strain__MVC86"
+
+d123[d123$ID=="JF781304.1:5429388_Sclerotinia_sclerotiorum_hypovirus_1_strain_SZ150_complete_genome",1] = "JF781304.1_5429388_Sclerotinia_sclerotiorum_hypovirus_1_strain_SZ150_complete_genome"
+
+d123[d123$ID=="KC330231.1:51112543_Fusarium_graminearum_hypovirus_1_isolate_HN10_complete_genome",1] = "KC330231.1_51112543_Fusarium_graminearum_hypovirus_1_isolate_HN10_complete_genome"
+
+d123[d123$ID=="KF525367.1:31414221_Sclerotinia_sclerotiorum_hypovirus_2_isolate_5472_complete_genome",1] = "KF525367.1_31414221_Sclerotinia_sclerotiorum_hypovirus_2_isolate_5472_complete_genome"
+
+d123[d123$ID=="KF537784.1:3108856_Phomopsis_longicolla_hypovirus_isolate_ME711_complete_genome",1] = "KF537784.1_3108856_Phomopsis_longicolla_hypovirus_isolate_ME711_complete_genome"
+
+d123[d123$ID=="KJ561218.1:46814567_Sclerotinia_sclerotiorum_hypovirus_2_isolate_SX247_complete_genome",1] = "KJ561218.1_46814567_Sclerotinia_sclerotiorum_hypovirus_2_isolate_SX247_complete_genome"
+
+d123[d123$ID=="KP208178.1:45812292_Fusarium_graminearum_hypovirus_2_isolate_FgHV2/JS16_complete_genome",1] = "KP208178.1_45812292_Fusarium_graminearum_hypovirus_2_isolate_FgHV2_JS16_complete_genome"
+
+d123[d123$ID=="KX883005.1:5898892_Beihai_sipunculid_worm_virus_6_strain_BHNXC41400_polyprotein_gene_complete_cds",1] = "KX883005.1_5898892_Beihai_sipunculid_worm_virus_6_strain_BHNXC41400_polyprotein_gene_complete_cds"
+
+d123[d123$ID=="KX883006.1:4099906_Beihai_hypolike_virus_1_strain_BHZC36965_polyprotein_gene_complete_cds",1] = "KX883006.1_4099906_Beihai_hypolike_virus_1_strain_BHZC36965_polyprotein_gene_complete_cds"
+
+d123[d123$ID=="KX883007.1:52111977_Wuhan_insect_virus_14_strain_WHZM10168_polyprotein_gene_complete_cds",1] = "KX883007.1_52111977_Wuhan_insect_virus_14_strain_WHZM10168_polyprotein_gene_complete_cds"
+
+d123[d123$ID=="KY120321.1:47612331_Fusarium_langsethiae_hypovirus_1_isolate_FlHV1/AH32_complete_genome",1] = "KY120321.1_47612331_Fusarium_langsethiae_hypovirus_1_isolate_FlHV1_AH32_complete_genome"
+
+d123[d123$ID=="LC150612.1:46212296_Fusarium_poae_hypovirus_1_genomic_RNA_complete_genome",1] = "LC150612.1_46212296_Fusarium_poae_hypovirus_1_genomic_RNA_complete_genome"
+
+d123[d123$ID=="NC_000960.1:3708994_Cryphonectria_hypovirus_3_complete_genome",1] = "NC_000960.1_3708994_Cryphonectria_hypovirus_3_complete_genome"
+
+d123[d123$ID=="NC_001492.1:49611861_Cryphonectria_hypovirus_1_complete_genome",1] = "NC_001492.1_49611861_Cryphonectria_hypovirus_1_complete_genome"
+
+d123[d123$ID=="NC_003534.1:48811679_Cryphonectria_hypovirus_2_genome",1] = "NC_003534.1_48811679_Cryphonectria_hypovirus_2_genome"
+
+d123[d123$ID=="NC_006431.1:1948740_Cryphonectria_hypovirus_4_endogenous_virus_complete_genome",1] = "NC_006431.1_1948740_Cryphonectria_hypovirus_4_endogenous_virus_complete_genome"
+```
+
+Saving the new data with new column names:
+```{r}
+colnames(d123) <- c("ID", "gmm", "kmeans", "spectral")
+write.csv(d123,file="estimated_labels_right_names-nt.csv", row.names=FALSE)
+```
+
+We need to convert the `ID` variable row names:
+```{r}
+rownames(d123) <- d123[,1]
+d123[,1] <- NULL
+```
+
+We also need to change the binary responses to characters (for some reason that's how the have it in the [book](https://yulab-smu.top/treedata-book/chapter7.html#gheatmap) section 7.3):
+```{r}
+d123 <- within(d123, gmm<-as.character(d123$gmm))
+d123 <- within(d123, kmeans<-as.character(d123$kmeans))
+d123 <- within(d123, spectral<-as.character(d123$spectral))
+```
+
+Adding the traits as a heatmap:
+```{r}
+p <- ggtree(tre, branch.length='none', layout='circular')
+gheatmap(p, d123, offset=5, width=0.5, font.size=0, 
+        colnames_angle=-45, hjust=0) +
+    scale_fill_manual(breaks=c("0","1"), 
+        values=c("steelblue", "firebrick"), name="label", guide="none")
+```
+
+Saving as PDF (need to copy and paste):
+```{r}
+pdf("heatmap-tree-nt.pdf", width=5, height=5)
+gheatmap(p, d123, offset=5, width=0.5, font.size=0, 
+        colnames_angle=-45, hjust=0) +
+    scale_fill_manual(breaks=c("0","1"), 
+        values=c("steelblue", "firebrick"), name="label", guide="none")
+dev.off()
+```
+
+
+
+# Aminoacid tree
 
 Reading tree:
 ```{r}
@@ -125,14 +256,4 @@ gheatmap(p, d123, offset=5, width=0.5, font.size=0,
         colnames_angle=-45, hjust=0) +
     scale_fill_manual(breaks=c("0","1"), 
         values=c("steelblue", "firebrick"), name="label", guide="none")
-```
-
-Adding the traits (estimated labels)
-```{r}
-p <- ggtree(tre, branch.length='none', layout='circular') %<+% d123
-
-p2 <- p + ##geom_tiplab(offset = .6, hjust = .5) +
-    geom_tippoint(aes(color = gmm)) + 
-    theme(legend.position = "right") #+ 
-    #scale_size_continuous(range = c(3, 10))
 ```
