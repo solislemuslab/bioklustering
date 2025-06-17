@@ -2,6 +2,9 @@ BioKlustering-Website/node_modules/
 BioKlustering-Website/virtual-env/*
 BioKlustering-Website/media/resultfiles/*
 BioKlustering-Website/media/images/*
+manuscript/bacteria-data/*
+manuscript/mycovirus-data/*
+manuscript/validation-data/datasets/*
 
 
 # Django #
@@ -130,7 +133,5 @@ Backup[ ]of[ ]*.numbers/
 *.aln
 *.fna
 *.faa
-*.fasta
-*.fa
 *.dat
 *.paml
